@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{d6ca4009-877c-4d89-9774-b4c1370f02f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="media">
+      <UniqueIdentifier>{81e137b1-4ea3-4abe-829a-6f64bc994cb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper">
+      <UniqueIdentifier>{6efe3a76-edc0-4f6f-b45a-1869ab863c2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper\stb">
+      <UniqueIdentifier>{2eeab77b-5d84-4893-b9df-1b2ed789b189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper\texture">
+      <UniqueIdentifier>{f5660859-05e1-44c8-b7ed-5aa038337189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper\spot">
+      <UniqueIdentifier>{50e6a889-344d-4336-9f5b-cdc3fb0a71f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper\texture\cube">
+      <UniqueIdentifier>{1ee63f39-a87e-4e09-8e86-2da479c9b993}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper\texture\cube\pisa">
+      <UniqueIdentifier>{00b1ebd1-44f0-401a-85d5-d19d39549d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper\texture\cube\pisa-hdr">
+      <UniqueIdentifier>{fc8da165-def3-42cd-ba78-792a8db8e949}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ImGUI">
+      <UniqueIdentifier>{72dde31b-116d-4362-9967-501d96153d19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ImGUI">
+      <UniqueIdentifier>{d91b6a2b-524f-4bb6-a562-a717bca60141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper\texture\cube\customSkybox">
+      <UniqueIdentifier>{85aad866-4f84-4fd1-bdd4-0b9d2176836b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\Spotlight Shaders">
+      <UniqueIdentifier>{d25d7060-115c-43c2-9758-4814e751f354}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\Directional Lighting">
+      <UniqueIdentifier>{ac768483-a7b8-45c4-a153-1cae80c5dacd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scenebasic_uniform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\glslprogram.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\glutils.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\objmesh.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\plane.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\teapot.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\torus.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\trianglemesh.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_glfw.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_opengl3.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_tables.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <Filter>Source Files\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\cube.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\texture.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\stb_image.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\skybox.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_negx.hdr">
+      <Filter>helper\texture\cube\pisa-hdr</Filter>
+    </None>
+    <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_negy.hdr">
+      <Filter>helper\texture\cube\pisa-hdr</Filter>
+    </None>
+    <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_negz.hdr">
+      <Filter>helper\texture\cube\pisa-hdr</Filter>
+    </None>
+    <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_posx.hdr">
+      <Filter>helper\texture\cube\pisa-hdr</Filter>
+    </None>
+    <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_posy.hdr">
+      <Filter>helper\texture\cube\pisa-hdr</Filter>
+    </None>
+    <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_posz.hdr">
+      <Filter>helper\texture\cube\pisa-hdr</Filter>
+    </None>
+    <None Include="shader\blinnPhongShader.frag">
+      <Filter>shaders\Spotlight Shaders</Filter>
+    </None>
+    <None Include="shader\blinnPhongShader.vert">
+      <Filter>shaders\Spotlight Shaders</Filter>
+    </None>
+    <None Include="shader\phongShader.frag">
+      <Filter>shaders\Directional Lighting</Filter>
+    </None>
+    <None Include="shader\phongShader.vert">
+      <Filter>shaders\Directional Lighting</Filter>
+    </None>
+    <None Include="shader\bpToonShader.frag">
+      <Filter>shaders\Directional Lighting</Filter>
+    </None>
+    <None Include="shader\bpToonShader.vert">
+      <Filter>shaders\Directional Lighting</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="scenebasic_uniform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\aabb.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\drawable.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\glslprogram.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\glutils.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\objmesh.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\plane.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\scene.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\scenerunner.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\teapot.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\teapotdata.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\torus.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\trianglemesh.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\utils.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_internal.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_rectpack.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_textedit.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_truetype.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imconfig.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_glfw.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_opengl3.h">
+      <Filter>Header Files\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\texture.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\cube.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\skybox.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\stb\stb_image.h">
+      <Filter>helper\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\stb\stb_image_write.h">
+      <Filter>helper\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image_write.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\ao_ears.png">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\bluewater.png">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\brick1.jpg">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cement.jpg">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\fire.png">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\flower.png">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\hardwood2_diffuse.jpg">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\hardwood2_roughness.jpg">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\me_textile.png">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\moss.png">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\ogre_diffuse.png">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\ogre_normalmap.png">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\smoke.png">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\star.png">
+      <Filter>helper\texture</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa\pisa_negx.png">
+      <Filter>helper\texture\cube\pisa</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa\pisa_negy.png">
+      <Filter>helper\texture\cube\pisa</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa\pisa_negz.png">
+      <Filter>helper\texture\cube\pisa</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa\pisa_posx.png">
+      <Filter>helper\texture\cube\pisa</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa\pisa_posy.png">
+      <Filter>helper\texture\cube\pisa</Filter>
+    </Image>
+    <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa\pisa_posz.png">
+      <Filter>helper\texture\cube\pisa</Filter>
+    </Image>
+    <Image Include="media\skybox\Skybox_Back.jpg">
+      <Filter>helper\texture\cube\customSkybox</Filter>
+    </Image>
+    <Image Include="media\skybox\Skybox_Bottom.jpg">
+      <Filter>helper\texture\cube\customSkybox</Filter>
+    </Image>
+    <Image Include="media\skybox\Skybox_Front.jpg">
+      <Filter>helper\texture\cube\customSkybox</Filter>
+    </Image>
+    <Image Include="media\skybox\Skybox_Left.jpg">
+      <Filter>helper\texture\cube\customSkybox</Filter>
+    </Image>
+    <Image Include="media\skybox\Skybox_Right.jpg">
+      <Filter>helper\texture\cube\customSkybox</Filter>
+    </Image>
+    <Image Include="media\skybox\Skybox_Top.jpg">
+      <Filter>helper\texture\cube\customSkybox</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
