@@ -51,46 +51,18 @@ SceneBasic_Uniform::SceneBasic_Uniform() :
     rotSpeed(glm::pi<float>() / 8.0f)
 {
     //Custom Models
-    houseMesh = ObjMesh::load("media/models/House_Model.obj", true);
-    islandMesh = ObjMesh::load("media/models/Island_Model.obj", true);
+    streetMesh = ObjMesh::load("media/models/Street_Model.obj", true);
+    yellowCarMesh = ObjMesh::load("media/models/Car_Yellow.obj", true);
+    redCarMesh = ObjMesh::load("media/models/Car_Red.obj", true);
+    lamp_postMesh = ObjMesh::load("media/models/Lamp_Post.obj", true);
     treeMesh = ObjMesh::load("media/models/Tree_Model.obj", true);
-
-    //Third-Party Models
-    ogre = ObjMesh::load("media/bs_ears.obj", false, true);
 }
 
 
 int main(int argc, char* argv[])
 {
-
-    //CIN/COUT Introduction in CMD
-    std::cout << "PLEASE CHOOSE THE SHADER TYPE YOU WISH TO EXPERIENCE: " << std::endl;
-    std::cout << "For The Toon Shader: Press T" << std::endl;
-    std::cout << "For The Blinn Phong Spotlight (Normals) Shader: Press B" << std::endl;
-    std::cout << "For The Phong Direction Lighting Shader: Press P" << std::endl;
-    std::cin >> shaderTypeInput;
-
-    //Will wait for user input to decide what shader they wish to experience
-    if (shaderTypeInput == "T" || shaderTypeInput == "t")
-    {
-        switchShader_to_bpToonShader = true;
-    }
-    else if (shaderTypeInput == "B" || shaderTypeInput == "b")
-    {
-        switchShader_to_blinnPhongSpotlight = true;
-    }
-    else if (shaderTypeInput == "P" || shaderTypeInput == "p")
-    {
-        switchShader_to_phongDirectional = true;
-    }
-    else 
-    {
-        std::cout << "WRONG INPUT! " << std::endl;
-        exit(EXIT_SUCCESS);
-    }
-
     //Run entire application when user has selected shader e.g. load window, shaders, uniform data, etc.
-    SceneRunner runner("A Cabin In The Woods...");
+    SceneRunner runner("The Street Of Wakewood");
 
     std::unique_ptr<Scene> scene;
 
@@ -128,54 +100,18 @@ void SceneBasic_Uniform::initScene()
 
 void SceneBasic_Uniform::compile()
 {
-    // Load, Link, and activate the Phong Shader (Directional Lighting) if user chooses "P"
-    if (switchShader_to_phongDirectional == true)
-    {
-        try {
-            shader.compileShader("shader/phongShader.vert");
-            shader.compileShader("shader/phongShader.frag");
-            shader.link();
-            shader.use();
-        }
-        catch (GLSLProgramException& e) {
-            cerr << e.what() << endl;
-            exit(EXIT_FAILURE);
-        }
+   
+    try {
+        shader.compileShader("shader/bpToonShader.vert");
+        shader.compileShader("shader/bpToonShader.frag");
+        shader.link();
+        shader.use();
     }
-
-
-
-    // Load, Link, and activate the Blinn Phonn Normal Shader (Spotlight Lighting) if user chooses "B"
-    if (switchShader_to_blinnPhongSpotlight == true)
-    {
-        try {
-            shader.compileShader("shader/blinnPhongShader.vert");
-            shader.compileShader("shader/blinnPhongShader.frag");
-            shader.link();
-            shader.use();
-        }
-        catch (GLSLProgramException& e) {
-            cerr << e.what() << endl;
-            exit(EXIT_FAILURE);
-        }
+    catch (GLSLProgramException& e) {
+        cerr << e.what() << endl;
+        exit(EXIT_FAILURE);
     }
-
-
-
-    // Load, Link, and activate the Toon Shader (Directional Lighting) if user chooses "T"
-    if (switchShader_to_bpToonShader == true)
-    {
-        try {
-            shader.compileShader("shader/bpToonShader.vert");
-            shader.compileShader("shader/bpToonShader.frag");
-            shader.link();
-            shader.use();
-        }
-        catch (GLSLProgramException& e) {
-            cerr << e.what() << endl;
-            exit(EXIT_FAILURE);
-        }
-    }
+    
 }
 
 
@@ -251,48 +187,88 @@ void SceneBasic_Uniform::render()
 
 
     #pragma region Load All Models - Assign Positions, Rotations and Scale
-    if (switchShader_to_blinnPhongSpotlight == true) 
-    {
-        // Alter the Poisition/Rotation/Size of the Ogre Mesh
-        model = mat4(1.0f);
-        model = glm::translate(model, vec3(3.0f, 4.0f, 5.0f));
-        model = glm::rotate(model, glm::radians(70.0f), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-        model = glm::scale(model, vec3(2.4f, 2.4f, 2.4f));
 
-        //Set Matrix Values based on data above, load model
-        setMatrices();
-        ogre->render();
-    }
-    else
-    {
-    #pragma region House Model Settings
 
-    // Alter the Poisition/Rotation/Size of the House Mesh
+    #pragma region Street Model Settings
+
+    // Alter the Poisition/Rotation/Size of the Street Mesh
     model = mat4(1.0f);
-    model = glm::translate(model, vec3(2.0f, 5.1f, -1.5f));
-    model = glm::rotate(model, glm::radians(85.0f), vec3(0.0f, 1.0f, 0.0f));
+    model = glm::translate(model, vec3(2.5f, 5.0f, 1.0f));
+    model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
     model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
     model = glm::scale(model, vec3(0.4f, 0.4f, 0.4f));
 
-    //Load Matrices Settings & Render House Mesh
+    //Load Matrices Settings & Render Street Mesh
     setMatrices();
-    houseMesh->render();
+    streetMesh->render();
+
     #pragma endregion
 
 
-    #pragma region Island Model Settings
-    // Alter the Poisition/Rotation/Size of the Island Mesh
+    #pragma region Car Model Settings
+    // Alter the Poisition/Rotation/Size of the Yellow Car Mesh
     model = mat4(1.0f);
-    model = glm::translate(model, vec3(-3.0f, 0.0f, -3.0f));
-    model = glm::rotate(model, glm::radians(120.0f), vec3(0.0f, 1.0f, 0.0f));
+    model = glm::translate(model, vec3(2.1f, 5.0f, 1.0f));
+    model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
     model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(1.0f, 1.0f, 1.0f));
+    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
 
-
-    //Load Matrices Settings & Render Island Mesh
+    //Load Matrices Settings & Render Car Mesh
     setMatrices();
-    islandMesh->render();
+    yellowCarMesh->render();
+
+
+    // Alter the Poisition/Rotation/Size of the Red Car Mesh
+    model = mat4(1.0f);
+    model = glm::translate(model, vec3(2.8f, 5.0f, 2.6f));
+    model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+    //Load Matrices Settings & Render Car Mesh
+    setMatrices();
+    redCarMesh->render();
+
+    #pragma endregion
+
+
+    #pragma region Lamp Models Settings
+
+    // Alter the Poisition/Rotation/Size of the Lamp Post Mesh
+    model = mat4(1.0f);
+    model = glm::translate(model, vec3(1.55f, 5.5f, 1.2f));
+    model = glm::rotate(model, glm::radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+    model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
+
+    //Load Matrices Settings & Render Lamp Post Mesh
+    setMatrices();
+    lamp_postMesh->render();
+
+
+    // Alter the Poisition/Rotation/Size of the Lamp Post Mesh
+    model = mat4(1.0f);
+    model = glm::translate(model, vec3(3.5f, 5.5f, -0.75f));
+    model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+    model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
+
+    //Load Matrices Settings & Render Lamp Post Mesh
+    setMatrices();
+    lamp_postMesh->render();
+
+
+    // Alter the Poisition/Rotation/Size of the Lamp Post Mesh
+    model = mat4(1.0f);
+    model = glm::translate(model, vec3(3.35f, 5.5f, 3.0f));
+    model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+    model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
+
+    //Load Matrices Settings & Render Lamp Post Mesh
+    setMatrices();
+    lamp_postMesh->render();
+
     #pragma endregion
 
 
@@ -300,66 +276,106 @@ void SceneBasic_Uniform::render()
 
     // Alter the Poisition/Rotation/Size of the Tree Mesh
     model = mat4(1.0f);
-    model = glm::translate(model, vec3(-12.0f, 8.5f, -2.5f));
+    model = glm::translate(model, vec3(-0.5f, 5.0f, 0.5f));
     model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.5f, 0.5f, 0.5f));
+    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+    //Load Matrices Settings & Render Tree Mesh
+    setMatrices();
+    treeMesh->render();
+
+    // Alter the Poisition/Rotation/Size of the Tree Mesh
+    model = mat4(1.0f);
+    model = glm::translate(model, vec3(1.0f, 5.0f, -1.0f));
+    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+    //Load Matrices Settings & Render Tree Mesh
+    setMatrices();
+    treeMesh->render();
+
+    // Alter the Poisition/Rotation/Size of the Tree Mesh
+    model = mat4(1.0f);
+    model = glm::translate(model, vec3(0.1f, 5.0f, 1.7f));
+    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+    //Load Matrices Settings & Render Tree Mesh
+    setMatrices();
+    treeMesh->render();
+
+    // Alter the Poisition/Rotation/Size of the Tree Mesh
+    model = mat4(1.0f);
+    model = glm::translate(model, vec3(-0.35f, 5.0f, 3.2f));
+    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
 
     //Load Matrices Settings & Render Tree Mesh
     setMatrices();
     treeMesh->render();
 
 
-    //Declare Model
+
+    // Alter the Poisition/Rotation/Size of the Tree Mesh
     model = mat4(1.0f);
-    model = glm::translate(model, vec3(-2.0f, 4.8f, 0.0f));
+    model = glm::translate(model, vec3(4.0f, 5.0f, 3.0f));
     model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.5f, 0.5f, 0.5f));
+    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+    //Load Matrices Settings & Render Tree Mesh
     setMatrices();
     treeMesh->render();
 
 
 
-
+    // Alter the Poisition/Rotation/Size of the Tree Mesh
     model = mat4(1.0f);
-    model = glm::translate(model, vec3(1.0f, 5.0f, -2.0f));
+    model = glm::translate(model, vec3(4.75f, 5.0f, 1.5f));
     model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.5f, 0.5f, 0.5f));
+    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+    //Load Matrices Settings & Render Tree Mesh
     setMatrices();
     treeMesh->render();
 
 
+
+    // Alter the Poisition/Rotation/Size of the Tree Mesh
     model = mat4(1.0f);
-    model = glm::translate(model, vec3(3.0f, 4.5f, 8.0f));
+    model = glm::translate(model, vec3(5.0f, 5.0f, 3.5f));
     model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.5f, 0.5f, 0.5f));
+    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+    //Load Matrices Settings & Render Tree Mesh
     setMatrices();
     treeMesh->render();
 
 
+
+    // Alter the Poisition/Rotation/Size of the Tree Mesh
     model = mat4(1.0f);
-    model = glm::translate(model, vec3(4.0f, 4.5f, 4.0f));
+    model = glm::translate(model, vec3(4.5f, 5.0f, 0.5f));
     model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.2f, 0.2f, 0.2f));
+    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+    //Load Matrices Settings & Render Tree Mesh
     setMatrices();
     treeMesh->render();
 
 
+    // Alter the Poisition/Rotation/Size of the Tree Mesh
     model = mat4(1.0f);
-    model = glm::translate(model, vec3(6.0f, 4.5f, 6.0f));
+    model = glm::translate(model, vec3(5.5f, 5.0f, -1.0f));
     model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.3f, 0.3f, 0.3f));
+    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+    //Load Matrices Settings & Render Tree Mesh
     setMatrices();
     treeMesh->render();
 
-
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(2.0f, 4.2f, 6.0f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.3f, 0.3f, 0.3f));
-    setMatrices();
-    treeMesh->render();
     #pragma endregion
-    }
+
+    
     #pragma endregion
 
 
@@ -481,8 +497,8 @@ void SceneBasic_Uniform::refreshShader()
 {
 
     //Setup the direction of the camera - for the bling phong normal texture shader 
-    mat4 directionalView = glm::lookAt(vec3(4.0f, 4.0f, 6.5f), vec3(0.0f, 0.75f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
-    view = glm::lookAt(vec3(5.0f, 5.0f, 7.5f), vec3(0.0f, 0.75f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+    mat4 directionalView = glm::lookAt(vec3(15.0f, 15.0f, 12.5f), vec3(0.0f, 0.75f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+    view = glm::lookAt(vec3(2.2f, 8.0f, 5.5f), vec3(2.5f, 2.75f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
     projection = mat4(1.0f);
     angle = 0.0;
@@ -490,31 +506,13 @@ void SceneBasic_Uniform::refreshShader()
     //Set the direct light position
     shader.setUniform("Light.Position", directionalView * glm::vec4(1.0f, 25.0f, 0.0f, 0.0f));
    
-    #pragma region Assign the textures - depending on the shader chosen - Normal Textures or Textures
-    // Alters the specular settings, ambient light,
-    if (switchShader_to_blinnPhongSpotlight == true)
-    {
-        // Load diffuse texture
-        GLuint diffuseTexture = Texture::loadTexture("media/texture/ogre_diffuse.png");
+    #pragma region Assign the textures
 
-        // Load normal map texture
-        GLuint normalMapTexture = Texture::loadTexture("media/texture/ogre_normalmap.png");
+    // Load texture and bind it to the active meshes
+    GLuint texID = Texture::loadTexture("media/nice69-32x.png");
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texID);
 
-        // Load Diffuse & Normal texture and bind it to the active meshes
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, diffuseTexture);
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, normalMapTexture);
-    }
-    else
-    {
-        // Load texture and bind it to the active meshes
-        GLuint texID = Texture::loadTexture("media/nice69-32x.png");
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texID);
-
-    }
     #pragma endregion
 
 }
@@ -527,7 +525,7 @@ void SceneBasic_Uniform::toggleMusic()
     if (toggleCurrentMusic == true) 
     {
         // Loop background music in game and set the volume
-        music = backgoundMusic->play2D("media/audio/Dreamer-by-Hazy.flac", true, false, true);
+        music = backgoundMusic->play2D("media/audio/Art Of Silence - Uniq.mp3", true, false, true);
         music->setVolume(0.07f);
     }
     else 

@@ -27,11 +27,11 @@ private:
     GLSLProgram shader;
 
     //Imported Meshes
-    std::unique_ptr<ObjMesh> houseMesh; //House mesh
-    std::unique_ptr<ObjMesh> islandMesh; //Island mesh
+    std::unique_ptr<ObjMesh> streetMesh; //House mesh
+    std::unique_ptr<ObjMesh> yellowCarMesh; //Red Car mesh
+    std::unique_ptr<ObjMesh> redCarMesh; //Yellow Car mesh
+    std::unique_ptr<ObjMesh> lamp_postMesh; //Tree mesh
     std::unique_ptr<ObjMesh> treeMesh; //Tree mesh
-
-    std::unique_ptr<ObjMesh> ogre; //Ogre mesh
 
     //Angle (used for animating objects e.g. lighting position), rotation speeds
     float angle, tPrev, rotSpeed;
