@@ -4,6 +4,10 @@
 This Optimised Developer Tool will be used to present varying OpenGL Techniques. These include, a Geometry Shader, Shadows, Noise, & Physically Based Reflection Model. This application will be used to showcase these elements in real time and allow you to understand the different concepts within OpenGL. 
 
 ### Features
+  * Dynamic Street Scene
+
+
+--------------
 
 
 ### Documentation
@@ -16,10 +20,22 @@ This Optimised Developer Tool will be used to present varying OpenGL Techniques.
 #### What makes your shader program special and how does it compare to similar things?
 
 
-#### YouTube Video
+--------------
+
+
+### YouTube Video
 
 
 ### Screenshots
 
 
+--------------
+
+
 ### References & OpenGL Libraries
+
+#### Music
+Art of Silence - Uniq: https://www.youtube.com/watch?v=3V-pYCGx0C4
+
+#### Textures
+Simple Car Wheel/Tire Side View: https://openclipart.org/detail/171197/simple-car-wheeltire-side-view
