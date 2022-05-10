@@ -55,6 +55,9 @@
     <Filter Include="shaders\Directional Lighting">
       <UniqueIdentifier>{ac768483-a7b8-45c4-a153-1cae80c5dacd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders\Shadow Maps">
+      <UniqueIdentifier>{851bf5cd-a9c4-4553-8b55-576ecdcc4984}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -117,6 +120,12 @@
     <ClCompile Include="helper\skybox.cpp">
       <Filter>helper</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\COMP3015\Lab 8\Lab 8 Files\Additional files\frustum.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\frustum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_negx.hdr">
@@ -155,15 +164,24 @@
     <None Include="shader\bpToonShader.vert">
       <Filter>shaders\Directional Lighting</Filter>
     </None>
+    <None Include="shadowMap.vert">
+      <Filter>shaders\Shadow Maps</Filter>
+    </None>
+    <None Include="shadowMap.frag">
+      <Filter>shaders\Shadow Maps</Filter>
+    </None>
+    <None Include="solid.vert">
+      <Filter>shaders\Shadow Maps</Filter>
+    </None>
+    <None Include="solid.frag">
+      <Filter>shaders\Shadow Maps</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scenebasic_uniform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="helper\aabb.h">
-      <Filter>helper</Filter>
-    </ClInclude>
-    <ClInclude Include="helper\drawable.h">
       <Filter>helper</Filter>
     </ClInclude>
     <ClInclude Include="helper\glslprogram.h">
@@ -246,6 +264,21 @@
     </ClInclude>
     <ClInclude Include="stb_image_write.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMP3015\Lab 8\Lab 8 Files\Additional files\frustum.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\COMP3015\Lab 8\Lab 8 Files\Additional files\random.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\frustum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\random.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\drawable.h">
+      <Filter>helper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

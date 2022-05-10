@@ -155,8 +155,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\COMP3015\Lab 8\Lab 8 Files\Additional files\frustum.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="helper\cube.cpp" />
+    <ClCompile Include="helper\frustum.cpp" />
     <ClCompile Include="helper\glslprogram.cpp" />
     <ClCompile Include="helper\glutils.cpp" />
     <ClCompile Include="helper\objmesh.cpp" />
@@ -189,15 +191,23 @@
     <None Include="shader\bpToonShader.vert" />
     <None Include="shader\phongShader.frag" />
     <None Include="shader\phongShader.vert" />
+    <None Include="shadowMap.frag" />
+    <None Include="shadowMap.vert" />
+    <None Include="solid.frag" />
+    <None Include="solid.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\COMP3015\Lab 8\Lab 8 Files\Additional files\frustum.h" />
+    <ClInclude Include="..\..\COMP3015\Lab 8\Lab 8 Files\Additional files\random.h" />
     <ClInclude Include="helper\aabb.h" />
     <ClInclude Include="helper\cube.h" />
     <ClInclude Include="helper\drawable.h" />
+    <ClInclude Include="helper\frustum.h" />
     <ClInclude Include="helper\glslprogram.h" />
     <ClInclude Include="helper\glutils.h" />
     <ClInclude Include="helper\objmesh.h" />
     <ClInclude Include="helper\plane.h" />
+    <ClInclude Include="helper\random.h" />
     <ClInclude Include="helper\scene.h" />
     <ClInclude Include="helper\scenerunner.h" />
     <ClInclude Include="helper\skybox.h" />

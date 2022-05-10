@@ -4,6 +4,7 @@
 #include "helper/scene.h"
 #include "helper/objmesh.h"
 #include "helper/skybox.h"
+#include "helper/frustum.h"
 
 // Sound Library - Used for background music
 #include <irrklang/irrklang.h>
@@ -24,7 +25,9 @@ using namespace irrklang;
 class SceneBasic_Uniform : public Scene
 {
 private:
-    GLSLProgram shader;
+    GLSLProgram shader, solidShader;
+
+    GLuint shadowFBO, pass1Index, pass2Index;
 
     //Imported Meshes
     std::unique_ptr<ObjMesh> streetMesh; //House mesh
@@ -32,6 +35,12 @@ private:
     std::unique_ptr<ObjMesh> redCarMesh; //Yellow Car mesh
     std::unique_ptr<ObjMesh> lamp_postMesh; //Tree mesh
     std::unique_ptr<ObjMesh> treeMesh; //Tree mesh
+
+    //Shadow Map
+    int shadowMapWidth, shadowMapHeight;
+    glm::mat4 lightPV, shadowBias;
+
+    Frustum lightFrustum;
 
     //Angle (used for animating objects e.g. lighting position), rotation speeds
     float angle, tPrev, rotSpeed;
@@ -41,6 +50,9 @@ private:
 
     void setMatrices();
     void compile();
+    void setupFBO();
+    void drawScene();
+    void spitOutDepthBuffer();
 
 public:
     SceneBasic_Uniform();
@@ -49,6 +61,7 @@ public:
     void refreshShader();
     void toggleMusic();
     void ImGuiSetup();
+
     void sceneShaderSetup();
     void update( float t );
     void render();
