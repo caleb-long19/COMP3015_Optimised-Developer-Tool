@@ -164,16 +164,31 @@
     <None Include="shader\bpToonShader.vert">
       <Filter>shaders\Directional Lighting</Filter>
     </None>
-    <None Include="shadowMap.vert">
+    <None Include="shadowVolume-vol.vert">
       <Filter>shaders\Shadow Maps</Filter>
     </None>
-    <None Include="shadowMap.frag">
+    <None Include="shadowVolume-vol.frag">
       <Filter>shaders\Shadow Maps</Filter>
     </None>
     <None Include="solid.vert">
       <Filter>shaders\Shadow Maps</Filter>
     </None>
     <None Include="solid.frag">
+      <Filter>shaders\Shadow Maps</Filter>
+    </None>
+    <None Include="shadowVolume-vol.geom">
+      <Filter>shaders\Shadow Maps</Filter>
+    </None>
+    <None Include="shadowVolume-render.vert">
+      <Filter>shaders\Shadow Maps</Filter>
+    </None>
+    <None Include="shadowVolume-render.frag">
+      <Filter>shaders\Shadow Maps</Filter>
+    </None>
+    <None Include="shadowVolume-comp.vert">
+      <Filter>shaders\Shadow Maps</Filter>
+    </None>
+    <None Include="shadowVolume-comp.frag">
       <Filter>shaders\Shadow Maps</Filter>
     </None>
   </ItemGroup>

@@ -191,8 +191,13 @@
     <None Include="shader\bpToonShader.vert" />
     <None Include="shader\phongShader.frag" />
     <None Include="shader\phongShader.vert" />
-    <None Include="shadowMap.frag" />
-    <None Include="shadowMap.vert" />
+    <None Include="shadowVolume-vol.frag" />
+    <None Include="shadowVolume-vol.geom" />
+    <None Include="shadowVolume-vol.vert" />
+    <None Include="shadowVolume-comp.frag" />
+    <None Include="shadowVolume-comp.vert" />
+    <None Include="shadowVolume-render.frag" />
+    <None Include="shadowVolume-render.vert" />
     <None Include="solid.frag" />
     <None Include="solid.vert" />
   </ItemGroup>

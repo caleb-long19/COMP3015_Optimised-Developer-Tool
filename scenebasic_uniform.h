@@ -21,48 +21,72 @@ using namespace irrklang;
 #include "helper/texture.h"
 
 #include <glm/glm.hpp>
+#include "helper/plane.h"
+
+
+
 
 class SceneBasic_Uniform : public Scene
 {
 private:
-    GLSLProgram shader, solidShader;
+    GLSLProgram renderShader, volumeShader, compShader;
+    GLuint colorDepthFBO, fsQuad;
+    GLuint spotTex, brickTex;
 
-    GLuint shadowFBO, pass1Index, pass2Index;
+
 
     //Imported Meshes
+    Plane plane;
+    std::unique_ptr<ObjMesh> spot; //House mesh
     std::unique_ptr<ObjMesh> streetMesh; //House mesh
     std::unique_ptr<ObjMesh> yellowCarMesh; //Red Car mesh
     std::unique_ptr<ObjMesh> redCarMesh; //Yellow Car mesh
     std::unique_ptr<ObjMesh> lamp_postMesh; //Tree mesh
     std::unique_ptr<ObjMesh> treeMesh; //Tree mesh
 
+
+
+
     //Shadow Map
     int shadowMapWidth, shadowMapHeight;
     glm::mat4 lightPV, shadowBias;
-
     Frustum lightFrustum;
 
+
+
     //Angle (used for animating objects e.g. lighting position), rotation speeds
+    glm::vec4 lightPos;
     float angle, tPrev, rotSpeed;
+
+
+
+    #pragma region MyRegion
 
     //Float values for Uniform Data
     float specularShininessValue = 20.0f, spotExponentValue = 20.0f, spotCutoffValue = 30.0f, fogMinDistanceValue = 0.0f, fogMaxDistanceValue = 11.5f;
 
-    void setMatrices();
+    #pragma endregion
+
+
+
+    void setMatrices(GLSLProgram &);
     void compile();
     void setupFBO();
-    void drawScene();
-    void spitOutDepthBuffer();
+    void drawScene(GLSLProgram&, bool);
+
+
+    void pass1();
+    void pass2();
+    void pass3();
+    void updateLight();
 
 public:
     SceneBasic_Uniform();
 
     void initScene();
-    void refreshShader();
     void toggleMusic();
     void ImGuiSetup();
 
-    void sceneShaderSetup();
     void update( float t );
     void render();
     void resize(int, int);

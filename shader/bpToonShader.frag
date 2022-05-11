@@ -11,29 +11,25 @@ layout(binding=0) uniform sampler2D Tex1;
 
 
 uniform struct LightInfo {
-    vec4 Position; // Eye coordinate Location
-
-    vec3 L; // Diffuse & Specular Intensity
-
-    vec3 La; //Ambience Intensity
+    vec4 Position;  // Eye coordinate Location
+    vec3 L;         // Diffuse & Specular Intensity
+    vec3 La;        //Ambience Intensity
 } Light;
 
 
 
-uniform struct MaterialInfo {
-  vec3 Ka; // Ambient Reflectivity
-
-  vec3 Kd; // Diffuse Reflectivity
+uniform struct MaterialInfo 
+{
+  vec3 Ka;      // Ambient Reflectivity
+  vec3 Kd;      // Diffuse Reflectivity
 } Material;
 
 
 
 uniform struct FogInfo {
-  float MaxDist; //Max distance of fog
-
-  float MinDist; //Min distance of fog
-
-  vec3 Color; //Fog Colour
+  float MaxDist;    //Max distance of fog
+  float MinDist;    //Min distance of fog
+  vec3 Color;       //Fog Colour
 } Fog;
 
 
@@ -47,11 +43,10 @@ layout( location = 0 ) out vec4 FragColor;
 
 vec3 bpToonShader( ) {
 
-    //Calculate the texture we want to sample with the coordinates of the texture
-    vec3 texColor = texture(Tex1, TexCoord).rgb;
+    vec3 texColor = texture(Tex1, TexCoord).rgb;     //Calculate the texture we want to sample with the coordinates of the texture
 
-    //Calcuate the normalized normal
-    vec3 normal = normalize(Normal);
+
+    vec3 normal = normalize(Normal);     //Calcuate the normalized normal
 
     //Calculate Specular lighting vector in the view space 
     vec3 specular = normalize(Light.Position.xyz - Position);
