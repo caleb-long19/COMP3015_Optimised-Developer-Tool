@@ -36,14 +36,18 @@ private:
 
 
     //Imported Meshes
-    Plane plane;
-    std::unique_ptr<ObjMesh> spot; //House mesh
-    std::unique_ptr<ObjMesh> streetMesh; //House mesh
-    std::unique_ptr<ObjMesh> yellowCarMesh; //Red Car mesh
-    std::unique_ptr<ObjMesh> redCarMesh; //Yellow Car mesh
+    std::unique_ptr<ObjMesh> streetMesh; //Street mesh
+    std::unique_ptr<ObjMesh> defaultHouse; //House mesh
+    std::unique_ptr<ObjMesh> yellowHouse; //House mesh
+    std::unique_ptr<ObjMesh> blueHouse; //House mesh
+    std::unique_ptr<ObjMesh> redHouse; //House mesh
+
+    std::unique_ptr<ObjMesh> fenceMesh; //House mesh
     std::unique_ptr<ObjMesh> lamp_postMesh; //Tree mesh
     std::unique_ptr<ObjMesh> treeMesh; //Tree mesh
 
+    std::unique_ptr<ObjMesh> yellowCarMesh; //Red Car mesh
+    std::unique_ptr<ObjMesh> redCarMesh; //Yellow Car mesh
 
 
 

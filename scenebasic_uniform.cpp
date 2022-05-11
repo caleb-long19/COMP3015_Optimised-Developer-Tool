@@ -32,16 +32,22 @@ std::string shaderTypeInput;
 
 SceneBasic_Uniform::SceneBasic_Uniform() : 
     tPrev(0),
-    rotSpeed(0.1f),
-    plane(10.0f, 10.0f, 2, 2, 5.0f, 5.0f)
+    rotSpeed(0.1f)
 {
     //Custom Models
-    spot = ObjMesh::loadWithAdjacency("media/spot/spot_triangulated.obj");
     streetMesh = ObjMesh::loadWithAdjacency("media/models/Street_Model.obj");
-    yellowCarMesh = ObjMesh::loadWithAdjacency("media/models/Car_Yellow.obj");
-    redCarMesh = ObjMesh::loadWithAdjacency("media/models/Car_Red.obj");
+    defaultHouse = ObjMesh::loadWithAdjacency("media/models/House_Model_Normal.obj");
+    yellowHouse = ObjMesh::loadWithAdjacency("media/models/House_Model_Yellow.obj");
+    blueHouse = ObjMesh::loadWithAdjacency("media/models/House_Model_Blue.obj");
+    redHouse = ObjMesh::loadWithAdjacency("media/models/House_Model_Red.obj");
+
+    fenceMesh = ObjMesh::loadWithAdjacency("media/models/Fence.obj");
     lamp_postMesh = ObjMesh::loadWithAdjacency("media/models/Lamp_Post.obj");
     treeMesh = ObjMesh::loadWithAdjacency("media/models/Tree_Model.obj");
+
+
+    yellowCarMesh = ObjMesh::loadWithAdjacency("media/models/Car_Yellow.obj");
+    redCarMesh = ObjMesh::loadWithAdjacency("media/models/Car_Red.obj");
 }
 
 
@@ -100,7 +106,7 @@ void SceneBasic_Uniform::initScene()
     //Load textures
     glActiveTexture(GL_TEXTURE2);
     spotTex = Texture::loadTexture("media/nice69-32x.png");
-    brickTex = Texture::loadTexture("media/texture/brick1.jpg");
+    brickTex = Texture::loadTexture("media/nice69-32x.png");
 
     updateLight();
 
@@ -128,7 +134,7 @@ void SceneBasic_Uniform::initScene()
 
 void SceneBasic_Uniform::updateLight()
 {
-    lightPos = vec4(5.0f * vec3(cosf(angle) * 7.5f, 1.5f, sinf(angle) * 7.5f), 1.0f);  // World coords
+    lightPos = vec4(150.0f * vec3(cosf(angle) * 0.5f, 1.5f, sinf(angle) * 4.5f), 1.0f);  // World coords
 }
 
 
@@ -227,7 +233,6 @@ void SceneBasic_Uniform::update(float t)
         if (angle > glm::two_pi<float>()) angle -= glm::two_pi<float>();
         updateLight();
     }
-
 }
 
 
@@ -249,6 +254,8 @@ void SceneBasic_Uniform::render()
 
 
 
+
+
 void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 {
     vec3 color;
@@ -263,198 +270,254 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         shader.setUniform("Shininess", 150.0f);
     }
 
-#pragma region Load All Models - Assign Positions, Rotations and Scale
-
-
-#pragma region Street Model Settings
-
-    // Alter the Poisition/Rotation/Size of the Street Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(0.0f, 5.0f, 1.0f));
-    model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.4f, 0.4f, 0.4f));
-
-    //Load Matrices Settings & Render Street Mesh
-    setMatrices(shader);
-    streetMesh->render();
-
-#pragma endregion
-
-
-#pragma region Car Model Settings
-    // Alter the Poisition/Rotation/Size of the Yellow Car Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(-0.4f, 5.0f, 1.0f));
-    model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-
-    //Load Matrices Settings & Render Car Mesh
-    setMatrices(shader);
-    yellowCarMesh->render();
-
-
-    // Alter the Poisition/Rotation/Size of the Red Car Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(0.3f, 5.0f, 2.6f));
-    model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-
-    //Load Matrices Settings & Render Car Mesh
-    setMatrices(shader);
-    redCarMesh->render();
-
-#pragma endregion
-
-
-#pragma region Lamp Models Settings
-
-    // Alter the Poisition/Rotation/Size of the Lamp Post Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(-1.05f, 5.8f, 1.2f));
-    model = glm::rotate(model, glm::radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
-
-    //Load Matrices Settings & Render Lamp Post Mesh
-    setMatrices(shader);
-    lamp_postMesh->render();
-
-
-    // Alter the Poisition/Rotation/Size of the Lamp Post Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(1.0f, 5.8f, -0.75f));
-    model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
-
-    //Load Matrices Settings & Render Lamp Post Mesh
-    setMatrices(shader);
-    lamp_postMesh->render();
-
-
-    // Alter the Poisition/Rotation/Size of the Lamp Post Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(0.85f, 5.8f, 3.0f));
-    model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
-
-    //Load Matrices Settings & Render Lamp Post Mesh
-    setMatrices(shader);
-    lamp_postMesh->render();
-
-#pragma endregion
-
-
-#pragma region Tree Models Settings
-
-    // Alter the Poisition/Rotation/Size of the Tree Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(-3.0f, 5.0f, 0.5f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-
-    //Load Matrices Settings & Render Tree Mesh
-    setMatrices(shader);
-    treeMesh->render();
-
-    // Alter the Poisition/Rotation/Size of the Tree Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(-1.5f, 5.0f, -1.0f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-
-    //Load Matrices Settings & Render Tree Mesh
-    setMatrices(shader);
-    treeMesh->render();
-
-    // Alter the Poisition/Rotation/Size of the Tree Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(-2.6f, 5.0f, 1.7f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-
-    //Load Matrices Settings & Render Tree Mesh
-    setMatrices(shader);
-    treeMesh->render();
-
-    // Alter the Poisition/Rotation/Size of the Tree Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(-2.85f, 5.0f, 3.2f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-
-    //Load Matrices Settings & Render Tree Mesh
-    setMatrices(shader);
-    treeMesh->render();
+    #pragma region Load All Models - Assign Positions, Rotations and Scale
 
 
 
-    // Alter the Poisition/Rotation/Size of the Tree Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(1.5f, 5.0f, 3.0f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+        #pragma region House Model Settings
 
-    //Load Matrices Settings & Render Tree Mesh
-    setMatrices(shader);
-    treeMesh->render();
+            // Alter the Poisition/Rotation/Size of the Yellow Car Mesh
+            model = mat4(1.0f);
 
+            model = glm::translate(model, vec3(3.0f, 5.37f, 2.35f));
+            model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
 
-
-    // Alter the Poisition/Rotation/Size of the Tree Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(2.35f, 5.0f, 1.5f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-
-    //Load Matrices Settings & Render Tree Mesh
-    setMatrices(shader);
-    treeMesh->render();
+            //Load Matrices Settings & Render Car Mesh
+            setMatrices(shader);
+            defaultHouse->render();
 
 
+            // Alter the Poisition/Rotation/Size of the Red Car Mesh
+            model = mat4(1.0f);
 
-    // Alter the Poisition/Rotation/Size of the Tree Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(2.5f, 5.0f, 3.5f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+            model = glm::translate(model, vec3(-3.20f, 5.37f, 2.48f));
+            model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
 
-    //Load Matrices Settings & Render Tree Mesh
-    setMatrices(shader);
-    treeMesh->render();
-
-
-
-    // Alter the Poisition/Rotation/Size of the Tree Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(2.0f, 5.0f, 0.5f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-
-    //Load Matrices Settings & Render Tree Mesh
-    setMatrices(shader);
-    treeMesh->render();
+            //Load Matrices Settings & Render Car Mesh
+            setMatrices(shader);
+            blueHouse->render();
 
 
-    // Alter the Poisition/Rotation/Size of the Tree Mesh
-    model = mat4(1.0f);
-    model = glm::translate(model, vec3(3.0f, 5.0f, -1.0f));
-    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+            // Alter the Poisition/Rotation/Size of the Red Car Mesh
+            model = mat4(1.0f);
 
-    //Load Matrices Settings & Render Tree Mesh
-    setMatrices(shader);
-    treeMesh->render();
+            model = glm::translate(model, vec3(-3.15f, 5.37f, -0.60f));
+            model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
 
-    model = mat4(1.0f);
-#pragma endregion
+            //Load Matrices Settings & Render Car Mesh
+            setMatrices(shader);
+            yellowHouse->render();
 
 
-#pragma endregion
+            // Alter the Poisition/Rotation/Size of the Red Car Mesh
+            model = mat4(1.0f);
+
+            model = glm::translate(model, vec3(3.25f, 5.37f, -0.3f));
+            model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
+
+            //Load Matrices Settings & Render Car Mesh
+            setMatrices(shader);
+            redHouse->render();
+
+        #pragma endregion
+
+
+        #pragma region Car Model Settings
+
+            // Alter the Poisition/Rotation/Size of the Yellow Car Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(-0.4f, 5.0f, 1.0f));
+            model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+            //Load Matrices Settings & Render Car Mesh
+            setMatrices(shader);
+            yellowCarMesh->render();
+
+
+            // Alter the Poisition/Rotation/Size of the Red Car Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(0.3f, 5.0f, 2.6f));
+            model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+            //Load Matrices Settings & Render Car Mesh
+            setMatrices(shader);
+            redCarMesh->render();
+
+            // Alter the Poisition/Rotation/Size of the Street Mesh
+            model = mat4(1.0f);
+
+            model = glm::translate(model, vec3(0.0f, 5.0f, 1.0f));
+            model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.4f, 0.4f, 0.4f));
+
+
+            setMatrices(shader);
+            streetMesh->render();
+
+
+        #pragma endregion
+
+
+        #pragma region Lamp Models Settings
+
+            // Alter the Poisition/Rotation/Size of the Lamp Post Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(-1.25f, 5.8f, 1.2f));
+            model = glm::rotate(model, glm::radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
+
+            //Load Matrices Settings & Render Lamp Post Mesh
+            setMatrices(shader);
+            lamp_postMesh->render();
+
+
+            // Alter the Poisition/Rotation/Size of the Lamp Post Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(1.3f, 5.8f, -0.75f));
+            model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
+
+            //Load Matrices Settings & Render Lamp Post Mesh
+            setMatrices(shader);
+            lamp_postMesh->render();
+
+
+            // Alter the Poisition/Rotation/Size of the Lamp Post Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(1.1f, 5.8f, 3.0f));
+            model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
+
+            //Load Matrices Settings & Render Lamp Post Mesh
+            setMatrices(shader);
+            lamp_postMesh->render();
+
+        #pragma endregion
+
+
+        #pragma region Tree Models Settings
+
+            // Alter the Poisition/Rotation/Size of the Tree Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(-3.0f, 5.0f, 0.8f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+            //Load Matrices Settings & Render Tree Mesh
+            setMatrices(shader);
+            treeMesh->render();
+
+            // Alter the Poisition/Rotation/Size of the Tree Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(-1.5f, 5.0f, -1.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+            //Load Matrices Settings & Render Tree Mesh
+            setMatrices(shader);
+            treeMesh->render();
+
+            // Alter the Poisition/Rotation/Size of the Tree Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(-2.6f, 5.0f, 1.7f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+            //Load Matrices Settings & Render Tree Mesh
+            setMatrices(shader);
+            treeMesh->render();
+
+            // Alter the Poisition/Rotation/Size of the Tree Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(-2.85f, 5.0f, 3.2f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+            //Load Matrices Settings & Render Tree Mesh
+            setMatrices(shader);
+            treeMesh->render();
+
+
+
+            // Alter the Poisition/Rotation/Size of the Tree Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(1.5f, 5.0f, 3.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+            //Load Matrices Settings & Render Tree Mesh
+            setMatrices(shader);
+            treeMesh->render();
+
+
+
+            // Alter the Poisition/Rotation/Size of the Tree Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(2.35f, 5.0f, 1.5f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+            //Load Matrices Settings & Render Tree Mesh
+            setMatrices(shader);
+            treeMesh->render();
+
+
+
+            // Alter the Poisition/Rotation/Size of the Tree Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(2.5f, 5.0f, 3.5f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+            //Load Matrices Settings & Render Tree Mesh
+            setMatrices(shader);
+            treeMesh->render();
+
+
+
+            // Alter the Poisition/Rotation/Size of the Tree Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(2.0f, 5.0f, 0.5f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+            //Load Matrices Settings & Render Tree Mesh
+            setMatrices(shader);
+            treeMesh->render();
+
+
+            // Alter the Poisition/Rotation/Size of the Tree Mesh
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(3.0f, 5.0f, -1.4f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+
+            //Load Matrices Settings & Render Tree Mesh
+            setMatrices(shader);
+            treeMesh->render();
+
+            model = mat4(1.0f);
+        #pragma endregion
+
+
+
+    #pragma endregion
 
 }
 
@@ -537,7 +600,7 @@ void SceneBasic_Uniform::pass1() {
     float c = 2.0f;
 
     projection = glm::infinitePerspective(glm::radians(50.0f), (float)width / height, 0.5f);
-    vec3 cameraPos(c * 8.0f * cos(angle), c * 6.0f, c * 4.5f * sin(angle));
+    vec3 cameraPos(c * 2.0f * cos(angle), c * 6.0f, c * 4.5f * sin(angle));
     view = glm::lookAt(cameraPos, vec3(0, 6, 0), vec3(0, 1, 0));
 
     renderShader.use();
