@@ -162,6 +162,7 @@
     <ClCompile Include="helper\frustum.cpp" />
     <ClCompile Include="helper\glslprogram.cpp" />
     <ClCompile Include="helper\glutils.cpp" />
+    <ClCompile Include="helper\noisetex.cpp" />
     <ClCompile Include="helper\objmesh.cpp" />
     <ClCompile Include="helper\plane.cpp" />
     <ClCompile Include="helper\skybox.cpp" />
@@ -186,6 +187,8 @@
     <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_posx.hdr" />
     <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_posy.hdr" />
     <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_posz.hdr" />
+    <None Include="shader\fog.frag" />
+    <None Include="shader\fog.vert" />
     <None Include="shader\shadowVolume-comp.frag" />
     <None Include="shader\shadowVolume-comp.vert" />
     <None Include="shader\shadowVolume-render.frag" />
@@ -193,6 +196,8 @@
     <None Include="shader\shadowVolume-vol.frag" />
     <None Include="shader\shadowVolume-vol.geom" />
     <None Include="shader\shadowVolume-vol.vert" />
+    <None Include="shader\skybox.frag" />
+    <None Include="shader\skybox.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\COMP3015\Lab 8\Lab 8 Files\Additional files\frustum.h" />
@@ -203,6 +208,7 @@
     <ClInclude Include="helper\frustum.h" />
     <ClInclude Include="helper\glslprogram.h" />
     <ClInclude Include="helper\glutils.h" />
+    <ClInclude Include="helper\noisetex.h" />
     <ClInclude Include="helper\objmesh.h" />
     <ClInclude Include="helper\plane.h" />
     <ClInclude Include="helper\random.h" />

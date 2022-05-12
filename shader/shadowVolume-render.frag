@@ -26,10 +26,7 @@ void shade( )
     vec4 texColor = texture(Tex, TexCoord);
 
     Ambient = vec4(texColor.rgb * LightIntensity * Ka, 1.0);
-    DiffSpec = vec4(texColor.rgb * LightIntensity * 
-        ( Kd * max( dot(s, Normal), 0.0 ) +
-          Ks * pow( max( dot(r,v), 0.0 ), Shininess ) ) ,
-          1.0 );
+    DiffSpec = vec4(texColor.rgb * LightIntensity * (Kd * max( dot(s, Normal), 0.0) + Ks * pow(max(dot(r,v), 0.0), Shininess)) ,1.0 );
 }
 
 

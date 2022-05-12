@@ -14,6 +14,9 @@ using glm::mat3;
 using glm::mat4;
 
 
+// Fog Colours
+float drivingDistance = 6.0f;
+
 
 // Start the sound engine & Bool to turn music on or off
 ISoundEngine* backgoundMusic = createIrrKlangDevice();
@@ -23,9 +26,11 @@ bool toggleCurrentMusic = true;
 
 
 
-SceneBasic_Uniform::SceneBasic_Uniform() : 
+SceneBasic_Uniform::SceneBasic_Uniform() :
     tPrev(0),
-    rotSpeed(0.5f)
+    rotSpeed(0.5f),
+    carSpeed(0.5f),
+    sky(100.0f)
 {
     //Custom Models
     streetMesh = ObjMesh::loadWithAdjacency("media/models/Street_Model.obj");
@@ -80,6 +85,14 @@ void SceneBasic_Uniform::initScene()
 
     angle = 0.0f;
 
+    // Find Textures and bind them to the cube map (Skybox)
+    GLuint cubeTex = Texture::loadHdrCubeMap("media/skybox/sky-hdr/sky");
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTex);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTex);
+
+
     setupFBO();
 
     renderShader.use();
@@ -87,7 +100,8 @@ void SceneBasic_Uniform::initScene()
 
     // Set up a  VAO for the full-screen quad
     GLfloat verts[] = { -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f,
-      1.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f };
+                    1.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f };
+
     GLuint bufHandle;
     glGenBuffers(1, &bufHandle);
     glBindBuffer(GL_ARRAY_BUFFER, bufHandle);
@@ -107,6 +121,7 @@ void SceneBasic_Uniform::initScene()
     glActiveTexture(GL_TEXTURE2);
     spotTex = Texture::loadTexture("media/nice69-32x.png");
     brickTex = Texture::loadTexture("media/nice69-32x.png");
+
 
     updateLight();
 
@@ -212,6 +227,11 @@ void SceneBasic_Uniform::compile()
         compShader.compileShader("shader/shadowVolume-comp.frag");
         compShader.link();
 
+        // Skybox Shader
+        skyShader.compileShader("shader/skybox.vert");
+        skyShader.compileShader("shader/skybox.frag");
+        skyShader.link();
+
     }
     catch (GLSLProgramException& e) {
         cerr << e.what() << endl;
@@ -228,10 +248,14 @@ void SceneBasic_Uniform::compile()
 void SceneBasic_Uniform::update(float t)
 {
     float deltaT = t - tPrev;
+
     if (tPrev == 0.0f) deltaT = 0.0f;
     tPrev = t;
-    if (animating()) {
+
+    if (animating()) 
+    { 
         angle += deltaT * rotSpeed;
+        carAngle += deltaT * carSpeed;
         if (angle > glm::two_pi<float>()) angle -= glm::two_pi<float>();
         updateLight();
     }
@@ -261,9 +285,9 @@ void SceneBasic_Uniform::render()
 
 void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 {
-    float driving = 6.0f;
-    vec3 color;
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    vec3 color;
 
     if (!onlyShadowCasters) {
         glActiveTexture(GL_TEXTURE2);
@@ -273,6 +297,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         shader.setUniform("Kd", color);
         shader.setUniform("Ks", vec3(0.9f));
         shader.setUniform("Shininess", 150.0f);
+
     }
 
 
@@ -367,7 +392,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             // Alter the Poisition/Rotation/Size of the Yellow Car Mesh
             model = mat4(1.0f);
 
-            model = glm::translate(model, vec3(-0.40f, 5.14f, driving * 0.25f * cos(angle)));
+            model = glm::translate(model, vec3(-0.40f, 5.14f, drivingDistance * 0.25f * cos(carAngle)));
             model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
             model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
             model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
@@ -379,7 +404,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
             // Alter the Poisition/Rotation/Size of the Red Car Mesh
             model = mat4(1.0f);
-            model = glm::translate(model, vec3(0.45f, 5.14f, driving * 0.35f * sin(angle)));
+            model = glm::translate(model, vec3(0.45f, 5.14f, drivingDistance * 0.35f * sin(carAngle)));
             model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
             model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
             model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
@@ -548,74 +573,84 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             model = mat4(1.0f);
         #pragma endregion
 
-
     #pragma endregion
 
+            // Draw skybox
+            skyShader.use();
+            model = mat4(1.0f);
+            setSkyboxMatrices(skyShader);
+            sky.render();
 
+        #pragma region ImGUI Elements
+                    // Start the Dear ImGui frame
+                    ImGui_ImplOpenGL3_NewFrame();
+                    ImGui_ImplGlfw_NewFrame();
+                    ImGui::NewFrame();
 
-#pragma region ImGUI Elements
-            // Start the Dear ImGui frame
-            ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
-
-            // Display window with background colour and player speed changing values
-            {
-                ImGui::Begin("The Town of Wakewood - Editor Window"); // Create Window - Title: The Town of Wakewood
-
-                //Checkbox to stop animation
-                ImGui::Checkbox("Toggle Animation", &m_animate);
-
-
-                // Create "gap" in gui to make a cleaner appearance
-                ImGui::Dummy(ImVec2(0.0f, 10.0f));
-
-
-                // Slider that adjusts the speed of the animations in-game
-                ImGui::SliderFloat("Adjust Game Speed", (float*)&rotSpeed, 0.1, 1);
-
-
-                ImGui::Dummy(ImVec2(0.0f, 10.0f));
-
-
-                //Button to turn music on or off
-                if (ImGui::Button("Toggle Music"))
-                {
-                    if (toggleCurrentMusic == true)
+                    // Display window with background colour and player speed changing values
                     {
-                        //Turn music off
-                        toggleCurrentMusic = false;
-                        toggleMusic();
+                        ImGui::Begin("The Town of Wakewood - Editor Window"); // Create Window - Title: The Town of Wakewood
+
+                        //Checkbox to stop animation
+                        ImGui::Checkbox("Toggle Animation", &m_animate);
+
+
+                        // Create "gap" in gui to make a cleaner appearance
+                        ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+
+                        // Slider that adjusts the speed of the animations in-game
+                        ImGui::SliderFloat("Adjust All Animation Speeds", (float*)&rotSpeed, 0.1, 1);
+
+
+                        // Slider that adjusts driving distance of the cars
+                        ImGui::SliderFloat("Adjust Vehicle Distance", (float*)&drivingDistance, 0.1, 4.0f);
+
+
+                        // Slider that adjusts driving distance of the cars
+                        ImGui::SliderFloat("Adjust Vehicle Speed", (float*)&carSpeed, 0.1, 6.0f);
+
+
+                        ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+
+                        //Button to turn music on or off
+                        if (ImGui::Button("Toggle Music"))
+                        {
+                            if (toggleCurrentMusic == true)
+                            {
+                                //Turn music off
+                                toggleCurrentMusic = false;
+                                toggleMusic();
+                            }
+                            else
+                            {
+                                //Turn music on
+                                toggleCurrentMusic = true;
+                                toggleMusic();
+                            }
+                        }
+
+                        ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+                        //Button to exit application
+                        if (ImGui::Button("Exit Application"))
+                        {
+                            exit(EXIT_SUCCESS);
+                        }
+
+                        ImGui::Text("Average Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate); // Dispplay the framerate
+                        ImGui::End();
                     }
-                    else
-                    {
-                        //Turn music on
-                        toggleCurrentMusic = true;
-                        toggleMusic();
-                    }
-                }
 
-                ImGui::Dummy(ImVec2(0.0f, 10.0f));
-
-                //Button to exit application
-                if (ImGui::Button("Exit Application"))
-                {
-                    exit(EXIT_SUCCESS);
-                }
-
-                ImGui::Text("Average Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate); // Dispplay the framerate
-                ImGui::End();
-            }
-
-            ImGui::Render();
+                    ImGui::Render();
 
 
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-#pragma endregion
-
-
+                    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        #pragma endregion
 
 }
+
 
 
 
@@ -730,9 +765,18 @@ void SceneBasic_Uniform::pass3() {
 void SceneBasic_Uniform::setMatrices(GLSLProgram &shader)
 {
     mat4 mv = view * model;
+
     shader.setUniform("ModelViewMatrix", mv);
     shader.setUniform("ProjMatrix", projection);
     shader.setUniform("NormalMatrix", glm::mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
+
+}
+
+void SceneBasic_Uniform::setSkyboxMatrices(GLSLProgram& skyShader)
+{
+    mat4 mv = view * model;
+    skyShader.setUniform("ModelMatrix", model);
+    skyShader.setUniform("MVP", projection * mv);
 }
 
 

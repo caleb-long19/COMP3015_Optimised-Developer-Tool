@@ -52,6 +52,15 @@
     <Filter Include="shaders\Shadow Maps">
       <UniqueIdentifier>{851bf5cd-a9c4-4553-8b55-576ecdcc4984}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders\Particles">
+      <UniqueIdentifier>{39b7b711-31f9-4d30-998a-beffd91809a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\Skybox">
+      <UniqueIdentifier>{41cd5fc3-5de1-4db5-8baf-db1eb8edcbae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\Fog">
+      <UniqueIdentifier>{703a811f-c7b6-4c17-8dbe-4d7f7afef09c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -120,6 +129,9 @@
     <ClCompile Include="helper\frustum.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="helper\noisetex.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_negx.hdr">
@@ -160,6 +172,18 @@
     </None>
     <None Include="shader\shadowVolume-vol.vert">
       <Filter>shaders\Shadow Maps</Filter>
+    </None>
+    <None Include="shader\skybox.frag">
+      <Filter>shaders\Skybox</Filter>
+    </None>
+    <None Include="shader\skybox.vert">
+      <Filter>shaders\Skybox</Filter>
+    </None>
+    <None Include="shader\fog.frag">
+      <Filter>shaders\Fog</Filter>
+    </None>
+    <None Include="shader\fog.vert">
+      <Filter>shaders\Fog</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -263,6 +287,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="helper\drawable.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\noisetex.h">
       <Filter>helper</Filter>
     </ClInclude>
   </ItemGroup>

@@ -19,6 +19,8 @@ using namespace irrklang;
 #include <glad/glad.h>
 #include "helper/glslprogram.h"
 #include "helper/texture.h"
+#include "helper/noisetex.h"
+#include "helper/skybox.h"
 
 #include <glm/glm.hpp>
 #include "helper/plane.h"
@@ -29,11 +31,11 @@ using namespace irrklang;
 class SceneBasic_Uniform : public Scene
 {
 private:
-    GLSLProgram renderShader, volumeShader, compShader;
-    GLuint colorDepthFBO, fsQuad;
+    GLSLProgram renderShader, volumeShader, compShader, skyShader;
+    GLuint colorDepthFBO, fsQuad, quad;
     GLuint spotTex, brickTex;
 
-
+    SkyBox sky;
 
     //Imported Meshes
     std::unique_ptr<ObjMesh> streetMesh; //Street mesh
@@ -60,9 +62,7 @@ private:
 
     //Angle (used for animating objects e.g. lighting position), rotation speeds
     glm::vec4 lightPos;
-    float angle, tPrev, rotSpeed;
-
-
+    float angle, tPrev, rotSpeed, carAngle, carSpeed;
 
     #pragma region ImGUI Values
 
@@ -73,6 +73,7 @@ private:
 
 
     void setMatrices(GLSLProgram &);
+    void setSkyboxMatrices(GLSLProgram &);
     void compile();
     void setupFBO();
     void drawScene(GLSLProgram&, bool);
