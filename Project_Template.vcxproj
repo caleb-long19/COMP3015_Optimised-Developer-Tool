@@ -24,6 +24,7 @@
     <ProjectGuid>{2424a6ac-480b-441a-94ea-86c5c10c6abf}</ProjectGuid>
     <RootNamespace>ProjectTemplate</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Project_Wakewood</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -191,15 +192,13 @@
     <None Include="shader\bpToonShader.vert" />
     <None Include="shader\phongShader.frag" />
     <None Include="shader\phongShader.vert" />
-    <None Include="shadowVolume-vol.frag" />
-    <None Include="shadowVolume-vol.geom" />
-    <None Include="shadowVolume-vol.vert" />
-    <None Include="shadowVolume-comp.frag" />
-    <None Include="shadowVolume-comp.vert" />
-    <None Include="shadowVolume-render.frag" />
-    <None Include="shadowVolume-render.vert" />
-    <None Include="solid.frag" />
-    <None Include="solid.vert" />
+    <None Include="shader\shadowVolume-comp.frag" />
+    <None Include="shader\shadowVolume-comp.vert" />
+    <None Include="shader\shadowVolume-render.frag" />
+    <None Include="shader\shadowVolume-render.vert" />
+    <None Include="shader\shadowVolume-vol.frag" />
+    <None Include="shader\shadowVolume-vol.geom" />
+    <None Include="shader\shadowVolume-vol.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\COMP3015\Lab 8\Lab 8 Files\Additional files\frustum.h" />

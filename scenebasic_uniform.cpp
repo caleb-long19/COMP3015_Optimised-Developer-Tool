@@ -14,18 +14,11 @@ using glm::mat3;
 using glm::mat4;
 
 
-//Bool to turn music on or off
-bool toggleCurrentMusic = true;
 
-
-// Start the sound engine
+// Start the sound engine & Bool to turn music on or off
 ISoundEngine* backgoundMusic = createIrrKlangDevice();
 ISound* music;
-
-
-//Store users input from CIN at shaderram launch
-std::string shaderTypeInput;
-
+bool toggleCurrentMusic = true;
 
 
 
@@ -41,6 +34,7 @@ SceneBasic_Uniform::SceneBasic_Uniform() :
     blueHouse = ObjMesh::loadWithAdjacency("media/models/House_Model_Blue.obj");
     redHouse = ObjMesh::loadWithAdjacency("media/models/House_Model_Red.obj");
 
+
     fenceMesh = ObjMesh::loadWithAdjacency("media/models/Fence.obj");
     lamp_postMesh = ObjMesh::loadWithAdjacency("media/models/Lamp_Post.obj");
     treeMesh = ObjMesh::loadWithAdjacency("media/models/Tree_Model.obj");
@@ -52,10 +46,13 @@ SceneBasic_Uniform::SceneBasic_Uniform() :
 
 
 
+
+
+
 int main(int argc, char* argv[])
 {
     //Run entire application when user has selected shader e.g. load window, shaders, uniform data, etc.
-    SceneRunner runner("The Street Of Wakewood");
+    SceneRunner runner("The Town Of Wakewood");
 
     std::unique_ptr<Scene> scene;
 
@@ -63,6 +60,9 @@ int main(int argc, char* argv[])
 
     return runner.run(*scene);
 }
+
+
+
 
 
 
@@ -142,6 +142,7 @@ void SceneBasic_Uniform::updateLight()
 
 
 
+
 void SceneBasic_Uniform::setupFBO()
 {
     // The depth buffer
@@ -191,6 +192,7 @@ void SceneBasic_Uniform::setupFBO()
 
 
 
+
 void SceneBasic_Uniform::compile()
 {
     try {
@@ -216,6 +218,7 @@ void SceneBasic_Uniform::compile()
         exit(EXIT_FAILURE);
     }
 }
+
 
 
 
@@ -258,7 +261,9 @@ void SceneBasic_Uniform::render()
 
 void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 {
+
     vec3 color;
+
 
     if (!onlyShadowCasters) {
         glActiveTexture(GL_TEXTURE2);
@@ -269,6 +274,8 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         shader.setUniform("Ks", vec3(0.9f));
         shader.setUniform("Shininess", 150.0f);
     }
+
+
 
     #pragma region Load All Models - Assign Positions, Rotations and Scale
 
@@ -327,6 +334,33 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             setMatrices(shader);
             redHouse->render();
 
+
+            // Alter the Poisition/Rotation/Size of the Red Car Mesh
+            model = mat4(1.0f);
+
+            model = glm::translate(model, vec3(2.72f, 5.1f, 1.0f));
+            model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
+
+            //Load Matrices Settings & Render Car Mesh
+            setMatrices(shader);
+            fenceMesh->render();
+
+
+            // Alter the Poisition/Rotation/Size of the Red Car Mesh
+            model = mat4(1.0f);
+
+            model = glm::translate(model, vec3(-2.67f, 5.1f, 1.0f));
+            model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
+
+            //Load Matrices Settings & Render Car Mesh
+            setMatrices(shader);
+            fenceMesh->render();
+
+
         #pragma endregion
 
 
@@ -334,7 +368,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
             // Alter the Poisition/Rotation/Size of the Yellow Car Mesh
             model = mat4(1.0f);
-            model = glm::translate(model, vec3(-0.4f, 5.0f, 1.0f));
+            model = glm::translate(model, vec3(-0.4f, 5.14f, 1.0f));
             model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
             model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
             model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
@@ -346,7 +380,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
             // Alter the Poisition/Rotation/Size of the Red Car Mesh
             model = mat4(1.0f);
-            model = glm::translate(model, vec3(0.3f, 5.0f, 2.6f));
+            model = glm::translate(model, vec3(0.3f, 5.14f, 2.6f));
             model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
             model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
             model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
@@ -415,7 +449,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
             // Alter the Poisition/Rotation/Size of the Tree Mesh
             model = mat4(1.0f);
-            model = glm::translate(model, vec3(-3.0f, 5.0f, 0.8f));
+            model = glm::translate(model, vec3(-3.0f, 5.0f, 0.4f));
             model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
             model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
 
@@ -522,69 +556,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 }
 
 
-
-
-//void SceneBasic_Uniform::drawScene(GLSLProgram &shader, bool onlyShadowCasters)
-//{
-//    vec3 color;
-//
-//    if (!onlyShadowCasters) {
-//        glActiveTexture(GL_TEXTURE2);
-//        glBindTexture(GL_TEXTURE_2D, spotTex);
-//        color = vec3(1.0f);
-//        shader.setUniform("Ka", color * 0.1f);
-//        shader.setUniform("Kd", color);
-//        shader.setUniform("Ks", vec3(0.9f));
-//        shader.setUniform("Shininess", 150.0f);
-//    }
-//
-//    model = mat4(1.0f);
-//    model = glm::translate(model, vec3(-2.3f, 1.0f, 0.2f));
-//    model = glm::rotate(model, glm::radians(180.0f), vec3(0.0f, 1.0f, 0.0f));
-//    model = glm::scale(model, vec3(1.5f));
-//    setMatrices(shader);
-//    spot->render();
-//
-//    model = mat4(1.0f);
-//    model = glm::translate(model, vec3(2.5f, 1.0f, -1.2f));
-//    model = glm::rotate(model, glm::radians(180.0f), vec3(0.0f, 1.0f, 0.0f));
-//    model = glm::scale(model, vec3(1.5f));
-//    setMatrices(shader);
-//    spot->render();
-//
-//    model = mat4(1.0f);
-//    model = glm::translate(model, vec3(0.5f, 1.0f, 2.7f));
-//    model = glm::rotate(model, glm::radians(180.0f), vec3(0.0f, 1.0f, 0.0f));
-//    model = glm::scale(model, vec3(1.5f));
-//    setMatrices(shader);
-//    spot->render();
-//
-//    if (!onlyShadowCasters) {
-//        glActiveTexture(GL_TEXTURE2);
-//        glBindTexture(GL_TEXTURE_2D, brickTex);
-//        color = vec3(0.5f);
-//        shader.setUniform("Kd", color);
-//        shader.setUniform("Ks", vec3(0.0f));
-//        shader.setUniform("Ka", vec3(0.1f));
-//        shader.setUniform("Shininess", 1.0f);
-//        model = mat4(1.0f);
-//        setMatrices(shader);
-//        plane.render();
-//        model = mat4(1.0f);
-//        model = glm::translate(model, vec3(-5.0f, 5.0f, 0.0f));
-//        model = glm::rotate(model, glm::radians(90.0f), vec3(1, 0, 0));
-//        model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 0.0f, 1.0f));
-//        setMatrices(shader);
-//        plane.render();
-//        model = mat4(1.0f);
-//        model = glm::translate(model, vec3(0.0f, 5.0f, -5.0f));
-//        model = glm::rotate(model, glm::radians(90.0f), vec3(1.0f, 0.0f, 0.0f));
-//        setMatrices(shader);
-//        plane.render();
-//        model = mat4(1.0f);
-//    }
-//       
-//}
 
 
 
@@ -711,49 +682,49 @@ void SceneBasic_Uniform::setMatrices(GLSLProgram &shader)
 #pragma region External Code - Music - Window Size - ImGUI
 
 
-void SceneBasic_Uniform::resize(int w, int h)
-{
-    glViewport(0, 0, w, h);
-    width = w;
-    height = h;
-}
-
-
-
-
-
-void SceneBasic_Uniform::toggleMusic()
-{
-    if (toggleCurrentMusic == true) 
+    void SceneBasic_Uniform::resize(int w, int h)
     {
-        // Loop background music in game and set the volume
-        music = backgoundMusic->play2D("media/audio/Art Of Silence - Uniq.mp3", true, false, true);
-        music->setVolume(0.07f);
-    }
-    else 
-    {
-        //Stop playing the music
-        music->stop();
+        glViewport(0, 0, w, h);
+        width = w;
+        height = h;
     }
 
-}
+
+
+
+
+    void SceneBasic_Uniform::toggleMusic()
+    {
+        if (toggleCurrentMusic == true) 
+        {
+            // Loop background music in game and set the volume
+            music = backgoundMusic->play2D("media/audio/Art Of Silence - Uniq.mp3", true, false, true);
+            music->setVolume(0.07f);
+        }
+        else 
+        {
+            //Stop playing the music
+            music->stop();
+        }
+
+    }
 
 
 
 
 
 
-void SceneBasic_Uniform::ImGuiSetup()
-{
-    // Initialising ImGUI
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init();
+    void SceneBasic_Uniform::ImGuiSetup()
+    {
+        // Initialising ImGUI
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        ImGui::StyleColorsDark();
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init();
 
-}
+    }
 
 
 

@@ -164,31 +164,25 @@
     <None Include="shader\bpToonShader.vert">
       <Filter>shaders\Directional Lighting</Filter>
     </None>
-    <None Include="shadowVolume-vol.vert">
+    <None Include="shader\shadowVolume-comp.frag">
       <Filter>shaders\Shadow Maps</Filter>
     </None>
-    <None Include="shadowVolume-vol.frag">
+    <None Include="shader\shadowVolume-comp.vert">
       <Filter>shaders\Shadow Maps</Filter>
     </None>
-    <None Include="solid.vert">
+    <None Include="shader\shadowVolume-render.frag">
       <Filter>shaders\Shadow Maps</Filter>
     </None>
-    <None Include="solid.frag">
+    <None Include="shader\shadowVolume-render.vert">
       <Filter>shaders\Shadow Maps</Filter>
     </None>
-    <None Include="shadowVolume-vol.geom">
+    <None Include="shader\shadowVolume-vol.frag">
       <Filter>shaders\Shadow Maps</Filter>
     </None>
-    <None Include="shadowVolume-render.vert">
+    <None Include="shader\shadowVolume-vol.geom">
       <Filter>shaders\Shadow Maps</Filter>
     </None>
-    <None Include="shadowVolume-render.frag">
-      <Filter>shaders\Shadow Maps</Filter>
-    </None>
-    <None Include="shadowVolume-comp.vert">
-      <Filter>shaders\Shadow Maps</Filter>
-    </None>
-    <None Include="shadowVolume-comp.frag">
+    <None Include="shader\shadowVolume-vol.vert">
       <Filter>shaders\Shadow Maps</Filter>
     </None>
   </ItemGroup>
