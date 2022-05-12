@@ -64,10 +64,9 @@ private:
 
 
 
-    #pragma region MyRegion
+    #pragma region ImGUI Values
 
     //Float values for Uniform Data
-    float specularShininessValue = 20.0f, spotExponentValue = 20.0f, spotCutoffValue = 30.0f, fogMinDistanceValue = 0.0f, fogMaxDistanceValue = 11.5f;
 
     #pragma endregion
 
@@ -77,7 +76,6 @@ private:
     void compile();
     void setupFBO();
     void drawScene(GLSLProgram&, bool);
-
 
     void pass1();
     void pass2();

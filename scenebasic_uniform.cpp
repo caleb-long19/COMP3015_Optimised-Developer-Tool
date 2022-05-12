@@ -25,7 +25,7 @@ bool toggleCurrentMusic = true;
 
 SceneBasic_Uniform::SceneBasic_Uniform() : 
     tPrev(0),
-    rotSpeed(0.1f)
+    rotSpeed(0.5f)
 {
     //Custom Models
     streetMesh = ObjMesh::loadWithAdjacency("media/models/Street_Model.obj");
@@ -225,7 +225,6 @@ void SceneBasic_Uniform::compile()
 
 
 
-
 void SceneBasic_Uniform::update(float t)
 {
     float deltaT = t - tPrev;
@@ -259,9 +258,10 @@ void SceneBasic_Uniform::render()
 
 
 
+
 void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 {
-
+    float driving = 6.0f;
     vec3 color;
 
 
@@ -276,9 +276,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
     }
 
 
-
     #pragma region Load All Models - Assign Positions, Rotations and Scale
-
 
 
         #pragma region House Model Settings
@@ -368,7 +366,8 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
             // Alter the Poisition/Rotation/Size of the Yellow Car Mesh
             model = mat4(1.0f);
-            model = glm::translate(model, vec3(-0.4f, 5.14f, 1.0f));
+
+            model = glm::translate(model, vec3(-0.40f, 5.14f, driving * 0.25f * cos(angle)));
             model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
             model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
             model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
@@ -380,7 +379,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
             // Alter the Poisition/Rotation/Size of the Red Car Mesh
             model = mat4(1.0f);
-            model = glm::translate(model, vec3(0.3f, 5.14f, 2.6f));
+            model = glm::translate(model, vec3(0.45f, 5.14f, driving * 0.35f * sin(angle)));
             model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
             model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
             model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
@@ -550,8 +549,71 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         #pragma endregion
 
 
-
     #pragma endregion
+
+
+
+#pragma region ImGUI Elements
+            // Start the Dear ImGui frame
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            // Display window with background colour and player speed changing values
+            {
+                ImGui::Begin("The Town of Wakewood - Editor Window"); // Create Window - Title: The Town of Wakewood
+
+                //Checkbox to stop animation
+                ImGui::Checkbox("Toggle Animation", &m_animate);
+
+
+                // Create "gap" in gui to make a cleaner appearance
+                ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+
+                // Slider that adjusts the speed of the animations in-game
+                ImGui::SliderFloat("Adjust Game Speed", (float*)&rotSpeed, 0.1, 1);
+
+
+                ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+
+                //Button to turn music on or off
+                if (ImGui::Button("Toggle Music"))
+                {
+                    if (toggleCurrentMusic == true)
+                    {
+                        //Turn music off
+                        toggleCurrentMusic = false;
+                        toggleMusic();
+                    }
+                    else
+                    {
+                        //Turn music on
+                        toggleCurrentMusic = true;
+                        toggleMusic();
+                    }
+                }
+
+                ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+                //Button to exit application
+                if (ImGui::Button("Exit Application"))
+                {
+                    exit(EXIT_SUCCESS);
+                }
+
+                ImGui::Text("Average Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate); // Dispplay the framerate
+                ImGui::End();
+            }
+
+            ImGui::Render();
+
+
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#pragma endregion
+
+
 
 }
 
@@ -581,6 +643,8 @@ void SceneBasic_Uniform::pass1() {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     drawScene(renderShader, false);
 }
+
+
 
 
 
@@ -618,6 +682,7 @@ void SceneBasic_Uniform::pass2() {
     // Enable writing to the color buffer
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
+
 
 
 
@@ -669,9 +734,6 @@ void SceneBasic_Uniform::setMatrices(GLSLProgram &shader)
     shader.setUniform("ProjMatrix", projection);
     shader.setUniform("NormalMatrix", glm::mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
 }
-
-
-
 
 
 

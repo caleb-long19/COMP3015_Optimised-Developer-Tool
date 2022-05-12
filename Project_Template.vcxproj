@@ -186,12 +186,6 @@
     <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_posx.hdr" />
     <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_posy.hdr" />
     <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_posz.hdr" />
-    <None Include="shader\blinnPhongShader.frag" />
-    <None Include="shader\blinnPhongShader.vert" />
-    <None Include="shader\bpToonShader.frag" />
-    <None Include="shader\bpToonShader.vert" />
-    <None Include="shader\phongShader.frag" />
-    <None Include="shader\phongShader.vert" />
     <None Include="shader\shadowVolume-comp.frag" />
     <None Include="shader\shadowVolume-comp.vert" />
     <None Include="shader\shadowVolume-render.frag" />

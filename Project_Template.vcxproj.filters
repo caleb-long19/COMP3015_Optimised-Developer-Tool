@@ -49,12 +49,6 @@
     <Filter Include="helper\texture\cube\customSkybox">
       <UniqueIdentifier>{85aad866-4f84-4fd1-bdd4-0b9d2176836b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="shaders\Spotlight Shaders">
-      <UniqueIdentifier>{d25d7060-115c-43c2-9758-4814e751f354}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="shaders\Directional Lighting">
-      <UniqueIdentifier>{ac768483-a7b8-45c4-a153-1cae80c5dacd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="shaders\Shadow Maps">
       <UniqueIdentifier>{851bf5cd-a9c4-4553-8b55-576ecdcc4984}</UniqueIdentifier>
     </Filter>
@@ -145,24 +139,6 @@
     </None>
     <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_posz.hdr">
       <Filter>helper\texture\cube\pisa-hdr</Filter>
-    </None>
-    <None Include="shader\blinnPhongShader.frag">
-      <Filter>shaders\Spotlight Shaders</Filter>
-    </None>
-    <None Include="shader\blinnPhongShader.vert">
-      <Filter>shaders\Spotlight Shaders</Filter>
-    </None>
-    <None Include="shader\phongShader.frag">
-      <Filter>shaders\Directional Lighting</Filter>
-    </None>
-    <None Include="shader\phongShader.vert">
-      <Filter>shaders\Directional Lighting</Filter>
-    </None>
-    <None Include="shader\bpToonShader.frag">
-      <Filter>shaders\Directional Lighting</Filter>
-    </None>
-    <None Include="shader\bpToonShader.vert">
-      <Filter>shaders\Directional Lighting</Filter>
     </None>
     <None Include="shader\shadowVolume-comp.frag">
       <Filter>shaders\Shadow Maps</Filter>
