@@ -44,12 +44,29 @@ private:
     GLuint feedback[2];
     GLuint drawBuf;
     
+
+    //Shadow Map
+    int shadowMapWidth, shadowMapHeight;
+    glm::mat4 lightPV, shadowBias;
+    Frustum lightFrustum;
+
+    //Angle (used for animating objects e.g. lighting position), rotation speeds
+    glm::vec4 lightPos;
+
+    int nParticles;
+
+    float angle, tPrev, time, deltaT, rotSpeed, carAngle, carSpeed, particleLifetime;
+
+    bool creamHouseChimney = true, redHouseChimney = true, yellowHouseChimney = true, blueHouseChimney = true;
+
+    float lightPosX = 0.5f, lightPosY = 1.5f, lightPosZ = 4.5f;
+
+
     SkyBox sky;
 
-
     //Imported Meshes
-    std::unique_ptr<ObjMesh> streetMesh; //Street mesh
-    std::unique_ptr<ObjMesh> defaultHouse; //House mesh
+    std::unique_ptr<ObjMesh> townMesh; //Street mesh
+    std::unique_ptr<ObjMesh> whiteHouse; //House mesh
     std::unique_ptr<ObjMesh> yellowHouse; //House mesh
     std::unique_ptr<ObjMesh> blueHouse; //House mesh
     std::unique_ptr<ObjMesh> redHouse; //House mesh
@@ -60,22 +77,6 @@ private:
 
     std::unique_ptr<ObjMesh> yellowCarMesh; //Red Car mesh
     std::unique_ptr<ObjMesh> redCarMesh; //Yellow Car mesh
-
-
-
-    //Shadow Map
-    int shadowMapWidth, shadowMapHeight;
-    glm::mat4 lightPV, shadowBias;
-    Frustum lightFrustum;
-
-
-
-    //Angle (used for animating objects e.g. lighting position), rotation speeds
-    glm::vec4 lightPos;
-    int nParticles;
-    float angle, tPrev, time, deltaT, rotSpeed, carAngle, carSpeed, particleLifetime;
-
-    bool creamHouseChimney = true, redHouseChimney = true, yellowHouseChimney = true, blueHouseChimney = true;
 
 
     void setMatrices(GLSLProgram &);
@@ -90,6 +91,10 @@ private:
     void pass2();
     void pass3();
     void updateLight();
+
+    void setupParticles();
+    void setupSkybox();
+    void setupShadowVolumes();
 
 public:
     SceneBasic_Uniform();
