@@ -2,6 +2,9 @@
 
 uniform sampler2D ParticleTex;
 
+// Out to transform feedback buffers (first pass)
+in vec3 Position;
+
 in float Transp;
 in vec2 TexCoord;
 

@@ -75,7 +75,7 @@ private:
     int nParticles;
     float angle, tPrev, time, deltaT, rotSpeed, carAngle, carSpeed, particleLifetime;
 
-
+    bool creamHouseChimney = true, redHouseChimney = true, yellowHouseChimney = true, blueHouseChimney = true;
 
 
     void setMatrices(GLSLProgram &);
