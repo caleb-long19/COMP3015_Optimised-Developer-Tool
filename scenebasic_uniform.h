@@ -16,26 +16,36 @@ using namespace irrklang;
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+
 #include <glad/glad.h>
 #include "helper/glslprogram.h"
 #include "helper/texture.h"
 #include "helper/noisetex.h"
 #include "helper/skybox.h"
+#include "helper/particleutils.h"
+
 
 #include <glm/glm.hpp>
 #include "helper/plane.h"
-
-
+#include "helper/grid.h"
 
 
 class SceneBasic_Uniform : public Scene
 {
 private:
-    GLSLProgram renderShader, volumeShader, compShader, skyShader;
+    GLSLProgram renderShader, volumeShader, compShader, skyShader, smokeShader, flatShader;
     GLuint colorDepthFBO, fsQuad, quad;
     GLuint spotTex, brickTex;
 
+    // Position and direction of emitter.
+    glm::vec3 emitterPos, emitterDir;
+    GLuint posBuf[2], velBuf[2], age[2];
+    GLuint particleArray[2];
+    GLuint feedback[2];
+    GLuint drawBuf;
+    
     SkyBox sky;
+
 
     //Imported Meshes
     std::unique_ptr<ObjMesh> streetMesh; //Street mesh
@@ -62,21 +72,19 @@ private:
 
     //Angle (used for animating objects e.g. lighting position), rotation speeds
     glm::vec4 lightPos;
-    float angle, tPrev, rotSpeed, carAngle, carSpeed;
+    int nParticles;
+    float angle, tPrev, time, deltaT, rotSpeed, carAngle, carSpeed, particleLifetime;
 
-    #pragma region ImGUI Values
-
-    //Float values for Uniform Data
-
-    #pragma endregion
 
 
 
     void setMatrices(GLSLProgram &);
     void setSkyboxMatrices(GLSLProgram &);
+    void setParticleMatrices(GLSLProgram &);
     void compile();
     void setupFBO();
     void drawScene(GLSLProgram&, bool);
+    void initBuffers();
 
     void pass1();
     void pass2();

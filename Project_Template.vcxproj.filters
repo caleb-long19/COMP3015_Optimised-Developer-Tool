@@ -58,9 +58,6 @@
     <Filter Include="shaders\Skybox">
       <UniqueIdentifier>{41cd5fc3-5de1-4db5-8baf-db1eb8edcbae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="shaders\Fog">
-      <UniqueIdentifier>{703a811f-c7b6-4c17-8dbe-4d7f7afef09c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -132,6 +129,9 @@
     <ClCompile Include="helper\noisetex.cpp">
       <Filter>helper</Filter>
     </ClCompile>
+    <ClCompile Include="helper\grid.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_negx.hdr">
@@ -179,11 +179,11 @@
     <None Include="shader\skybox.vert">
       <Filter>shaders\Skybox</Filter>
     </None>
-    <None Include="shader\fog.frag">
-      <Filter>shaders\Fog</Filter>
+    <None Include="shader\smokeParticles.frag">
+      <Filter>shaders\Particles</Filter>
     </None>
-    <None Include="shader\fog.vert">
-      <Filter>shaders\Fog</Filter>
+    <None Include="shader\smokeParticles.vert">
+      <Filter>shaders\Particles</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -290,6 +290,12 @@
       <Filter>helper</Filter>
     </ClInclude>
     <ClInclude Include="helper\noisetex.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\grid.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\particleutils.h">
       <Filter>helper</Filter>
     </ClInclude>
   </ItemGroup>

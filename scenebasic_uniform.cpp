@@ -28,9 +28,16 @@ bool toggleCurrentMusic = true;
 
 SceneBasic_Uniform::SceneBasic_Uniform() :
     tPrev(0),
+    drawBuf(1), 
+    time(0),
+    deltaT(0),
     rotSpeed(0.5f),
     carSpeed(0.5f),
-    sky(100.0f)
+    sky(100.0f),
+    nParticles(1000),
+    particleLifetime(10.0f),
+    emitterPos(0.0f),
+    emitterDir(0, 1, 0)
 {
     //Custom Models
     streetMesh = ObjMesh::loadWithAdjacency("media/models/Street_Model.obj");
@@ -78,12 +85,31 @@ void SceneBasic_Uniform::initScene()
     compile();
 
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-    glClearStencil(0);
 
     //Enable Depth for 3D Rendering
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
 
     angle = 0.0f;
+
+    model = mat4(1.0f);
+
+    initBuffers();
+
+    glActiveTexture(GL_TEXTURE0);
+    Texture::loadTexture("media/texture/smoke.png");
+
+    glActiveTexture(GL_TEXTURE1);
+    ParticleUtils::createRandomTex1D(nParticles * 3);
+
+    smokeShader.use();
+    smokeShader.setUniform("ParticleTex", 0);
+    smokeShader.setUniform("ParticleLifetime", particleLifetime);
+    smokeShader.setUniform("Accel", vec3(0.0f, 0.1f, 0.0f));
+    smokeShader.setUniform("RandomTex", 1);
+    smokeShader.setUniform("Emitter", emitterPos);
+    smokeShader.setUniform("EmitterBasis", ParticleUtils::makeArbitraryBasis(emitterDir));
 
     // Find Textures and bind them to the cube map (Skybox)
     GLuint cubeTex = Texture::loadHdrCubeMap("media/skybox/sky-hdr/sky");
@@ -91,7 +117,6 @@ void SceneBasic_Uniform::initScene()
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTex);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTex);
-
 
     setupFBO();
 
@@ -115,13 +140,13 @@ void SceneBasic_Uniform::initScene()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);  // Vertex position
 
+
     glBindVertexArray(0);
 
     //Load textures
     glActiveTexture(GL_TEXTURE2);
     spotTex = Texture::loadTexture("media/nice69-32x.png");
     brickTex = Texture::loadTexture("media/nice69-32x.png");
-
 
     updateLight();
 
@@ -130,6 +155,7 @@ void SceneBasic_Uniform::initScene()
 
     compShader.use();
     compShader.setUniform("DiffSpecTex", 0);
+
 
     this->animate(true);
 
@@ -232,6 +258,17 @@ void SceneBasic_Uniform::compile()
         skyShader.compileShader("shader/skybox.frag");
         skyShader.link();
 
+        // Smoke Particle Shader
+        smokeShader.compileShader("shader/smokeParticles.vert");
+        smokeShader.compileShader("shader/smokeParticles.frag");
+
+        GLuint shaderHandle = smokeShader.getHandle();
+        const char* outputNames[] = { "Position", "Velocity", "Age" };
+        glTransformFeedbackVaryings(shaderHandle, 3, outputNames, GL_SEPARATE_ATTRIBS);
+
+        smokeShader.link();
+        smokeShader.use();
+
     }
     catch (GLSLProgramException& e) {
         cerr << e.what() << endl;
@@ -247,15 +284,19 @@ void SceneBasic_Uniform::compile()
 
 void SceneBasic_Uniform::update(float t)
 {
-    float deltaT = t - tPrev;
+    float deltaTime = t - tPrev;
 
-    if (tPrev == 0.0f) deltaT = 0.0f;
+    deltaT = t - time;
+
+    time = t;
+
+    if (tPrev == 0.0f) deltaTime = 0.0f;
     tPrev = t;
 
     if (animating()) 
     { 
-        angle += deltaT * rotSpeed;
-        carAngle += deltaT * carSpeed;
+        angle += deltaTime * rotSpeed;
+        carAngle += deltaTime * carSpeed;
         if (angle > glm::two_pi<float>()) angle -= glm::two_pi<float>();
         updateLight();
     }
@@ -285,7 +326,6 @@ void SceneBasic_Uniform::render()
 
 void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     vec3 color;
 
@@ -319,6 +359,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             defaultHouse->render();
 
 
+
             // Alter the Poisition/Rotation/Size of the Red Car Mesh
             model = mat4(1.0f);
 
@@ -330,6 +371,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             //Load Matrices Settings & Render Car Mesh
             setMatrices(shader);
             blueHouse->render();
+
 
 
             // Alter the Poisition/Rotation/Size of the Red Car Mesh
@@ -345,6 +387,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             yellowHouse->render();
 
 
+
             // Alter the Poisition/Rotation/Size of the Red Car Mesh
             model = mat4(1.0f);
 
@@ -358,6 +401,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             redHouse->render();
 
 
+
             // Alter the Poisition/Rotation/Size of the Red Car Mesh
             model = mat4(1.0f);
 
@@ -369,6 +413,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             //Load Matrices Settings & Render Car Mesh
             setMatrices(shader);
             fenceMesh->render();
+
 
 
             // Alter the Poisition/Rotation/Size of the Red Car Mesh
@@ -402,6 +447,8 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             yellowCarMesh->render();
 
 
+
+
             // Alter the Poisition/Rotation/Size of the Red Car Mesh
             model = mat4(1.0f);
             model = glm::translate(model, vec3(0.45f, 5.14f, drivingDistance * 0.35f * sin(carAngle)));
@@ -412,6 +459,9 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             //Load Matrices Settings & Render Car Mesh
             setMatrices(shader);
             redCarMesh->render();
+
+
+
 
             // Alter the Poisition/Rotation/Size of the Street Mesh
             model = mat4(1.0f);
@@ -424,7 +474,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
             setMatrices(shader);
             streetMesh->render();
-
 
         #pragma endregion
 
@@ -443,6 +492,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             lamp_postMesh->render();
 
 
+
             // Alter the Poisition/Rotation/Size of the Lamp Post Mesh
             model = mat4(1.0f);
             model = glm::translate(model, vec3(1.3f, 5.8f, -0.75f));
@@ -453,6 +503,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             //Load Matrices Settings & Render Lamp Post Mesh
             setMatrices(shader);
             lamp_postMesh->render();
+
 
 
             // Alter the Poisition/Rotation/Size of the Lamp Post Mesh
@@ -481,6 +532,8 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             setMatrices(shader);
             treeMesh->render();
 
+
+
             // Alter the Poisition/Rotation/Size of the Tree Mesh
             model = mat4(1.0f);
             model = glm::translate(model, vec3(-1.5f, 5.0f, -1.0f));
@@ -491,6 +544,8 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             setMatrices(shader);
             treeMesh->render();
 
+
+
             // Alter the Poisition/Rotation/Size of the Tree Mesh
             model = mat4(1.0f);
             model = glm::translate(model, vec3(-2.6f, 5.0f, 1.7f));
@@ -500,6 +555,8 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             //Load Matrices Settings & Render Tree Mesh
             setMatrices(shader);
             treeMesh->render();
+
+
 
             // Alter the Poisition/Rotation/Size of the Tree Mesh
             model = mat4(1.0f);
@@ -573,6 +630,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             model = mat4(1.0f);
         #pragma endregion
 
+
     #pragma endregion
 
             // Draw skybox
@@ -581,7 +639,45 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             setSkyboxMatrices(skyShader);
             sky.render();
 
+            //// Update pass
+            //smokeShader.use();
+            //smokeShader.setUniform("Pass", 1);
+            //smokeShader.setUniform("Time", time);
+            //smokeShader.setUniform("DeltaT", deltaT);
+
+            //glEnable(GL_RASTERIZER_DISCARD);
+            //glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, feedback[drawBuf]);
+            //glBeginTransformFeedback(GL_POINTS);
+            //glBindVertexArray(particleArray[1 - drawBuf]);
+            //glVertexAttribDivisor(0, 0);
+            //glVertexAttribDivisor(1, 0);
+            //glVertexAttribDivisor(2, 0);
+            //glDrawArrays(GL_POINTS, 0, nParticles);
+            //glEndTransformFeedback();
+            //glDisable(GL_RASTERIZER_DISCARD);
+
+            //// Render pass
+            //smokeShader.setUniform("Pass", 2);
+
+            //flatShader.use();
+            //setMatrices(flatShader);
+
+            //smokeShader.use();
+            //setParticleMatrices(smokeShader);
+            //glDepthMask(GL_FALSE);
+            //glBindVertexArray(particleArray[drawBuf]);
+            //glVertexAttribDivisor(0, 1);
+            //glVertexAttribDivisor(1, 1);
+            //glVertexAttribDivisor(2, 1);
+            //glDrawArraysInstanced(GL_TRIANGLES, 0, 6, nParticles);
+            //glBindVertexArray(0);
+            //glDepthMask(GL_TRUE);
+
+            //// Swap buffers
+            drawBuf = 1 - drawBuf;
+
         #pragma region ImGUI Elements
+
                     // Start the Dear ImGui frame
                     ImGui_ImplOpenGL3_NewFrame();
                     ImGui_ImplGlfw_NewFrame();
@@ -653,7 +749,86 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
 
 
+void SceneBasic_Uniform::initBuffers() {
+    // Generate the buffers
+    glGenBuffers(2, posBuf);    // position buffers
+    glGenBuffers(2, velBuf);    // velocity buffers
+    glGenBuffers(2, age);       // Start time buffers
 
+    // Allocate space for all buffers
+    int size = nParticles * 3 * sizeof(GLfloat);
+    glBindBuffer(GL_ARRAY_BUFFER, posBuf[0]);
+    glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_ARRAY_BUFFER, posBuf[1]);
+    glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_ARRAY_BUFFER, velBuf[0]);
+    glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_ARRAY_BUFFER, velBuf[1]);
+    glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_ARRAY_BUFFER, age[0]);
+    glBufferData(GL_ARRAY_BUFFER, nParticles * sizeof(GLfloat), 0, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_ARRAY_BUFFER, age[1]);
+    glBufferData(GL_ARRAY_BUFFER, nParticles * sizeof(GLfloat), 0, GL_DYNAMIC_COPY);
+
+    // Fill the first age buffer
+    std::vector<GLfloat> initialAge(nParticles);
+    float rate = particleLifetime / nParticles;
+    for (int i = 0; i < nParticles; i++) initialAge[i] = rate * (i - nParticles);
+    Random::shuffle(initialAge);  // Shuffle ages for more uniformity
+    glBindBuffer(GL_ARRAY_BUFFER, age[0]);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, nParticles * sizeof(GLfloat), initialAge.data());
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Create vertex arrays for each set of buffers
+    glGenVertexArrays(2, particleArray);
+
+    // Set up particle array 0
+    glBindVertexArray(particleArray[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, posBuf[0]);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, velBuf[0]);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, age[0]);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(2);
+
+    // Set up particle array 1
+    glBindVertexArray(particleArray[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, posBuf[1]);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, velBuf[1]);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, age[1]);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(2);
+
+    glBindVertexArray(0);
+
+    // Setup the feedback objects
+    glGenTransformFeedbacks(2, feedback);
+
+    // Transform feedback 0
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, feedback[0]);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, posBuf[0]);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, velBuf[0]);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 2, age[0]);
+
+    // Transform feedback 1
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, feedback[1]);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, posBuf[1]);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, velBuf[1]);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 2, age[1]);
+
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
+}
 
 
 
@@ -761,7 +936,6 @@ void SceneBasic_Uniform::pass3() {
 
 
 
-
 void SceneBasic_Uniform::setMatrices(GLSLProgram &shader)
 {
     mat4 mv = view * model;
@@ -772,6 +946,7 @@ void SceneBasic_Uniform::setMatrices(GLSLProgram &shader)
 
 }
 
+
 void SceneBasic_Uniform::setSkyboxMatrices(GLSLProgram& skyShader)
 {
     mat4 mv = view * model;
@@ -780,6 +955,12 @@ void SceneBasic_Uniform::setSkyboxMatrices(GLSLProgram& skyShader)
 }
 
 
+void SceneBasic_Uniform::setParticleMatrices(GLSLProgram& particleShader)
+{
+    mat4 mv = view * model;
+    particleShader.setUniform("Proj", projection);
+    particleShader.setUniform("MV", mv);
+}
 
 
 

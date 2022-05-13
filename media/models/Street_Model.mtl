@@ -1,5 +1,5 @@
 # Blender MTL File: 'Street_Model.blend'
-# Material Count: 154
+# Material Count: 166
 
 newmtl Material
 Ns 225.000000
@@ -572,6 +572,138 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd G:\\GitHub Repositories\\COMP3015-Custom-Shader-Project-OpenGL\\media\\nice69-32x.png
+
+newmtl Material.053
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd G:\\GitHub Repositories\\COMP3015-Custom-Shader-Project-OpenGL\\media\\nice69-32x.png
+
+newmtl Material.054
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd G:\\GitHub Repositories\\COMP3015-Custom-Shader-Project-OpenGL\\media\\nice69-32x.png
+
+newmtl Material.055
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd G:\\GitHub Repositories\\COMP3015-Custom-Shader-Project-OpenGL\\media\\nice69-32x.png
+
+newmtl Material.056
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd G:\\GitHub Repositories\\COMP3015-Custom-Shader-Project-OpenGL\\media\\nice69-32x.png
+
+newmtl Material.057
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd G:\\GitHub Repositories\\COMP3015-Custom-Shader-Project-OpenGL\\media\\nice69-32x.png
+
+newmtl Material.058
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd G:\\GitHub Repositories\\COMP3015-Custom-Shader-Project-OpenGL\\media\\nice69-32x.png
+
+newmtl Material.059
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd G:\\GitHub Repositories\\COMP3015-Custom-Shader-Project-OpenGL\\media\\nice69-32x.png
+
+newmtl Material.060
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd nice69-32x.png
+
+newmtl Material.061
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd nice69-32x.png
+
+newmtl Material.062
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd nice69-32x.png
+
+newmtl Material.063
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd nice69-32x.png
+
+newmtl Material.064
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd nice69-32x.png
 
 newmtl Material.073
 Ns 225.000000
