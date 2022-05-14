@@ -35,73 +35,89 @@ class SceneBasic_Uniform : public Scene
 private:
     GLSLProgram renderShader, volumeShader, compShader, skyShader, smokeShader, noiseShader;
     GLuint colorDepthFBO, fsQuad, quad;
-    GLuint spotTex, brickTex;
+    GLuint modelTex;
 
     // Position and direction of emitter.
+    // Int Arrays for Position, Veloctiy and Age Buffers
     glm::vec3 emitterPos, emitterDir;
     GLuint posBuf[2], velBuf[2], age[2];
     GLuint particleArray[2];
     GLuint feedback[2];
     GLuint drawBuf;
-    
 
-    //Shadow Map
-    int shadowMapWidth, shadowMapHeight;
+
+    int nParticles;                         // Number of Particles
+    int shadowMapWidth, shadowMapHeight;    // Shadow Volume Data
+
+
     glm::mat4 lightPV, shadowBias;
-    Frustum lightFrustum;
+    glm::vec4 lightPos;                                             // Position of the Light
 
-    //Angle (used for animating objects e.g. lighting position), rotation speeds
-    glm::vec4 lightPos;
 
-    int nParticles;
+    float camAngle, tPrev, time, deltaT, rotSpeed;                     // Used to reclculate the camAngle of the lighting, time it takes, and how fast the animation plays
+    float vehicleAngle, vehicleSpeed;                               // Used for calculating the camAngle the moves & how fast the vehicle animation plays
+    float particleLifetime;                                         // Length of time in which particles stay alive
+    float lightPosX = 0.5f, lightPosY = 1.5f, lightPosZ = 4.5f;     // Values to alter the position of the global light (Used in the GUI)
 
-    float angle, tPrev, time, deltaT, rotSpeed, vehicleAngle, vehicleSpeed, particleLifetime;
-    float lightPosX = 0.5f, lightPosY = 1.5f, lightPosZ = 4.5f;
 
-    bool creamHouseChimney = true, redHouseChimney = true, yellowHouseChimney = true, blueHouseChimney = true;
+#pragma region MyRegion
+
+    // Setup ObjMesh Variables 
+    // Used to load the models
+    std::unique_ptr<ObjMesh> townMesh;          // Street mesh
+    std::unique_ptr<ObjMesh> whiteHouse;        // White House mesh
+    std::unique_ptr<ObjMesh> yellowHouse;       // Yellow House mesh
+    std::unique_ptr<ObjMesh> blueHouse;         // Blue House mesh
+    std::unique_ptr<ObjMesh> redHouse;          // Red House mesh
+
+    std::unique_ptr<ObjMesh> fenceMesh;         // Fence mesh
+    std::unique_ptr<ObjMesh> lamp_postMesh;     // Lamp Post mesh
+    std::unique_ptr<ObjMesh> treeMesh;          // Tree mesh
+
+    std::unique_ptr<ObjMesh> yellowCarMesh;     // Red Car mesh
+    std::unique_ptr<ObjMesh> redCarMesh;        // Yellow Car mesh
+    std::unique_ptr<ObjMesh> planeDecay;        // Plane mesh
+
+#pragma endregion
+
 
     SkyBox sky;
-
-    //Imported Meshes
-    std::unique_ptr<ObjMesh> townMesh; //Street mesh
-    std::unique_ptr<ObjMesh> whiteHouse; //House mesh
-    std::unique_ptr<ObjMesh> yellowHouse; //House mesh
-    std::unique_ptr<ObjMesh> blueHouse; //House mesh
-    std::unique_ptr<ObjMesh> redHouse; //House mesh
-
-    std::unique_ptr<ObjMesh> fenceMesh; //House mesh
-    std::unique_ptr<ObjMesh> lamp_postMesh; //Tree mesh
-    std::unique_ptr<ObjMesh> treeMesh; //Tree mesh
-    std::unique_ptr<ObjMesh> planeDecay; //Tree mesh
-
-    std::unique_ptr<ObjMesh> yellowCarMesh; //Red Car mesh
-    std::unique_ptr<ObjMesh> redCarMesh; //Yellow Car mesh
+    Frustum lightFrustum;
 
 
+#pragma region Methods For SceneBasic_Uniform.cpp
+
+    // Method to contain the matrices data of the different shaders
     void setMatrices(GLSLProgram &);
     void setSkyboxMatrices(GLSLProgram &);
     void setParticleMatrices(GLSLProgram &);
     void setNoiseMatrices(GLSLProgram &);
+
+
+    // Compile, setup buffer data, and draw the scene methods
     void compile();
     void setupFBO();
     void drawScene(GLSLProgram&, bool);
     void initBuffers();
-
     void pass1();
     void pass2();
     void pass3();
     void updateLight();
 
+
+    // Setup methods for the different techniques
     void setupParticles();
     void setupSkybox();
     void setupShadowVolumes();
     void setupNoise();
 
+#pragma endregion
+
 public:
     SceneBasic_Uniform();
 
     void initScene();
-    void toggleforestAmbience();
+    void toggleAmbience();
     void ImGuiSetup();
 
     void update( float t );

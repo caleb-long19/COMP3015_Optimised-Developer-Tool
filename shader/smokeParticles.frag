@@ -1,17 +1,21 @@
 #version 460
 
-uniform sampler2D ParticleTex;
 
-// Out to transform feedback buffers (first pass)
+// Out To Transform Feedback Buffers (first pass)
 in vec3 Position;
 
-in float Transp;
-in vec2 TexCoord;
 
-layout ( location = 0 ) out vec4 FragColor;
+in float Transp;    // Transposition
+in vec2 TexCoord;   // Texture Coordinates
+
+
+uniform sampler2D ParticleTex;              // Particle texture We Assign
+layout (location = 0) out vec4 FragColor;   // Output Fragment Colour
+
 
 void main()
 {
+    // Setting The Frag Colour To The Texture's Colour
     FragColor = texture(ParticleTex, TexCoord);
     FragColor.a *= Transp;
 }

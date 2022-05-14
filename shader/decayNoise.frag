@@ -1,11 +1,13 @@
 #version 460
 
-uniform struct LightInfo {
+uniform struct LightInfo 
+{
     vec4 Position;
     vec3 Intensity;
 } Light;
 
-uniform struct MaterialInfo {
+uniform struct MaterialInfo 
+{
     vec3 Ka;
     vec3 Kd;
     vec3 Ks;
@@ -23,18 +25,19 @@ uniform float HighThreshold;
 
 layout ( location = 0 ) out vec4 FragColor;
 
-vec3 phongModel() {
+vec3 phongModel() 
+{
     vec3 n = Normal;
     vec3 s = normalize(Light.Position.xyz - Position.xyz);
     vec3 v = normalize(-Position.xyz);
     vec3 r = reflect( -s, n );
+
     float sDotN = max( dot(s,n), 0.0 );
+
     vec3 diffuse = Light.Intensity * Material.Kd * sDotN;
     vec3 spec = vec3(0.0);
-    if( sDotN > 0.0 )
-        spec = Light.Intensity * Material.Ks *
-            pow( max( dot(r,v), 0.0 ), Material.Shininess );
 
+    if( sDotN > 0.0 ) spec = Light.Intensity * Material.Ks * pow( max( dot(r,v), 0.0 ), Material.Shininess );
     return diffuse + spec;
 }
 

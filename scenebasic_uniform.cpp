@@ -14,23 +14,28 @@ using glm::mat3;
 using glm::mat4;
 
 
-// Fog Colours
-float drivingDistance = 6.0f;
-float forestVolume = 0.05f, carVolume = 0.1f;
-
-
 // Start the sound engine & Bool to turn forestAmbience on or off
 ISoundEngine* backgroundSFX = createIrrKlangDevice();
 ISound* forestAmbience;
 ISound* carAmbience;
-bool toggleCurrentAmbience = true;
-bool disablePlane = true;
 
+
+// Store the volume level of the ambient sounds
+float forestVolume = 0.05f, carVolume = 0.1f;
+bool toggleCurrentAmbience = true;
+
+
+// Model Manipulation (Turn off rendering & alter positions)
+float drivingDistance = 6.0f;
+bool disablePlane = true;
+bool creamHouseChimney = true, redHouseChimney = true, yellowHouseChimney = true, blueHouseChimney = true;
 vec3 color;
+
+
 
 int main(int argc, char* argv[])
 {
-    //Run entire application when user has selected shader e.g. load window, shaders, uniform data, etc.
+    //Run entire application
     SceneRunner runner("The Town Of Wakewood");
 
     std::unique_ptr<Scene> scene;
@@ -41,11 +46,18 @@ int main(int argc, char* argv[])
 }
 
 
+
 SceneBasic_Uniform::SceneBasic_Uniform() :
-    tPrev(0), drawBuf(1), time(0), deltaT(0), 
-    rotSpeed(0.5f), vehicleSpeed(0.5f),
-    nParticles(1500), particleLifetime(5.0f),
-    emitterPos(0.0f), emitterDir(0, 1, 0),
+    tPrev(0), 
+    drawBuf(1), 
+    time(0), 
+    deltaT(0),
+    rotSpeed(0.5f), 
+    vehicleSpeed(0.5f),
+    nParticles(1500), 
+    particleLifetime(5.0f),
+    emitterPos(0.0f), 
+    emitterDir(0, 1, 0),
     sky(100.0f)
 {
     // Load The Town & House Meshes
@@ -55,15 +67,15 @@ SceneBasic_Uniform::SceneBasic_Uniform() :
     blueHouse = ObjMesh::loadWithAdjacency("media/models/House_Model_Blue.obj");
     redHouse = ObjMesh::loadWithAdjacency("media/models/House_Model_Red.obj");
 
-    // Load The Tree, fence, and lamp-post meshes
+    // Load The Tree, fence, lamp-post meshes
     fenceMesh = ObjMesh::loadWithAdjacency("media/models/Fence.obj");
     lamp_postMesh = ObjMesh::loadWithAdjacency("media/models/Lamp_Post.obj");
     treeMesh = ObjMesh::loadWithAdjacency("media/models/Tree_Model.obj");
-    planeDecay = ObjMesh::loadWithAdjacency("media/models/Plane.obj");
 
-    // Load The Car Meshes
+    // Load The Vehicle Meshes
     yellowCarMesh = ObjMesh::loadWithAdjacency("media/models/Car_Yellow.obj");
     redCarMesh = ObjMesh::loadWithAdjacency("media/models/Car_Red.obj");
+    planeDecay = ObjMesh::loadWithAdjacency("media/models/Plane.obj");
 }
 
 
@@ -82,7 +94,7 @@ void SceneBasic_Uniform::initScene()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
 
-    angle = 0.0f;
+    camAngle = 0.0f;
 
     // Setup Particles, Skybox/Cubemap & Geometry & Shadows
     setupNoise();
@@ -93,8 +105,8 @@ void SceneBasic_Uniform::initScene()
     //Initialise the ImGUI for the Render Method
     ImGuiSetup();
 
-    //Start The forestAmbience
-    toggleforestAmbience();
+    //Start The background ambience
+    toggleAmbience();
 }
 
 
@@ -102,8 +114,8 @@ void SceneBasic_Uniform::initScene()
 void SceneBasic_Uniform::updateLight()
 {
     // Change the position of the directional light continuously
-    // lightPos = vec4(150.0f * vec3(cosf(angle) * 0.5f, 1.5f, sinf(angle) * 4.5f), 1.0f);  // World coords
-    lightPos = vec4(150.0f * vec3(cosf(angle) * lightPosX, lightPosY, sinf(angle) * lightPosZ), 1.0f);  // World coords
+    // lightPos = vec4(150.0f * vec3(cosf(camAngle) * 0.5f, 1.5f, sinf(camAngle) * 4.5f), 1.0f);  // World coords
+    lightPos = vec4(150.0f * vec3(cosf(camAngle) * lightPosX, lightPosY, sinf(camAngle) * lightPosZ), 1.0f);  // World coords
 
 }
 
@@ -112,29 +124,29 @@ void SceneBasic_Uniform::updateLight()
 void SceneBasic_Uniform::compile()
 {
     try {
-        // The shader for the volumes
+        // Locate & Link The Shader For The Volumes
         volumeShader.compileShader("shader/shadowVolume-vol.vert");
         volumeShader.compileShader("shader/shadowVolume-vol.geom");
         volumeShader.compileShader("shader/shadowVolume-vol.frag");
         volumeShader.link();
 
-        // The shader for rendering and compositing
+        // Locate & Link The Shader For Rendering and Compositing
         renderShader.compileShader("shader/shadowVolume-render.vert");
         renderShader.compileShader("shader/shadowVolume-render.frag");
         renderShader.link();
 
-        // The final composite shader
+        // Locate & Link The Final Composite Shader
         compShader.compileShader("shader/shadowVolume-comp.vert");
         compShader.compileShader("shader/shadowVolume-comp.frag");
         compShader.link();
 
-        // Skybox Shader
+        // Locate & Link Skybox Shader
         skyShader.compileShader("shader/skybox.vert");
         skyShader.compileShader("shader/skybox.frag");
         skyShader.link();
 
 
-        // Smoke Particle Shader
+        // Locate & Link Smoke Particle Shader
         smokeShader.compileShader("shader/smokeParticles.vert");
         smokeShader.compileShader("shader/smokeParticles.frag");
 
@@ -145,10 +157,9 @@ void SceneBasic_Uniform::compile()
         smokeShader.link();
         smokeShader.use();
 
-
+        // Locate & Link Noise Shader
         noiseShader.compileShader("shader/decayNoise.vert");
         noiseShader.compileShader("shader/decayNoise.frag");
-
         noiseShader.link();
 
     }
@@ -165,16 +176,17 @@ void SceneBasic_Uniform::update(float t)
     deltaT = t - time;
     time = t;
 
-    // Particles
     if (tPrev == 0.0f) deltaT = 0.0f;
     tPrev = t;
 
     if (animating()) 
     { 
-        // Car and Camera Angles
-        angle += deltaT * rotSpeed;
+        // Adjust camera angles based on delta time and speed
+        camAngle += deltaT * rotSpeed;
+
+        // Adjust car angles based on delta time and speed
         vehicleAngle += deltaT * vehicleSpeed;
-        if (angle > glm::two_pi<float>()) angle -= glm::two_pi<float>();
+        if (camAngle > glm::two_pi<float>()) camAngle -= glm::two_pi<float>();
         updateLight();
     }
 }
@@ -195,245 +207,262 @@ void SceneBasic_Uniform::render()
 
 void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 {
-    //Enable Depth for 3D Rendering | BlendFunc to blend rgba values | clear the colour and depth buffers
+    // Enable Depth for 3D Rendering
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // BlendFunc to blend rgba values | clear the colour and depth buffers
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+
     #pragma region Load All Models - Assign Positions, Rotations and Scale
 
-        // Bind the textures and set the geometry shader uniform data
+    // Bind the textures and set the geometry shader uniform data
+    if (!onlyShadowCasters) {
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, modelTex);
+        color = vec3(1.0f);
+        shader.setUniform("Ka", color * 0.1f);
+        shader.setUniform("Kd", color);
+        shader.setUniform("Ks", vec3(0.9f));
+        shader.setUniform("Shininess", 150.0f);
+    }
 
-        if (!onlyShadowCasters) {
-            glActiveTexture(GL_TEXTURE2);
-            glBindTexture(GL_TEXTURE_2D, spotTex);
-            color = vec3(1.0f);
-            shader.setUniform("Ka", color * 0.1f);
-            shader.setUniform("Kd", color);
-            shader.setUniform("Ks", vec3(0.9f));
-            shader.setUniform("Shininess", 150.0f);
-        }
+    #pragma region House Model Rendering & Model Data
 
-        #pragma region House Model Rendering & Model Data
+        // Alter the Poisition / Rotation / Size of the Town Mesh, set matrices/model data & render mesh
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(0.0f, 5.0f, 1.0f));
+        model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.4f, 0.4f, 0.4f));
+        setMatrices(shader);
+        townMesh->render();
 
+        // Alter the Poisition / Rotation / Size of the White House Mesh, set matrices/model data & render mesh
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(3.0f, 5.37f, 2.35f));
+        model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
+        setMatrices(shader);
+        whiteHouse->render();
 
-            model = mat4(1.0f);                                                         // Alter the Poisition / Rotation / Size of the Town Mesh, set matrices/model data & render mesh
-            model = glm::translate(model, vec3(0.0f, 5.0f, 1.0f));
-            model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.4f, 0.4f, 0.4f));
-            setMatrices(shader);
-            townMesh->render();
+        // Alter the Poisition / Rotation / Size of the Blue House Mesh, set matrices/model data & render mesh
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(-3.20f, 5.37f, 2.48f));
+        model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
+        setMatrices(shader);
+        blueHouse->render();
 
-            model = mat4(1.0f);                                                         // Alter the Poisition / Rotation / Size of the White House Mesh, set matrices/model data & render mesh
-            model = glm::translate(model, vec3(3.0f, 5.37f, 2.35f));
-            model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
-            setMatrices(shader);
-            whiteHouse->render();
-
-            model = mat4(1.0f);                                                         // Alter the Poisition / Rotation / Size of the Blue House Mesh, set matrices/model data & render mesh
-            model = glm::translate(model, vec3(-3.20f, 5.37f, 2.48f));
-            model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
-            setMatrices(shader);
-            blueHouse->render();
-
-            model = mat4(1.0f);                                                         // Alter the Poisition / Rotation / Size of the Red House Mesh, set matrices/model data & render mesh
-            model = glm::translate(model, vec3(-3.15f, 5.37f, -0.60f));
-            model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
-            setMatrices(shader);
-            yellowHouse->render();
-
-            model = mat4(1.0f);                                                         // Alter the Poisition / Rotation / Size of the Red House Mesh, set matrices/model data & render mesh
-            model = glm::translate(model, vec3(3.25f, 5.37f, -0.3f));
-            model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
-            setMatrices(shader);
-            redHouse->render();
+        // Alter the Poisition / Rotation / Size of the Red House Mesh, set matrices/model data & render mesh
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(-3.15f, 5.37f, -0.60f));
+        model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
+        setMatrices(shader);
+        yellowHouse->render();
 
 
+        // Alter the Poisition / Rotation / Size of the Red House Mesh, set matrices/model data & render mesh
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(3.25f, 5.37f, -0.3f));
+        model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
+        setMatrices(shader);
+        redHouse->render();
 
-            model = mat4(1.0f);                                                          // Alter the Poisition / Rotation / Size of the Fence Meshes, set matrices/model data & render mesh
-            model = glm::translate(model, vec3(2.72f, 5.1f, 1.0f));
-            model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
-            setMatrices(shader);
-            fenceMesh->render();
+        // Alter the Poisition / Rotation / Size of the Fence Meshes, set matrices/model data & render mesh
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(2.72f, 5.1f, 1.0f));
+        model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
+        setMatrices(shader);
+        fenceMesh->render();
 
-            model = mat4(1.0f);
-            model = glm::translate(model, vec3(-2.67f, 5.1f, 1.0f));
-            model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
-            setMatrices(shader);
-            fenceMesh->render();
-
-
-        #pragma endregion
-
-
-        #pragma region Car Model Rendering & Model Data
-
-            model = mat4(1.0f);                                                                                 // Alter the Poisition / Rotation / Size of the Yellow Car Mesh, set matrices/model data & render mesh
-            model = glm::translate(model, vec3(-0.40f, 5.14f, drivingDistance * 0.25f * cos(vehicleAngle)));
-            model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-            setMatrices(shader);
-            yellowCarMesh->render();
-
-            model = mat4(1.0f);                                                                                 // Alter the Poisition / Rotation / Size of the Red Car Mesh, set matrices/model data & render mesh
-            model = glm::translate(model, vec3(0.45f, 5.14f, drivingDistance * 0.35f * sin(vehicleAngle)));
-            model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-            setMatrices(shader);
-            redCarMesh->render();
-
-        #pragma endregion
-
-
-        #pragma region Lamp Models Rendering & Model Data
-
-            model = mat4(1.0f);                                                         // Alter the Poisition / Rotation / Size of the Lamp Post Meshes, set matrices/model data & render mesh
-            model = glm::translate(model, vec3(-1.25f, 5.8f, 1.2f));
-            model = glm::rotate(model, glm::radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
-            setMatrices(shader);
-            lamp_postMesh->render();
-
-            model = mat4(1.0f);
-            model = glm::translate(model, vec3(1.3f, 5.8f, -0.75f));
-            model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
-            setMatrices(shader);
-            lamp_postMesh->render();
-
-            model = mat4(1.0f);
-            model = glm::translate(model, vec3(1.1f, 5.8f, 3.0f));
-            model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
-            setMatrices(shader);
-            lamp_postMesh->render();
-
-        #pragma endregion
-
-
-        #pragma region Tree Models Rendering & Model Data
-
-            model = mat4(1.0f);                                                       // Alter the Poisition/Rotation/Size of the Tree Meshes, set matrices/model data & render mesh
-            model = glm::translate(model, vec3(-3.0f, 5.0f, 0.4f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-            setMatrices(shader);
-            treeMesh->render();
-
-            model = mat4(1.0f);
-            model = glm::translate(model, vec3(-1.5f, 5.0f, -1.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-            setMatrices(shader);
-            treeMesh->render();
-
-            model = mat4(1.0f);
-            model = glm::translate(model, vec3(-2.6f, 5.0f, 1.7f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-            setMatrices(shader);
-            treeMesh->render();
-
-            model = mat4(1.0f);
-            model = glm::translate(model, vec3(-2.85f, 5.0f, 3.2f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-            setMatrices(shader);
-            treeMesh->render();
-
-            model = mat4(1.0f);
-            model = glm::translate(model, vec3(1.5f, 5.0f, 3.0f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-            setMatrices(shader);
-            treeMesh->render();
-
-            model = mat4(1.0f);
-            model = glm::translate(model, vec3(2.35f, 5.0f, 1.5f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-            setMatrices(shader);
-            treeMesh->render();
-
-            model = mat4(1.0f);
-            model = glm::translate(model, vec3(2.5f, 5.0f, 3.5f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-            setMatrices(shader);
-            treeMesh->render();
-
-            model = mat4(1.0f);
-            model = glm::translate(model, vec3(2.0f, 5.0f, 0.5f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-            setMatrices(shader);
-            treeMesh->render();
-
-            model = mat4(1.0f);
-            model = glm::translate(model, vec3(3.0f, 5.0f, -1.4f));
-            model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
-            setMatrices(shader);
-            treeMesh->render();
-
-        #pragma endregion
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(-2.67f, 5.1f, 1.0f));
+        model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
+        setMatrices(shader);
+        fenceMesh->render();
 
 
     #pragma endregion
 
 
-        #pragma region Skybox
+    #pragma region Car Model Rendering & Model Data
 
-            // Rende/draw The Custom Skybox
-            skyShader.use();
-            model = mat4(1.0f);
-            setSkyboxMatrices(skyShader);
-            sky.render();
+        // Alter the Poisition / Rotation / Size of the Yellow Car Mesh, set matrices/model data & render mesh
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(-0.40f, 5.14f, drivingDistance * 0.25f * cos(vehicleAngle)));
+        model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+        setMatrices(shader);
+        yellowCarMesh->render();
 
-        #pragma endregion
+        // Alter the Poisition / Rotation / Size of the Red Car Mesh, set matrices/model data & render mesh
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(0.45f, 5.14f, drivingDistance * 0.35f * sin(vehicleAngle)));
+        model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+        setMatrices(shader);
+        redCarMesh->render();
+
+    #pragma endregion
+
+
+    #pragma region Lamp Models Rendering & Model Data
+
+        // Alter the Poisition / Rotation / Size of the Lamp Post Meshes, set matrices/model data & render mesh
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(-1.25f, 5.8f, 1.2f));
+        model = glm::rotate(model, glm::radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
+        setMatrices(shader);
+        lamp_postMesh->render();
+
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(1.3f, 5.8f, -0.75f));
+        model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
+        setMatrices(shader);
+        lamp_postMesh->render();
+
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(1.1f, 5.8f, 3.0f));
+        model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
+        setMatrices(shader);
+        lamp_postMesh->render();
+
+    #pragma endregion
+
+
+    #pragma region Tree Models Rendering & Model Data
+
+        // Alter the Poisition / Rotation / Size of the Tree Meshes, set matrices/model data & render mesh
+        model = mat4(1.0f); 
+        model = glm::translate(model, vec3(-3.0f, 5.0f, 0.4f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+        setMatrices(shader);
+        treeMesh->render();
+
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(-1.5f, 5.0f, -1.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+        setMatrices(shader);
+        treeMesh->render();
+
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(-2.6f, 5.0f, 1.7f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+        setMatrices(shader);
+        treeMesh->render();
+
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(-2.85f, 5.0f, 3.2f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+        setMatrices(shader);
+        treeMesh->render();
+
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(1.5f, 5.0f, 3.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+        setMatrices(shader);
+        treeMesh->render();
+
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(2.35f, 5.0f, 1.5f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+        setMatrices(shader);
+        treeMesh->render();
+
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(2.5f, 5.0f, 3.5f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+        setMatrices(shader);
+        treeMesh->render();
+
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(2.0f, 5.0f, 0.5f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+        setMatrices(shader);
+        treeMesh->render();
+
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(3.0f, 5.0f, -1.4f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
+        setMatrices(shader);
+        treeMesh->render();
+
+    #pragma endregion
+
+
+    #pragma region Plane Model Rendering & Model Data
+
+    if (disablePlane)
+    {
+        // Alter the Poisition / Rotation / Size of the Plane Mesh, Set Matrices/Model Data & Render Mesh
+        noiseShader.use();
+        model = mat4(1.0f);
+        model = glm::translate(model, vec3(5.0f * sin(vehicleAngle), 8.0f, 2.0f * cos(vehicleAngle)));
+        model = glm::rotate(model, glm::radians(87.0f * cos(vehicleAngle)), vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
+
+        // Set The Diffuse | Specular | Shininess Uniform Data in the Noise Shader
+        setNoiseMatrices(noiseShader);
+        noiseShader.setUniform("Material.Kd", 225.0f, 173.0f, 1.0f);
+        noiseShader.setUniform("Material.Ks", vec3(1.0f));
+        noiseShader.setUniform("Material.Shininess", 100.0f);
+        planeDecay->render();
+
+        // Return When All GL Commands are complete
+        glFinish();
+    }
+
+    #pragma endregion
+
+
+    #pragma endregion
+
+
+    #pragma region Skybox
+
+        // Rende The Custom Skybox
+        skyShader.use();
+        model = mat4(1.0f);
+        setSkyboxMatrices(skyShader);
+        sky.render();
+
+    #pragma endregion
 
 
     #pragma region Particles Rendering & Model Data
 
-            if (!onlyShadowCasters) {
-
-                if (disablePlane) 
-                {
-                    // Plane Model - Uses Decay Noise Effect
-                    noiseShader.use();
-                    model = mat4(1.0f);                                                         // Alter the Poisition / Rotation / Size of the Plane Mesh, set matrices/model data & render mesh
-                    model = glm::translate(model, vec3(5.0f * sin(vehicleAngle), 8.0f, 2.0f * cos(vehicleAngle)));
-                    model = glm::rotate(model, glm::radians(87.0f * cos(vehicleAngle)), vec3(0.0f, 1.0f, 0.0f));
-                    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
-                    model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
-
-                    setNoiseMatrices(noiseShader);
-                    noiseShader.setUniform("Material.Kd", 225.0f, 173.0f, 1.0f);
-                    noiseShader.setUniform("Material.Ks", vec3(1.0f));
-                    noiseShader.setUniform("Material.Shininess", 100.0f);
-                    planeDecay->render();
-
-                    glFinish();
-                }
-
+        if (!onlyShadowCasters)
+        {
             // Update pass
             if (animating())
             {
@@ -539,6 +568,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
     
     #pragma endregion
 
+
     #pragma region ImGUI Elements
 
         // Start the Dear ImGui frame
@@ -553,32 +583,34 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             ImGui::Dummy(ImVec2(0.0f, 10.0f));                          // Create "gap" in gui to make a cleaner appearance
 
 
-            ImGui::Text("Model & Animation Controller");
-            ImGui::Checkbox("Toggle Plane", &disablePlane);                                               // Disable or Enable the animations in the scene
-            ImGui::SliderFloat("Adjust All Animation Speeds", (float*)&rotSpeed, 0.1f, 1.0f);             // Slider that adjusts the speed of the animations in-game
-            ImGui::SliderFloat("Adjust Vehicle Distance", (float*)&drivingDistance, 0.1f, 4.0f);          // Slider that adjusts driving distance of the cars
-            ImGui::SliderFloat("Adjust Vehicle Speed", (float*)&vehicleSpeed, 0.1f, 6.0f);                // Slider that adjusts driving distance of the cars
+            ImGui::Text("Model & Animation Controller");                                            // Section title
+            ImGui::Checkbox("Toggle Plane", &disablePlane);                                         // Disable or Enable the animations in the scene
+            ImGui::SliderFloat("Adjust All Animation Speeds", (float*)&rotSpeed, 0.1f, 1.0f);       // Slider that adjusts the speed of the animations in-game
+            ImGui::SliderFloat("Adjust Vehicle Distance", (float*)&drivingDistance, 0.1f, 4.0f);    // Slider that adjusts driving distance of the cars
+            ImGui::SliderFloat("Adjust Vehicle Speed", (float*)&vehicleSpeed, 0.1f, 6.0f);          // Slider that adjusts driving distance of the cars
+
+
+            ImGui::Dummy(ImVec2(0.0f, 5.0f));   // Creates a blank space
+            ImGui::Separator();                 // Creates a white line
+            ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+
+            ImGui::Text("Lighting Controller");                                                     // Section title
+            ImGui::SliderFloat("Global Light Position - X", (float*)&lightPosX, 0.1f, 25.0f);       // Slider that adjusts the speed of the animations in-game
+            ImGui::SliderFloat("Global Light Position - Y", (float*)&lightPosY, 0.1, 25.0f);        // Slider that adjusts driving distance of the cars
+            ImGui::SliderFloat("Global Light Position - Z", (float*)&lightPosZ, 0.1, 25.0f);        // Slider that adjusts driving distance of the cars
+
 
             ImGui::Dummy(ImVec2(0.0f, 5.0f));
             ImGui::Separator();
             ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
-            ImGui::Text("Lighting Controller");
-            ImGui::SliderFloat("Global Light Position - X", (float*)&lightPosX, 0.1f, 25.0f);            // Slider that adjusts the speed of the animations in-game
-            ImGui::SliderFloat("Global Light Position - Y", (float*)&lightPosY, 0.1, 25.0f);             // Slider that adjusts driving distance of the cars
-            ImGui::SliderFloat("Global Light Position - Z", (float*)&lightPosZ, 0.1, 25.0f);             // Slider that adjusts driving distance of the cars
 
-
-            ImGui::Dummy(ImVec2(0.0f, 5.0f));
-            ImGui::Separator();
-            ImGui::Dummy(ImVec2(0.0f, 5.0f));
-
-            //Checkbox to start/stop chimney smoke from rendering
-            ImGui::Text("House Customization");
-            ImGui::Checkbox("Cream House: Chimney", &creamHouseChimney);
-            ImGui::Checkbox("Yellow House: Chimney", &yellowHouseChimney);
-            ImGui::Checkbox("Red House: Chimney", &redHouseChimney);
-            ImGui::Checkbox("Blue House: Chimney", &blueHouseChimney);
+            ImGui::Text("House Customization");                                 // Section title
+            ImGui::Checkbox("Cream House: Chimney", &creamHouseChimney);        // Disable White House Smoke
+            ImGui::Checkbox("Yellow House: Chimney", &yellowHouseChimney);      // Disable Yellowe House Smoke
+            ImGui::Checkbox("Red House: Chimney", &redHouseChimney);            // Disable Red House Smoke
+            ImGui::Checkbox("Blue House: Chimney", &blueHouseChimney);          // Disable Blue House Smoke
 
 
             ImGui::Dummy(ImVec2(0.0f, 10.0f));
@@ -586,38 +618,37 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
 
-            ImGui::Text("Volume Settings");
-            ImGui::SliderFloat("Forest Ambience - Volume", (float*)&forestVolume, 0.01f, 1.0f);            // Slider that adjusts the volume of the forest ambience
-            ImGui::SliderFloat("Car Ambience - Volume", (float*)&carVolume, 0.01f, 0.5f);               // Slider that adjusts the volume of the car ambience
-            if (ImGui::Button("Toggle Ambience"))                  // Button to turn forestAmbience on or off
+            ImGui::Text("Volume Settings");                                                        // Section title
+            ImGui::SliderFloat("Forest Ambience - Volume", (float*)&forestVolume, 0.01f, 1.0f);    // Slider that adjusts the volume of the forest ambience
+            ImGui::SliderFloat("Car Ambience - Volume", (float*)&carVolume, 0.01f, 0.5f);          // Slider that adjusts the volume of the car ambience
+            if (ImGui::Button("Toggle Ambience"))                                                  // Button to turn forestAmbience on/off
             {
                 if (toggleCurrentAmbience == true)
                 {
                     //Turn forest Ambience off
                     toggleCurrentAmbience = false;
-                    toggleforestAmbience();
+                    toggleAmbience();
                 }
                 else
                 {
                     //Turn forest Ambience on
                     toggleCurrentAmbience = true;
-                    toggleforestAmbience();
+                    toggleAmbience();
                 }
             }
+
 
             ImGui::Dummy(ImVec2(0.0f, 10.0f));
             ImGui::Separator();
             ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
-            ImGui::Text("Tool Customization");
-            ImGui::Checkbox("Toggle Animation", &m_animate);   // Disable or Enable the animations in the scene
 
-            //Button to exit application
-            if (ImGui::Button("Exit Application"))
+            ImGui::Text("Tool Customization");                 // Section title
+            ImGui::Checkbox("Toggle Animation", &m_animate);   // Disable or Enable the animations in the scene
+            if (ImGui::Button("Exit Application"))             // IF user presses the exit button: close application
             {
                 exit(EXIT_SUCCESS);
             }
-
 
             ImGui::Text("Average Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);       // Display the users verage framerate
             ImGui::End();
@@ -625,16 +656,20 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             }
 
             ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); 
+
+            // Set volume
             forestAmbience->setVolume(forestVolume);
             carAmbience->setVolume(carVolume);
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); 
 
         #pragma endregion
 }
 
 
+#pragma region Buffer Setup Methods
 
-void SceneBasic_Uniform::initBuffers() {
+void SceneBasic_Uniform::initBuffers() 
+{
     // Generate the buffers
     glGenBuffers(2, posBuf);    // position buffers
     glGenBuffers(2, velBuf);    // velocity buffers
@@ -763,34 +798,48 @@ void SceneBasic_Uniform::setupFBO()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+#pragma endregion
 
 
 
+#pragma region Setup/Render Geometry Shading, Shader Volumes, and Combine With Diffuse/Specular Lighting Methods 
 
-// Just renders the geometry normally with shading.The ambient component is rendered to one buffer, and the diffuse and specular componenets are written to a texture.
-void SceneBasic_Uniform::pass1() {
+// This renders the geometry normally with shading | The ambient component is rendered to one buffer, and the diffuse and specular componenets are written to a texture.
+void SceneBasic_Uniform::pass1() 
+{
     glDepthMask(GL_TRUE);
     glDisable(GL_STENCIL_TEST);
     glEnable(GL_DEPTH_TEST);
 
     float c = 2.0f;
 
+    // Setup the camera projectio and position | Camera position is animation using camAngle 
     projection = glm::infinitePerspective(glm::radians(50.0f), (float)width / height, 0.5f);
-    vec3 cameraPos(c * 2.0f * cos(angle), c * 6.0f, c * 4.5f * sin(angle));
+    vec3 cameraPos(c * 2.0f * cos(camAngle), c * 6.0f, c * 4.5f * sin(camAngle));
     view = glm::lookAt(cameraPos, vec3(0, 6, 0), vec3(0, 1, 0));
 
+
+    // Load The Shader For Rendering and Compositing | Set Uniform Data To Calculate The Position Of The Light
     renderShader.use();
     renderShader.setUniform("LightPosition", view * lightPos);
 
+
+    // Bind Framebuffer | Clear Depth & Colour Buffers
     glBindFramebuffer(GL_FRAMEBUFFER, colorDepthFBO);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+
+    // Render The Sceen
     drawScene(renderShader, false);
 }
 
 
 
 // This is the pass that generates the shadow volumes using the geometry shader
-void SceneBasic_Uniform::pass2() {
+void SceneBasic_Uniform::pass2() 
+{
+
+    // Load The Shader For The Volumes | Set Uniform Data To Calculate The Position Of The Light
     volumeShader.use();
     volumeShader.setUniform("LightPosition", view * lightPos);
 
@@ -807,8 +856,7 @@ void SceneBasic_Uniform::pass2() {
     // Re-bind to the default framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    // Set up the stencil test so that it always succeeds, increments
-    // for front faces, and decrements for back faces.
+    // Setup The stencil test so that it always succeeds, increments for front faces, and decrements for back faces.
     glClear(GL_STENCIL_BUFFER_BIT);
     glEnable(GL_STENCIL_TEST);
     glStencilFunc(GL_ALWAYS, 0, 0xffff);
@@ -857,9 +905,11 @@ void SceneBasic_Uniform::pass3() {
     glEnable(GL_DEPTH_TEST);
 }
 
+#pragma endregion
 
 
 
+#pragma region Setup Shaders/Techniques Methods
 
 // Setup the particle buffers, textures & uniform data
 void SceneBasic_Uniform::setupParticles() 
@@ -933,8 +983,7 @@ void SceneBasic_Uniform::setupShadowVolumes()
 
     //Load texture/s
     glActiveTexture(GL_TEXTURE2);
-    spotTex = Texture::loadTexture("media/nice69-32x.png");
-    brickTex = Texture::loadTexture("media/nice69-32x.png");
+    modelTex = Texture::loadTexture("media/nice69-32x.png");
 
     updateLight();
 
@@ -962,8 +1011,11 @@ void SceneBasic_Uniform::setupNoise()
     noiseShader.setUniform("HighThreshold", 0.65f);
 }
 
+#pragma endregion
 
 
+
+#pragma region Set Matrices Methods
 
 // Set Matrices for the default shaders
 void SceneBasic_Uniform::setMatrices(GLSLProgram &shader)
@@ -1005,7 +1057,7 @@ void SceneBasic_Uniform::setNoiseMatrices(GLSLProgram& noiseShader)
     noiseShader.setUniform("MVP", projection * mv);
 }
 
-
+#pragma endregion
 
 
 
@@ -1021,17 +1073,17 @@ void SceneBasic_Uniform::resize(int w, int h)
 
 
 
-void SceneBasic_Uniform::toggleforestAmbience()
+void SceneBasic_Uniform::toggleAmbience()
 {
     if (toggleCurrentAmbience == true) 
     {
-        // Loop background forestAmbience in game and set the volume
+        // Loop background Ambience
         forestAmbience = backgroundSFX->play2D("media/audio/Forest_Ambience.mp3", true, false, true);
         carAmbience = backgroundSFX->play2D("media/audio/Cars_DrivingSFX.mp3", true, false, true);
     }
     else 
     {
-        //Stop playing the forestAmbience
+        //Stop playing the ambience
         forestAmbience->stop();
         carAmbience->stop();
     }
