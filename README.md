@@ -1,12 +1,12 @@
 <kbd>![Town of Wakewood - Banner](Screenshots/TownofWakewood_Banner.png?)</kbd>
 
-## Project Title
+## PROJECT TITLE
 The Town Of Wakewood
 
-## Project Brief
+## PROJECT BRIEF
 This Optimised Developer Tool will be used to present varying OpenGL Techniques. These include, a Geometry Shader, Shadows, Noise, and Particles and Animation. This application will be used to showcase these elements in real time and allow you to understand the different concepts within OpenGL. 
 
-### Features
+### FEATURES
   * Dynamic Small Town Scene
   * Geometry Shading
   * Shadow Mapping/Volumes
@@ -41,12 +41,31 @@ This Optimised Developer Tool will be used to present varying OpenGL Techniques.
 --------------
 
 
-### Documentation
+### DOCUMENTATION
+
 #### How does the user interact with your executable? How do you open and control the software you wrote (exe file)?
 The Town of Wakewood can be download [here](https://github.com/caleb-long19/COMP3015_Optimised-Developer-Tool/releases/tag/v1.0). Once downloaded, extract and open the folder. Double click "Project_Wakewood.exe" to open the application. The loading time of the application will vary based on your systems hardware. Once the program has loaded, you will be presented with a low-poly town. In the top left corner you will see a graphical user interface (GUI), developed using ImGUI. Use your mouse to interact with the GUI. Left click on the buttons or tick boxes to interact with them. Hold the left mouse button on the sliders and drag left/right to alter their values. Each button/slider has a title above them, indicating what they do. Close the application by clicking the "x", located at the top right of the window, or press the "Exit Application" button on the GUI.
 
 #### How does the program code work? How do the classes and functions fit together and who does what?
-The application utilises multiple techinques, these include: Geometry Shading, Shadow Volumes, Cubemaps, & Particles and Animation. 
+The Town of Wakewood utilizes four primary techniques. Geometry Shading, Shadow Volumes, Particles & Animation, and Noise. Geometry Shading & Shadow Volumes require one another to work properly. Six GLSL Shaders were created to begin implementation, thse shaders are as follows:
+
+* shadowVolume-comp.frag
+* shadowVolume-comp.vert 
+* shadowVolume-render.frag
+* shadowVolume-render.vert
+* shadowVolume-vol.frag
+* shadwowVolume-vol.geom
+* shadowVolume-vol.vert
+
+Before discussing the shaders in further detail, context is required on where the data that is sent to the shaders is from. A file called "scenebasic_uniform.cpp" contains a vast amount of methods, each containing unique instructions to provide an efficient application. To communicate with the shaders, we must first compile them. This is done in the compile method.
+
+<kbd>![Compile Code](Screenshots/Code_Compile.png?)</kbd>
+
+The code sample above displays the previously discussed shaders being compiled and linked, by using the function of .use(). We can activate the shader. Once activated, the data we send to the .vert, .frag, and .geom files can be used.
+
+Once all the data from the shaders has been set via 
+
+All vertices shaders are used to retrieve/output data from the scenebasic_uniform.cpp file.
 
 #### What makes your shader program special and how does it compare to similar things?
 The Town of Wakewood has been built to simulate a small, top-down, open world setting of a small town. The visual look of the tool is used to represent games such as Cities: Skylines (Developed by Colossal Order, 2015).
@@ -63,15 +82,17 @@ The tools visual apperance mimics that of a residential area in Cities: Skylines
 | Vehicle AI           | :heavy_check_mark:  | :x:                 |
 | Music/SFX            | :heavy_check_mark:  | :heavy_check_mark:  |
 
-To make the tool unique from Cities: Skylines, two features were implemented. The first allows the user to alter the speed of the vehicles/traffic separate from the games speed. The second feature allows the user to change the distance the vehicles travel on the road. 
+To begin development of the tool, my previous project [COMP3015: Coursework 1](https://github.com/caleb-long19/COMP3015-Custom-Shader-Project-OpenGL) was used as a base. All aspects of the previous project [COMP3015: Coursework 1](https://github.com/caleb-long19/COMP3015-Custom-Shader-Project-OpenGL) were removed by the end of development, besides two features, the ImGUI library, which provides an easy to use GUI which manipulates the scene, and the irrKlang library, which is used to play audio samples during runtime. Everything else in this project is completely unique in comparison. The Town of Wakewood was originally going to contain only two techinques, geometry and shadow volumes. Due to the extra time after they were implemented, a decision was made to implement particles & animation. Smoke particles were added to chimney's, making it seem that the houses were being lived in. Lastly, the noise decay technique was added, simply because spare time was available and to increase the quality of this portfolio piece.
+
+To make the tool unique from Cities: Skylines, two features were implemented. The first allows the user to alter the speed of the vehicles/traffic separate from the games speed. The second feature allows the user to change the distance the vehicles travel on the road. These features combined with the four techniques, creates both a visually pleasing and dynamic tool that serves as a professional portfolio piece.
 
 
 --------------
 
 
-### Installation Instructions & User Manual
+### INSTALLATION INSTRUCTIONS & USER MANUAL
 
-#### Installation
+#### How To Install & Use The Tool
 
 <kbd>![Release Location](Screenshots/Release_Location.png?)</kbd>
 Go to the Releases Page. This is located on the right-hand side of the GitHub Repository
@@ -110,17 +131,17 @@ A Graphical User Interface will be present on the left-hand side of the window.
   * Exit Application
   * View Performance
 
-#### User Manual Video
-
+#### TUTORIAL & WALKTHROUGH VIDEO - CLICK ME!
+[![Tutorial Thumnbail](https://img.youtube.com/vi/sglTpRQdkmU/0.jpg)](https://www.youtube.com/watch?v=sglTpRQdkmU)
 
 
 --------------
 
 
-### YouTube Video
+### THE TOWN OF WAKEWOOD: PRESENTATION - CLICK ME!
+[![Presentation Thumnbail](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=VIDEO_ID)
 
-
-### Screenshots
+### SCREENSHOTS
 
 #### Morning In Wakewood
 <kbd>![Town of Wakewood - Morning](Screenshots/Town_of_Wakewood-Morning.png?)</kbd>
@@ -137,7 +158,7 @@ A Graphical User Interface will be present on the left-hand side of the window.
 --------------
 
 
-### References
+### REFERENCES
 
 #### YouTube
 * The Cherno: https://www.youtube.com/channel/UCQ-W1KE9EYfdxhL6S4twUNw
