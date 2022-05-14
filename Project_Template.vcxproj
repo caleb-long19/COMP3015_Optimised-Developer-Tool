@@ -188,6 +188,8 @@
     <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_posx.hdr" />
     <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_posy.hdr" />
     <None Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\cube\pisa-hdr\pisa_posz.hdr" />
+    <None Include="shader\decayNoise.frag" />
+    <None Include="shader\decayNoise.vert" />
     <None Include="shader\shadowVolume-comp.frag" />
     <None Include="shader\shadowVolume-comp.vert" />
     <None Include="shader\shadowVolume-render.frag" />
@@ -235,6 +237,7 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="scenebasic_uniform.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_write.h" />
@@ -260,12 +263,16 @@
     <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\ogre_normalmap.png" />
     <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\smoke.png" />
     <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\star.png" />
+    <Image Include="C:\Users\caleb\Downloads\Wakewood_Logo_New.ico" />
     <Image Include="media\skybox\Skybox_Back.jpg" />
     <Image Include="media\skybox\Skybox_Bottom.jpg" />
     <Image Include="media\skybox\Skybox_Front.jpg" />
     <Image Include="media\skybox\Skybox_Left.jpg" />
     <Image Include="media\skybox\Skybox_Right.jpg" />
     <Image Include="media\skybox\Skybox_Top.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Project_Wakewood.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

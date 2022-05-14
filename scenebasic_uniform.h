@@ -6,7 +6,7 @@
 #include "helper/skybox.h"
 #include "helper/frustum.h"
 
-// Sound Library - Used for background music
+// Sound Library - Used for background forestAmbience
 #include <irrklang/irrklang.h>
 using namespace irrklang;
 
@@ -33,7 +33,7 @@ using namespace irrklang;
 class SceneBasic_Uniform : public Scene
 {
 private:
-    GLSLProgram renderShader, volumeShader, compShader, skyShader, smokeShader, flatShader;
+    GLSLProgram renderShader, volumeShader, compShader, skyShader, smokeShader, noiseShader;
     GLuint colorDepthFBO, fsQuad, quad;
     GLuint spotTex, brickTex;
 
@@ -55,12 +55,10 @@ private:
 
     int nParticles;
 
-    float angle, tPrev, time, deltaT, rotSpeed, carAngle, carSpeed, particleLifetime;
-
-    bool creamHouseChimney = true, redHouseChimney = true, yellowHouseChimney = true, blueHouseChimney = true;
-
+    float angle, tPrev, time, deltaT, rotSpeed, vehicleAngle, vehicleSpeed, particleLifetime;
     float lightPosX = 0.5f, lightPosY = 1.5f, lightPosZ = 4.5f;
 
+    bool creamHouseChimney = true, redHouseChimney = true, yellowHouseChimney = true, blueHouseChimney = true;
 
     SkyBox sky;
 
@@ -74,6 +72,7 @@ private:
     std::unique_ptr<ObjMesh> fenceMesh; //House mesh
     std::unique_ptr<ObjMesh> lamp_postMesh; //Tree mesh
     std::unique_ptr<ObjMesh> treeMesh; //Tree mesh
+    std::unique_ptr<ObjMesh> planeDecay; //Tree mesh
 
     std::unique_ptr<ObjMesh> yellowCarMesh; //Red Car mesh
     std::unique_ptr<ObjMesh> redCarMesh; //Yellow Car mesh
@@ -82,6 +81,7 @@ private:
     void setMatrices(GLSLProgram &);
     void setSkyboxMatrices(GLSLProgram &);
     void setParticleMatrices(GLSLProgram &);
+    void setNoiseMatrices(GLSLProgram &);
     void compile();
     void setupFBO();
     void drawScene(GLSLProgram&, bool);
@@ -95,12 +95,13 @@ private:
     void setupParticles();
     void setupSkybox();
     void setupShadowVolumes();
+    void setupNoise();
 
 public:
     SceneBasic_Uniform();
 
     void initScene();
-    void toggleMusic();
+    void toggleforestAmbience();
     void ImGuiSetup();
 
     void update( float t );

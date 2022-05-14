@@ -16,12 +16,15 @@ using glm::mat4;
 
 // Fog Colours
 float drivingDistance = 6.0f;
+float forestVolume = 0.05f, carVolume = 0.1f;
 
 
-// Start the sound engine & Bool to turn music on or off
-ISoundEngine* backgoundMusic = createIrrKlangDevice();
-ISound* music;
-bool toggleCurrentMusic = true;
+// Start the sound engine & Bool to turn forestAmbience on or off
+ISoundEngine* backgroundSFX = createIrrKlangDevice();
+ISound* forestAmbience;
+ISound* carAmbience;
+bool toggleCurrentAmbience = true;
+bool disablePlane = true;
 
 vec3 color;
 
@@ -40,7 +43,7 @@ int main(int argc, char* argv[])
 
 SceneBasic_Uniform::SceneBasic_Uniform() :
     tPrev(0), drawBuf(1), time(0), deltaT(0), 
-    rotSpeed(0.5f), carSpeed(0.5f),
+    rotSpeed(0.5f), vehicleSpeed(0.5f),
     nParticles(1500), particleLifetime(5.0f),
     emitterPos(0.0f), emitterDir(0, 1, 0),
     sky(100.0f)
@@ -56,6 +59,7 @@ SceneBasic_Uniform::SceneBasic_Uniform() :
     fenceMesh = ObjMesh::loadWithAdjacency("media/models/Fence.obj");
     lamp_postMesh = ObjMesh::loadWithAdjacency("media/models/Lamp_Post.obj");
     treeMesh = ObjMesh::loadWithAdjacency("media/models/Tree_Model.obj");
+    planeDecay = ObjMesh::loadWithAdjacency("media/models/Plane.obj");
 
     // Load The Car Meshes
     yellowCarMesh = ObjMesh::loadWithAdjacency("media/models/Car_Yellow.obj");
@@ -81,6 +85,7 @@ void SceneBasic_Uniform::initScene()
     angle = 0.0f;
 
     // Setup Particles, Skybox/Cubemap & Geometry & Shadows
+    setupNoise();
     setupParticles();
     setupSkybox();
     setupShadowVolumes();
@@ -88,8 +93,8 @@ void SceneBasic_Uniform::initScene()
     //Initialise the ImGUI for the Render Method
     ImGuiSetup();
 
-    //Start The Music
-    toggleMusic();
+    //Start The forestAmbience
+    toggleforestAmbience();
 }
 
 
@@ -140,6 +145,12 @@ void SceneBasic_Uniform::compile()
         smokeShader.link();
         smokeShader.use();
 
+
+        noiseShader.compileShader("shader/decayNoise.vert");
+        noiseShader.compileShader("shader/decayNoise.frag");
+
+        noiseShader.link();
+
     }
     catch (GLSLProgramException& e) {
         cerr << e.what() << endl;
@@ -162,7 +173,7 @@ void SceneBasic_Uniform::update(float t)
     { 
         // Car and Camera Angles
         angle += deltaT * rotSpeed;
-        carAngle += deltaT * carSpeed;
+        vehicleAngle += deltaT * vehicleSpeed;
         if (angle > glm::two_pi<float>()) angle -= glm::two_pi<float>();
         updateLight();
     }
@@ -177,6 +188,7 @@ void SceneBasic_Uniform::render()
     pass2();
     glFlush();
     pass3();
+    glFinish();
 }
 
 
@@ -191,6 +203,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
     #pragma region Load All Models - Assign Positions, Rotations and Scale
 
         // Bind the textures and set the geometry shader uniform data
+
         if (!onlyShadowCasters) {
             glActiveTexture(GL_TEXTURE2);
             glBindTexture(GL_TEXTURE_2D, spotTex);
@@ -199,7 +212,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             shader.setUniform("Kd", color);
             shader.setUniform("Ks", vec3(0.9f));
             shader.setUniform("Shininess", 150.0f);
-
         }
 
         #pragma region House Model Rendering & Model Data
@@ -213,8 +225,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             setMatrices(shader);
             townMesh->render();
 
-
-            model = mat4(1.0f);                                                         // Alter the Poisition / Rotation / Size of the Cream House Mesh, set matrices/model data & render mesh
+            model = mat4(1.0f);                                                         // Alter the Poisition / Rotation / Size of the White House Mesh, set matrices/model data & render mesh
             model = glm::translate(model, vec3(3.0f, 5.37f, 2.35f));
             model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
             model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
@@ -271,7 +282,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         #pragma region Car Model Rendering & Model Data
 
             model = mat4(1.0f);                                                                                 // Alter the Poisition / Rotation / Size of the Yellow Car Mesh, set matrices/model data & render mesh
-            model = glm::translate(model, vec3(-0.40f, 5.14f, drivingDistance * 0.25f * cos(carAngle)));
+            model = glm::translate(model, vec3(-0.40f, 5.14f, drivingDistance * 0.25f * cos(vehicleAngle)));
             model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
             model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
             model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
@@ -279,7 +290,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             yellowCarMesh->render();
 
             model = mat4(1.0f);                                                                                 // Alter the Poisition / Rotation / Size of the Red Car Mesh, set matrices/model data & render mesh
-            model = glm::translate(model, vec3(0.45f, 5.14f, drivingDistance * 0.35f * sin(carAngle)));
+            model = glm::translate(model, vec3(0.45f, 5.14f, drivingDistance * 0.35f * sin(vehicleAngle)));
             model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
             model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
             model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
@@ -387,22 +398,41 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
 
     #pragma endregion
-    
 
-    #pragma region Skybox
 
-        // Rende/draw The Custom Skybox
-        skyShader.use();
-        model = mat4(1.0f);
-        setSkyboxMatrices(skyShader);
-        sky.render();
+        #pragma region Skybox
 
-    #pragma endregion
+            // Rende/draw The Custom Skybox
+            skyShader.use();
+            model = mat4(1.0f);
+            setSkyboxMatrices(skyShader);
+            sky.render();
+
+        #pragma endregion
 
 
     #pragma region Particles Rendering & Model Data
 
-        if (!onlyShadowCasters) {
+            if (!onlyShadowCasters) {
+
+                if (disablePlane) 
+                {
+                    // Plane Model - Uses Decay Noise Effect
+                    noiseShader.use();
+                    model = mat4(1.0f);                                                         // Alter the Poisition / Rotation / Size of the Plane Mesh, set matrices/model data & render mesh
+                    model = glm::translate(model, vec3(5.0f * sin(vehicleAngle), 8.0f, 2.0f * cos(vehicleAngle)));
+                    model = glm::rotate(model, glm::radians(87.0f * cos(vehicleAngle)), vec3(0.0f, 1.0f, 0.0f));
+                    model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
+                    model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
+
+                    setNoiseMatrices(noiseShader);
+                    noiseShader.setUniform("Material.Kd", 225.0f, 173.0f, 1.0f);
+                    noiseShader.setUniform("Material.Ks", vec3(1.0f));
+                    noiseShader.setUniform("Material.Shininess", 100.0f);
+                    planeDecay->render();
+
+                    glFinish();
+                }
 
             // Update pass
             if (animating())
@@ -427,7 +457,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
                 smokeShader.setUniform("Pass", 2);
             }
 
-            // Smoke Particles for the default house chimney
+            // Smoke Particles for the white house chimney
             if (creamHouseChimney)
             {
                 model = mat4(1.0f);
@@ -509,7 +539,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
     
     #pragma endregion
 
-
     #pragma region ImGUI Elements
 
         // Start the Dear ImGui frame
@@ -524,22 +553,25 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             ImGui::Dummy(ImVec2(0.0f, 10.0f));                          // Create "gap" in gui to make a cleaner appearance
 
 
-            ImGui::Text("Animation Controller");
-            ImGui::SliderFloat("Adjust All Animation Speeds", (float*)&rotSpeed, 0.1f, 1.0f);            // Slider that adjusts the speed of the animations in-game
-            ImGui::SliderFloat("Adjust Vehicle Distance", (float*)&drivingDistance, 0.1f, 4.0f);      // Slider that adjusts driving distance of the cars
-            ImGui::SliderFloat("Adjust Vehicle Speed", (float*)&carSpeed, 0.1f, 6.0f);                // Slider that adjusts driving distance of the cars
+            ImGui::Text("Model & Animation Controller");
+            ImGui::Checkbox("Toggle Plane", &disablePlane);                                               // Disable or Enable the animations in the scene
+            ImGui::SliderFloat("Adjust All Animation Speeds", (float*)&rotSpeed, 0.1f, 1.0f);             // Slider that adjusts the speed of the animations in-game
+            ImGui::SliderFloat("Adjust Vehicle Distance", (float*)&drivingDistance, 0.1f, 4.0f);          // Slider that adjusts driving distance of the cars
+            ImGui::SliderFloat("Adjust Vehicle Speed", (float*)&vehicleSpeed, 0.1f, 6.0f);                // Slider that adjusts driving distance of the cars
 
             ImGui::Dummy(ImVec2(0.0f, 5.0f));
-
-            ImGui::SliderFloat("Global Light Position - X", (float*)&lightPosX, 0.1f, 25.0f);            // Slider that adjusts the speed of the animations in-game
-            ImGui::SliderFloat("Global Light Position - Y", (float*)&lightPosY, 0.1, 25.0f);      // Slider that adjusts driving distance of the cars
-            ImGui::SliderFloat("Global Light Position - Z", (float*)&lightPosZ, 0.1, 25.0f);                // Slider that adjusts driving distance of the cars
-
-
-            ImGui::Dummy(ImVec2(0.0f, 10.0f));
             ImGui::Separator();
-            ImGui::Dummy(ImVec2(0.0f, 10.0f));
+            ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
+            ImGui::Text("Lighting Controller");
+            ImGui::SliderFloat("Global Light Position - X", (float*)&lightPosX, 0.1f, 25.0f);            // Slider that adjusts the speed of the animations in-game
+            ImGui::SliderFloat("Global Light Position - Y", (float*)&lightPosY, 0.1, 25.0f);             // Slider that adjusts driving distance of the cars
+            ImGui::SliderFloat("Global Light Position - Z", (float*)&lightPosZ, 0.1, 25.0f);             // Slider that adjusts driving distance of the cars
+
+
+            ImGui::Dummy(ImVec2(0.0f, 5.0f));
+            ImGui::Separator();
+            ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
             //Checkbox to start/stop chimney smoke from rendering
             ImGui::Text("House Customization");
@@ -554,46 +586,50 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
 
-            ImGui::Text("Tool Customization");
-            ImGui::Checkbox("Toggle Animation", &m_animate);    // Disable or Enable the animations in the scene
-            if (ImGui::Button("Toggle Music"))                  // Button to turn music on or off
+            ImGui::Text("Volume Settings");
+            ImGui::SliderFloat("Forest Ambience - Volume", (float*)&forestVolume, 0.01f, 1.0f);            // Slider that adjusts the volume of the forest ambience
+            ImGui::SliderFloat("Car Ambience - Volume", (float*)&carVolume, 0.01f, 0.5f);               // Slider that adjusts the volume of the car ambience
+            if (ImGui::Button("Toggle Ambience"))                  // Button to turn forestAmbience on or off
             {
-                if (toggleCurrentMusic == true)
+                if (toggleCurrentAmbience == true)
                 {
-                    //Turn music off
-                    toggleCurrentMusic = false;
-                    toggleMusic();
+                    //Turn forest Ambience off
+                    toggleCurrentAmbience = false;
+                    toggleforestAmbience();
                 }
                 else
                 {
-                    //Turn music on
-                    toggleCurrentMusic = true;
-                    toggleMusic();
+                    //Turn forest Ambience on
+                    toggleCurrentAmbience = true;
+                    toggleforestAmbience();
                 }
             }
-
 
             ImGui::Dummy(ImVec2(0.0f, 10.0f));
             ImGui::Separator();
             ImGui::Dummy(ImVec2(0.0f, 10.0f));
 
+            ImGui::Text("Tool Customization");
+            ImGui::Checkbox("Toggle Animation", &m_animate);   // Disable or Enable the animations in the scene
 
-            if (ImGui::Button("Exit Application"))              //Button to exit application
+            //Button to exit application
+            if (ImGui::Button("Exit Application"))
             {
                 exit(EXIT_SUCCESS);
             }
 
 
-            ImGui::Text("Average Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate); // Display the users verage framerate
+            ImGui::Text("Average Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);       // Display the users verage framerate
             ImGui::End();
 
             }
 
             ImGui::Render();
+            forestAmbience->setVolume(forestVolume);
+            carAmbience->setVolume(carVolume);
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); 
 
         #pragma endregion
-
 }
 
 
@@ -898,6 +934,7 @@ void SceneBasic_Uniform::setupShadowVolumes()
     //Load texture/s
     glActiveTexture(GL_TEXTURE2);
     spotTex = Texture::loadTexture("media/nice69-32x.png");
+    brickTex = Texture::loadTexture("media/nice69-32x.png");
 
     updateLight();
 
@@ -906,6 +943,23 @@ void SceneBasic_Uniform::setupShadowVolumes()
 
     compShader.use();
     compShader.setUniform("DiffSpecTex", 0);
+}
+
+
+
+void SceneBasic_Uniform::setupNoise() 
+{
+    noiseShader.use();
+
+    noiseShader.setUniform("NoiseTex", 5);
+
+    GLuint noiseTex = NoiseTex::generate2DTex(20.0f);
+    glActiveTexture(GL_TEXTURE5);
+    glBindTexture(GL_TEXTURE_2D, noiseTex);
+
+    noiseShader.setUniform("Light.Intensity", vec3(1.0f, 1.0f, 1.0f));
+    noiseShader.setUniform("LowThreshold", 0.45f);
+    noiseShader.setUniform("HighThreshold", 0.65f);
 }
 
 
@@ -941,10 +995,21 @@ void SceneBasic_Uniform::setParticleMatrices(GLSLProgram& particleShader)
 }
 
 
+// Set Matrices for the Noise
+void SceneBasic_Uniform::setNoiseMatrices(GLSLProgram& noiseShader)
+{
+    mat4 mv = view * model;
+    noiseShader.setUniform("ModelViewMatrix", mv);
+    noiseShader.setUniform("NormalMatrix",
+        glm::mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
+    noiseShader.setUniform("MVP", projection * mv);
+}
 
 
 
-#pragma region External Code - Music - Window Size - ImGUI
+
+
+#pragma region External Code - forestAmbience - Window Size - ImGUI
 
 
 void SceneBasic_Uniform::resize(int w, int h)
@@ -956,19 +1021,21 @@ void SceneBasic_Uniform::resize(int w, int h)
 
 
 
-void SceneBasic_Uniform::toggleMusic()
+void SceneBasic_Uniform::toggleforestAmbience()
 {
-    if (toggleCurrentMusic == true) 
+    if (toggleCurrentAmbience == true) 
     {
-        // Loop background music in game and set the volume
-        music = backgoundMusic->play2D("media/audio/Art Of Silence - Uniq.mp3", true, false, true);
-        music->setVolume(0.07f);
+        // Loop background forestAmbience in game and set the volume
+        forestAmbience = backgroundSFX->play2D("media/audio/Forest_Ambience.mp3", true, false, true);
+        carAmbience = backgroundSFX->play2D("media/audio/Cars_DrivingSFX.mp3", true, false, true);
     }
     else 
     {
-        //Stop playing the music
-        music->stop();
+        //Stop playing the forestAmbience
+        forestAmbience->stop();
+        carAmbience->stop();
     }
+
 
 }
 
