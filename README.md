@@ -1,7 +1,7 @@
 <kbd>![Town of Wakewood - Banner](Screenshots/TownofWakewood_Banner.png?)</kbd>
 
 ## Project Title
-The Town Of Wakewood: Developer Tool
+The Town Of Wakewood
 
 ## Project Brief
 This Optimised Developer Tool will be used to present varying OpenGL Techniques. These include, a Geometry Shader, Shadows, Noise, and Particles and Animation. This application will be used to showcase these elements in real time and allow you to understand the different concepts within OpenGL. 
@@ -10,16 +10,32 @@ This Optimised Developer Tool will be used to present varying OpenGL Techniques.
   * Dynamic Small Town Scene
   * Geometry Shading
   * Shadow Mapping/Volumes
+  * Particle Effects & Animations
+  * Noise Decay
   * Custom HDR Skybox
-  * Background Music
-  * GUI
+  * Background SFX
+  * Animated Models, Camera, and Lighting
+* ImGUI
+  * Model & Animation Controller
+    * Toggle Plane Model On/Off 
     * Adjust Game/Animation Speed
     * Adjust Distance Vehicles Travel
-    * Adjust Vehicle Moving Speed  
-    * Turn Music On/Off
-    * Turn Animation On/Off
+    * Adjust Vehicle Moving Speed
+  * Lighting Controller
+    * Adjust Global Lighting on the X, Y, and Z Axis
+  * House Customization
+    * Toggle White House Model On/Off
+    * Toggle Yellow House Model On/Off
+    * Toggle Red House Model On/Off
+    * Toggle Blue House Model On/Off
+  * Volume Settings
+    * Adjust Forest Ambience SFX
+    * Adjust Car Ambience SFX
+    * Toggle Ambience On/Off
+  * Tool Customization
+    * Toggle Animation On/Off
     * Exit Application
-    * View Performance 
+    * View Performance
 
 
 --------------
@@ -27,7 +43,7 @@ This Optimised Developer Tool will be used to present varying OpenGL Techniques.
 
 ### Documentation
 #### How does the user interact with your executable? How do you open and control the software you wrote (exe file)?
-The Town of Wakewood can be download [here](https://github.com/caleb-long19/COMP3015_Optimised-Developer-Tool/releases/tag/v0.1-alpha). Once downloaded, extract and open the folder. Double click "Project_Wakewood.exe" to open the application. The loading time of the application will vary based on your systems hardware. Once the program has loaded, you will be presented with a low-poly town. In the top left corner you will see a graphical user interface (GUI), developed using ImGUI. Use your mouse to interact with the GUI. Left click on the buttons or tick boxes to interact with them. Hold the left mouse button on the sliders and drag left/right to alter their values. Each button/slider has a title above them, indicating what they do. Close the application by clicking the x button, located at the top left of the window, or press the "Exit Application" button on the GUI.
+The Town of Wakewood can be download [here](https://github.com/caleb-long19/COMP3015_Optimised-Developer-Tool/releases/tag/v1.0). Once downloaded, extract and open the folder. Double click "Project_Wakewood.exe" to open the application. The loading time of the application will vary based on your systems hardware. Once the program has loaded, you will be presented with a low-poly town. In the top left corner you will see a graphical user interface (GUI), developed using ImGUI. Use your mouse to interact with the GUI. Left click on the buttons or tick boxes to interact with them. Hold the left mouse button on the sliders and drag left/right to alter their values. Each button/slider has a title above them, indicating what they do. Close the application by clicking the "x", located at the top right of the window, or press the "Exit Application" button on the GUI.
 
 #### How does the program code work? How do the classes and functions fit together and who does what?
 The application utilises multiple techinques, these include: Geometry Shading, Shadow Volumes, Cubemaps, & Particles and Animation. 
@@ -45,7 +61,7 @@ The tools visual apperance mimics that of a residential area in Cities: Skylines
 | Alter Game Speed     | :heavy_check_mark:  | :heavy_check_mark:  |
 | Build Cities         | :heavy_check_mark:  | :x:                 |
 | Vehicle AI           | :heavy_check_mark:  | :x:                 |
-| Music                | :heavy_check_mark:  | :heavy_check_mark:  |
+| Music/SFX            | :heavy_check_mark:  | :heavy_check_mark:  |
 
 To make the tool unique from Cities: Skylines, two features were implemented. The first allows the user to alter the speed of the vehicles/traffic separate from the games speed. The second feature allows the user to change the distance the vehicles travel on the road. 
 
@@ -73,16 +89,29 @@ Enter the folder and double-click the "Project_Wakewood.exe"
 The Window will load and you will be presented with a scene displaying a small town surrounded by a forest.
 
 A Graphical User Interface will be present on the left-hand side of the window.
+* Model & Animation Controller
+  * Toggle Plane Model On/Off 
   * Adjust Game/Animation Speed
   * Adjust Distance Vehicles Travel
-  * Adjust Vehicle Moving Speed  
+  * Adjust Vehicle Moving Speed
+* Lighting Controller
+  * Adjust Global Lighting on the X, Y, and Z Axis
+* House Customization
+  * Toggle White House Model On/Off
+  * Toggle Yellow House Model On/Off
+  * Toggle Red House Model On/Off
+  * Toggle Blue House Model On/Off
+* Volume Settings
+  * Adjust Forest Ambience SFX
+  * Adjust Car Ambience SFX
   * Turn Music On/Off
+* Tool Customization
   * Turn Animation On/Off
   * Exit Application
-  * View Performance 
-
+  * View Performance
 
 #### User Manual Video
+
 
 
 --------------
@@ -102,6 +131,8 @@ A Graphical User Interface will be present on the left-hand side of the window.
 #### Getting Dark In Wakewood
 <kbd>![Town of Wakewood - Evening](Screenshots/Town_of_Wakewood-Evening.png?)</kbd>
 
+#### Flying Around Wakewood
+<kbd>![Town of Wakewood - Flying](Screenshots/Town_of_Wakewood-Plane.png?)</kbd>
 
 --------------
 
@@ -126,3 +157,8 @@ A Graphical User Interface will be present on the left-hand side of the window.
 
 #### Music
 * Art of Silence - Uniq: https://www.youtube.com/watch?v=3V-pYCGx0C4
+* Zapsplat - Forest Ambience: https://www.zapsplat.com/music/forest-ambience-birds-wind-in-trees-leaves-falling-queensland-australia/
+* Sound Library - Car Drive By: https://www.youtube.com/watch?v=LSduo2nbAtI
+
+### Additional Notes
+ALL MODELS USED IN THE TOWN OF WAKEWOOD WERE CREATED BY MYSELF USING BLENDER!
