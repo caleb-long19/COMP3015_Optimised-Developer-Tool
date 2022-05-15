@@ -47,11 +47,12 @@ vec3 phongModel()
 
 void main()
 {
-    vec4 noise = texture(NoiseTex, TexCoord);   // Store Texel Value (Colour & Alpha Values)
+    vec4 noise = texture(NoiseTex, TexCoord);   // Get the noise value at TexCoord
 
     if(noise.a < LowThreshold) discard;         // If the noise value is less than the threshhold discard noise fragments
     if(noise.a > HighThreshold) discard;        // If the noise value is greater than the threshhold discard noise fragments 
 
+    // Color the fragment using the shading model 
     vec3 color = phongModel();              
-    FragColor = vec4( color , 1.0 );    // Pass the result into FragColour
+    FragColor = vec4( color , 1.0 );
 }

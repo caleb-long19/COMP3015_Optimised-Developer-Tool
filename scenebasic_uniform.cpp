@@ -1017,7 +1017,7 @@ void SceneBasic_Uniform::setupNoise()
 
 #pragma region Set Matrices Methods
 
-// Set Matrices for the default shaders
+// Set Matrices for the geometry/shadow shaders
 void SceneBasic_Uniform::setMatrices(GLSLProgram &shader)
 {
     mat4 mv = view * model;
