@@ -47,25 +47,70 @@ This Optimised Developer Tool will be used to present varying OpenGL Techniques.
 The Town of Wakewood can be download [here](https://github.com/caleb-long19/COMP3015_Optimised-Developer-Tool/releases/tag/v1.0). Once downloaded, extract and open the folder. Double click "Project_Wakewood.exe" to open the application. The loading time of the application will vary based on your systems hardware. Once the program has loaded, you will be presented with a low-poly town. In the top left corner you will see a graphical user interface (GUI), developed using ImGUI. Use your mouse to interact with the GUI. Left click on the buttons or tick boxes to interact with them. Hold the left mouse button on the sliders and drag left/right to alter their values. Each button/slider has a title above them, indicating what they do. Close the application by clicking the "x", located at the top right of the window, or press the "Exit Application" button on the GUI.
 
 #### How does the program code work? How do the classes and functions fit together and who does what?
-The Town of Wakewood utilizes four primary techniques. Geometry Shading, Shadow Volumes, Particles & Animation, and Noise. Geometry Shading & Shadow Volumes require one another to work properly. Six GLSL Shaders were created to begin implementation, thse shaders are as follows:
+The Town of Wakewood utilizes four primary techniques. Geometry Shading, Shadow Volumes, Particles & Animation, and Noise. A total of Ten GLSL Shaders were created during development, thse shaders are as follows:
 
-* shadowVolume-comp.frag
-* shadowVolume-comp.vert 
-* shadowVolume-render.frag
-* shadowVolume-render.vert
-* shadowVolume-vol.frag
-* shadwowVolume-vol.geom
-* shadowVolume-vol.vert
+* Geometry & Shadow Volume Shader
+  * shadowVolume-comp.frag
+  * shadowVolume-comp.vert 
+  * shadowVolume-render.frag
+  * shadowVolume-render.vert
+  * shadowVolume-vol.frag
+  * shadwowVolume-vol.geom
+  * shadowVolume-vol.vert
+
+* Smoke Particles & Animations
+  * smokeParticles.frag
+  * smokeParticles.vert
+
+* Noise Disintegration
+  * decayNoise.frag
+  * decayNoise.vert
 
 Before discussing the shaders in further detail, context is required on where the data that is sent to the shaders is from. A file called "scenebasic_uniform.cpp" contains a vast amount of methods, each containing unique instructions to provide an efficient application. To communicate with the shaders, we must first compile them. This is done in the compile method.
 
 <kbd>![Compile Code](Screenshots/Code_Compile.png?)</kbd>
 
-The code sample above displays the previously discussed shaders being compiled and linked, by using the function of .use(). We can activate the shader. Once activated, the data we send to the .vert, .frag, and .geom files can be used.
+The code sample above displays the previously discussed shaders being compiled and linked, by using the function of .use(). We can activate the shader. Once activated, we can send our data to our shaders, allowing them to use it for various calculations.
 
-Once all the data from the shaders has been set via 
+After the compiler has linked all the shaders. We can begin to setup all the data that needs to be sent to the shaders. This information is sent via using the function of .setUniform("Name_In_Shader", value).
 
-All vertices shaders are used to retrieve/output data from the scenebasic_uniform.cpp file.
+<kbd>![Uniform Code](Screenshots/Code_setupParticles.png?)</kbd>
+
+The uniform code above shows us loading the texture for the smoke particles. Before we set the uniform data, we need to activate the particle shader, or the application will not execute and provide an error. The uniform data ranges from the lifetime of the particles (How long they are alive before being recycled) to the min and max size of the smoke particles.
+
+<kbd>![Particle Shader Code](Screenshots/Code_particleShader.png?)</kbd>
+
+The uniform data is sent to the smokeParticles.vert shader. The data is used to calculate the velocity of the smoke, this is used to give the effect of smoke rising over time, just like in real life. The lifetime is calculated, checking to see if the particle age is greater than the lifetime, when it is, we recycle that particle, if not, we keep updating the velocity. 
+
+The smokeParticle.vert is the most unique vertex shader used in the project. Containing a lot more uniforms, outputs, and methods than all the others.
+
+<kbd>![vertex Shader Code](Screenshots/Code_vertShaders.png?)</kbd>
+
+The screenshot above displays what all the other vertex shader code looks like. Uniforms from the scenebasic_uniform.cpp are calculated here, once all calculations are done in the main method. Commonly containing coordinate data for both positon and textures, and the Model View Project Matrix. Model is used for an object local position into world space, view for the world space to camera, and project from the camera to the screen.
+
+<kbd>![Model Code](Screenshots/Code_models.png?)</kbd>
+
+An example of using manipulating the matrix data can be seen above. We reset our model data, and use the functions of translate, rotate, and scale for our model. Translate means the position of the object e.g. X, Y, Z Coordinates. Rotate is self explanitory, and scale means to increase or decrease the object size.
+
+Noise disintegration can be seen on the plane model that can be seen flying above the town. Setting up the noise requires multiple steps, first we must set the noise texture and bind it. For an object to appear disintegrated, the discard keyword is used and combined with the noise effect, simulating the look of decay on the chosen model. Fragments are of the noise are discared is the noise value is above or below a threshhold. 
+
+<kbd>![Noise Setup Code](Screenshots/Code_setupNoise.png?)</kbd>
+
+We activate the noise shader, generate a perfect noise texture that will bind to our plane model, and set the threshold values. This uniform data will now be sent to decayNoise.frag itself.
+
+
+<kbd>![Noise Fragment Code](Screenshots/Code_noiseFrag.png?)</kbd>
+
+The main method inside the noise fragment shader retrieves the noise texture and coordinates we set. We then check the noise value by comparing it to our thresholds, discarding any fragments that meet the criteria. Once discared, we run the phong model shading method and assign the fragment colour.
+
+<kbd>![Noise Model Code](Screenshots/Code_planeDecayModel.png?)</kbd>
+
+Finally, our plane model can be rendered with the noise disintegration effect. 
+
+Lastly, we have the geometry and shadow volumes. These shadow volumes provide high quality rendered shadows for all of the models in the scene, making it visually pleasing. Shadow volumes requires boundaries, quads are formed by extending the edges of an object to produce a shadow effect, similar to real life shadows. Each triangle consist of 3 of these quads (Extending upon each edge and caps). 
+
+
+The primary use of the geometry shader is to produce the shadow volumes and display textures, adjacency information of the models triangles are sent to the geometry shader. Adjacency information is used to check those triangles for a silgouette edge (triangle faces light & the triangle next to it is facing away). A polygon is then created for the shadow volume. 
 
 #### What makes your shader program special and how does it compare to similar things?
 The Town of Wakewood has been built to simulate a small, top-down, open world setting of a small town. The visual look of the tool is used to represent games such as Cities: Skylines (Developed by Colossal Order, 2015).
@@ -85,6 +130,9 @@ The tools visual apperance mimics that of a residential area in Cities: Skylines
 To begin development of the tool, my previous project [COMP3015: Coursework 1](https://github.com/caleb-long19/COMP3015-Custom-Shader-Project-OpenGL) was used as a base. All aspects of the previous project [COMP3015: Coursework 1](https://github.com/caleb-long19/COMP3015-Custom-Shader-Project-OpenGL) were removed by the end of development, besides two features, the ImGUI library, which provides an easy to use GUI which manipulates the scene, and the irrKlang library, which is used to play audio samples during runtime. Everything else in this project is completely unique in comparison. The Town of Wakewood was originally going to contain only two techinques, geometry and shadow volumes. Due to the extra time after they were implemented, a decision was made to implement particles & animation. Smoke particles were added to chimney's, making it seem that the houses were being lived in. Lastly, the noise decay technique was added, simply because spare time was available and to increase the quality of this portfolio piece.
 
 To make the tool unique from Cities: Skylines, two features were implemented. The first allows the user to alter the speed of the vehicles/traffic separate from the games speed. The second feature allows the user to change the distance the vehicles travel on the road. These features combined with the four techniques, creates both a visually pleasing and dynamic tool that serves as a professional portfolio piece.
+
+#### THE TOWN OF WAKEWOOD: PRESENTATION - CLICK ME!
+[![Presentation Thumnbail](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=VIDEO_ID)
 
 
 --------------
@@ -138,9 +186,6 @@ A Graphical User Interface will be present on the left-hand side of the window.
 --------------
 
 
-### THE TOWN OF WAKEWOOD: PRESENTATION - CLICK ME!
-[![Presentation Thumnbail](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=VIDEO_ID)
-
 ### SCREENSHOTS
 
 #### Morning In Wakewood
@@ -154,6 +199,7 @@ A Graphical User Interface will be present on the left-hand side of the window.
 
 #### Flying Around Wakewood
 <kbd>![Town of Wakewood - Flying](Screenshots/Town_of_Wakewood-Plane.png?)</kbd>
+
 
 --------------
 
@@ -171,6 +217,7 @@ A Graphical User Interface will be present on the left-hand side of the window.
 
 #### Websites
 * Plymouth University DLE Resources: Marius Varga
+  * 
 
 #### OpenGL Libraries
 * ImGUI: https://github.com/ocornut/imgui
