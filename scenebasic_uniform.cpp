@@ -19,7 +19,6 @@ ISoundEngine* backgroundSFX = createIrrKlangDevice();
 ISound* forestAmbience;
 ISound* carAmbience;
 
-
 // Store the volume level of the ambient sounds
 float forestVolume = 0.05f, carVolume = 0.1f;
 
