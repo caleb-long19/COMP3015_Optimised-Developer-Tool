@@ -5,14 +5,14 @@ layout (location = 1) in vec3 VertexNormal;     // Vertex Normals
 layout (location = 2) in vec2 VertexTexCoord;   // Vertex Texture Coordinates
 
 
-out vec3 Position;  // Outputs Current Position
+out vec4 Position;  // Outputs Current Position
 out vec3 Normal;    // Outputs Normal
 out vec2 TexCoord;  // Outputs Texture Coordinates
 
 
 uniform mat4 ModelViewMatrix;   // Model View Matrix
 uniform mat3 NormalMatrix;      // Normal Matrix
-uniform mat4 ProjMatrix;        // Projection Matrix
+uniform mat4 MVP;               // Model View Projection
 
 
 void main()

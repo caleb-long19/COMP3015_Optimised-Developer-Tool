@@ -466,6 +466,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             // Update pass
             if (animating())
             {
+
                 smokeShader.use();
                 smokeShader.setUniform("Pass", 1);
                 smokeShader.setUniform("Time", time);
@@ -992,7 +993,6 @@ void SceneBasic_Uniform::setupShadowVolumes()
     //Load texture/s
     glActiveTexture(GL_TEXTURE2);
     modelTex = Texture::loadTexture("media/nice69-32x.png");
-    glActiveTexture(GL_TEXTURE6);
     dsModelTex = Texture::loadTexture("media/nice69-32x.png");
 
     updateLight();
@@ -1001,7 +1001,7 @@ void SceneBasic_Uniform::setupShadowVolumes()
     renderShader.setUniform("Tex", 2);  // Assign Loaded Texture ID
 
     compShader.use();                           // Activate The Shadow Volume Composition Shader
-    compShader.setUniform("DiffSpecTex", 6);    // Assign Loaded Texture ID
+    compShader.setUniform("DiffSpecTex", 0);    // Assign Loaded Texture ID
 }
 
 
@@ -1018,10 +1018,10 @@ void SceneBasic_Uniform::setupNoise()
     glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, noiseTex);
 
-    // Set Uniform Data For The Noise Shaders
+    // Set Uniform Data For The Noise Shaders | Noise Threshholds For Discarding
     noiseShader.setUniform("Light.Intensity", vec3(0.5f, 0.5f, 0.5f));
-    noiseShader.setUniform("LowThreshold", 0.2f);
-    noiseShader.setUniform("HighThreshold", 0.8f);
+    noiseShader.setUniform("LowThreshold", 0.45f); 
+    noiseShader.setUniform("HighThreshold", 0.65f);
 }
 
 #pragma endregion

@@ -263,16 +263,12 @@
     <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\ogre_normalmap.png" />
     <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\smoke.png" />
     <Image Include="C:\Users\caleb\Downloads\COMP3015\Lab 4\Lab 4 Files\Additional files\texture\star.png" />
-    <Image Include="C:\Users\caleb\Downloads\Wakewood_Logo_New.ico" />
     <Image Include="media\skybox\Skybox_Back.jpg" />
     <Image Include="media\skybox\Skybox_Bottom.jpg" />
     <Image Include="media\skybox\Skybox_Front.jpg" />
     <Image Include="media\skybox\Skybox_Left.jpg" />
     <Image Include="media\skybox\Skybox_Right.jpg" />
     <Image Include="media\skybox\Skybox_Top.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Project_Wakewood.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
