@@ -794,7 +794,8 @@ void SceneBasic_Uniform::setupFBO()
 
 #pragma region Setup/Render Geometry Shading, Shader Volumes, and Combine With Diffuse/Specular Lighting Methods 
 
-// This renders the geometry normally with shading | The ambient component is rendered to one buffer, and the diffuse and specular componenets are written to a texture.
+// This renders the geometry normally with shading
+// The ambient component is rendered to one buffer, and the diffuse and specular componenets are written to a texture.
 void SceneBasic_Uniform::pass1() 
 {
     glDepthMask(GL_TRUE);
