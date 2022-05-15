@@ -591,7 +591,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
             ImGui::Text("Model & Animation Controller");                                            // Section title
             ImGui::Checkbox("Toggle Plane", &disablePlane);                                         // Disable or Enable the animations in the scene
-            ImGui::SliderFloat("Adjust All Animation Speeds", (float*)&rotSpeed, 0.1f, 1.0f);       // Slider that adjusts the speed of the animations in-game
+            ImGui::SliderFloat("Adjust Camera/Lighting Speeds", (float*)&rotSpeed, 0.1f, 1.0f);       // Slider that adjusts the speed of the animations in-game
             ImGui::SliderFloat("Adjust Vehicle Distance", (float*)&drivingDistance, 0.1f, 4.0f);    // Slider that adjusts driving distance of the cars
             ImGui::SliderFloat("Adjust Vehicle Speed", (float*)&vehicleSpeed, 0.1f, 6.0f);          // Slider that adjusts driving distance of the cars
 
