@@ -14,7 +14,7 @@ using glm::mat3;
 using glm::mat4;
 
 
-// Start the sound engine & Bool to turn forestAmbience on or off
+// Start the sound engine
 ISoundEngine* backgroundSFX = createIrrKlangDevice();
 ISound* forestAmbience;
 ISound* carAmbience;
@@ -22,6 +22,8 @@ ISound* carAmbience;
 
 // Store the volume level of the ambient sounds
 float forestVolume = 0.05f, carVolume = 0.1f;
+
+// bool to toggle audio
 bool toggleCurrentAmbience = true;
 
 // Model Manipulation (Turn off rendering & alter positions)
