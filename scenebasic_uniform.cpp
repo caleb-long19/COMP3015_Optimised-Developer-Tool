@@ -1006,12 +1006,12 @@ void SceneBasic_Uniform::setupShadowVolumes()
     glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, noiseTex);
 
-    renderShader.use();                                         // Activate The Shadow Volume Render Shader
-    renderShader.setUniform("Tex", 2);                          // Set Texture Uniorm For Rendering
-    renderShader.setUniform("NoiseTex", 5);                     // Set the randomly generated noise texture
-    renderShader.setUniform("LowThreshold", 0.45f);    // Low noise threshold
-    renderShader.setUniform("HighThreshold", 0.65f);  // High noise threshold
-    renderShader.setUniform("NoiseTex", 5);                     // Set Texture Uniorm For The Noise Shader
+    renderShader.use();                                 // Activate The Shadow Volume Render Shader
+    renderShader.setUniform("Tex", 2);                  // Set Texture Uniorm For Rendering
+    renderShader.setUniform("NoiseTex", 5);             // Set the randomly generated noise texture
+    renderShader.setUniform("LowThreshold", 0.45f);     // Low noise threshold
+    renderShader.setUniform("HighThreshold", 0.65f);    // High noise threshold
+    renderShader.setUniform("NoiseTex", 5);             // Set Texture Uniorm For The Noise Shader
 
     compShader.use();                           // Activate The Shadow Volume Composition Shader
     compShader.setUniform("DiffSpecTex", 0);    // Assign Loaded Texture ID

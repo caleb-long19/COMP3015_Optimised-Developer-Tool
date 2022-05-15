@@ -30,7 +30,7 @@ const int levels = 4;
 const float scaleFactor = 1.0 / levels;
 
 // Phong Shading Model
-void phongShade( )
+void phongShade()
 {
     vec3 specular = normalize(vec3(LightPosition) - Position); // Calculate Specular lighting vector in the view space 
 
@@ -58,23 +58,6 @@ void toonShade()
 	DiffSpec = vec4(texColor * Kd * ceil(cosine * levels) * scaleFactor, 1);
 }
 
-
-// Phong Shading Model
-void decayShading( )
-{
-    vec3 specular = normalize(vec3(LightPosition) - Position); // Calculate Specular lighting vector in the view space 
-
-    vec3 v = normalize(vec3(-Position));    // Calculate Direction
-    vec3 r = reflect(-specular, Normal);    // Calcuate the reflection
-    vec4 texColor = texture(Tex, TexCoord); // Store Texel Value (Colour & Alpha Values)
-
-    // Calculate The Ambient Lighting
-    Ambient = vec4(texColor.rgb * LightIntensity * Ka, 1.0);
-
-    // Calculate The Diffuse/Specular Lighting
-    DiffSpec = vec4(texColor.rgb * LightIntensity * (Kd * max( dot(specular, Normal), 0.0) + Ks * pow(max(dot(r,v), 0.0), Shininess)) ,1.0 );
-}
-
 void main() 
 {
     // Render Phong Shading
@@ -94,7 +77,8 @@ void main()
         if(noise.a < LowThreshold) discard;         // If the noise value is less than the threshhold discard noise fragments
         if(noise.a > HighThreshold) discard;        // If the noise value is greater than the threshhold discard noise fragments 
 
-        decayShading();
+        phongShade();
     }
 
 }
+
