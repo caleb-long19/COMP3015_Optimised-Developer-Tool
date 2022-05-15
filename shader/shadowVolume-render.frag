@@ -36,7 +36,7 @@ void phongShade()
 
     vec3 v = normalize(vec3(-Position));    // Calculate Direction
     vec3 r = reflect(-specular, Normal);    // Calcuate the reflection
-    vec4 texColor = texture(Tex, TexCoord); // Store Texel Value (Colour & Alpha Values)
+    vec4 texColor = texture(Tex, TexCoord); // get texColor value at texture coordinates
 
     // Calculate The Ambient Lighting
     Ambient = vec4(texColor.rgb * LightIntensity * Ka, 1.0);
@@ -47,7 +47,7 @@ void phongShade()
 
 void toonShade()
 {
-    vec3 texColor = texture(Tex, TexCoord).rgb; // Store Texel Value (Colour & Alpha Values)
+    vec3 texColor = texture(Tex, TexCoord).rgb;
     
 	vec3 specular = normalize(LightPosition.xyz - Position.xyz);
 
@@ -61,7 +61,6 @@ void toonShade()
 void main() 
 {
     // Render Phong Shading
-
     if(shaderType == 0)
     {
         phongShade();

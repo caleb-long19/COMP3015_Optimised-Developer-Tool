@@ -9,7 +9,7 @@ in float Transp;    // Transposition
 in vec2 TexCoord;   // Texture Coordinates
 
 
-uniform sampler2D ParticleTex;              // Particle texture We Assign
+uniform sampler2D ParticleTex;              // Particle texture
 layout (location = 0) out vec4 FragColor;   // Output Fragment Colour
 
 
