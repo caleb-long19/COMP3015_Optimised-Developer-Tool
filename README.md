@@ -47,7 +47,7 @@ This Optimised Developer Tool will be used to present varying OpenGL Techniques.
 The Town of Wakewood can be download [here](https://github.com/caleb-long19/COMP3015_Optimised-Developer-Tool/releases/tag/v1.0). Once downloaded, extract and open the folder. Double click "Project_Wakewood.exe" to open the application. The loading time of the application will vary based on your systems hardware. Once the program has loaded, you will be presented with a low-poly town. In the top left corner you will see a graphical user interface (GUI), developed using ImGUI. Use your mouse to interact with the GUI. Left click on the buttons or tick boxes to interact with them. Hold the left mouse button on the sliders and drag left/right to alter their values. Each button/slider has a title above them, indicating what they do. Close the application by clicking the "x", located at the top right of the window, or press the "Exit Application" button on the GUI.
 
 #### How does the program code work? How do the classes and functions fit together and who does what?
-The Town of Wakewood utilizes four primary techniques. Geometry Shading, Shadow Volumes, Particles & Animation, and Noise. A total of Ten GLSL Shaders were created during development, thse shaders are as follows:
+The Town of Wakewood utilizes four primary techniques. Geometry Shading, Shadow Volumes, Particles & Animation, and Noise. A total of 8 GLSL Shaders were created during development, these shaders are as follows:
 
 * Geometry & Shadow Volume Shader
   * shadowVolume-comp.frag
@@ -61,10 +61,6 @@ The Town of Wakewood utilizes four primary techniques. Geometry Shading, Shadow 
 * Smoke Particles & Animations
   * smokeParticles.frag
   * smokeParticles.vert
-
-* Noise Disintegration
-  * decayNoise.frag
-  * decayNoise.vert
 
 Before discussing the shaders in further detail, context is required on where the data that is sent to the shaders is from. A file called "scenebasic_uniform.cpp" contains a vast amount of methods, each containing unique instructions to provide an efficient application. To communicate with the shaders, we must first compile them. This is done in the compile method.
 
@@ -80,31 +76,31 @@ The uniform code above shows us loading the texture for the smoke particles. Bef
 
 <kbd>![Particle Shader Code](Screenshots/Code_particleShader.png?)</kbd>
 
-The uniform data is sent to the smokeParticles.vert shader. The data is used to calculate the velocity of the smoke, this is used to give the effect of smoke rising over time, just like in real life. The lifetime is calculated, checking to see if the particle age is greater than the lifetime, when it is, we recycle that particle, if not, we keep updating the velocity. 
+The uniform data is sent to the smokeParticles.vert shader. The data is used to calculate the velocity of the smoke, this is used to give the effect of smoke rising over time, just like in real life. The lifetime is calculated, checking to see if the particle age is greater than the lifetime, when it is, we recycle that particle, if not, we keep updating the velocity. We can now draw our particles in the drawScene method. We bind our feedback buffers, and particle arrays, set the matrices for the particles and draw them.
 
 The smokeParticle.vert is the most unique vertex shader used in the project. Containing a lot more uniforms, outputs, and methods than all the others.
 
 <kbd>![vertex Shader Code](Screenshots/Code_vertShaders.png?)</kbd>
 
-The screenshot above displays what all the other vertex shader code looks like. Uniforms from the scenebasic_uniform.cpp are calculated here, once all calculations are done in the main method. Commonly containing coordinate data for both positon and textures, and the Model View Project Matrix. Model is used for an object local position into world space, view for the world space to camera, and project from the camera to the screen.
+The screenshot above displays what all the other vertex shader code looks like. Uniforms from the scenebasic_uniform.cpp are calculated here, once all calculations are done in the main method, they sent to its fragment counterpart. Vertex commonly contains coordinate data for both positon and textures, and the Model View Projection Matrix. Model is used for an objects local position into world space, view for the world space to camera, and projection from the camera to the screen.
 
 <kbd>![Model Code](Screenshots/Code_models.png?)</kbd>
 
-An example of using manipulating the matrix data can be seen above. We reset our model data, and use the functions of translate, rotate, and scale for our model. Translate means the position of the object e.g. X, Y, Z Coordinates. Rotate is self explanitory, and scale means to increase or decrease the object size.
+An example of manipulating the matrix data can be seen above. We reset our model data, and use the functions of translate, rotate, and scale for our model. Translate means the position of the object e.g. X, Y, Z Coordinates. Rotate is self explanitory, and scale means to increase or decrease the object size.
 
-Noise disintegration can be seen on the plane model that can be seen flying above the town. Setting up the noise requires multiple steps, first we must set the noise texture and bind it. For an object to appear disintegrated, the discard keyword is used and combined with the noise effect, simulating the look of decay on the chosen model. Fragments are of the noise are discared is the noise value is above or below a threshhold. 
+Setting up the noise requires multiple steps, first we must set the noise texture and bind it. For an object to appear disintegrated, the discard keyword is used and combined with the noise effect, simulating the look of decay on the chosen model. Fragments of the noise are discared if the noise value is above or below a set threshhold. 
 
 <kbd>![Noise Setup Code](Screenshots/Code_setupNoise.png?)</kbd>
 
-We activate the noise shader, generate a perfect noise texture that will bind to our plane model, and set the threshold values. This uniform data will now be sent to decayNoise.frag itself.
+We generate a perfect noise texture that will bind to our models, and set the threshold values. This uniform data will be sent to shadowVolume-rander.frag.
 
 <kbd>![Noise Fragment Code](Screenshots/Code_noiseFrag.png?)</kbd>
 
-The main method inside the noise fragment shader retrieves the noise texture and coordinates we set. We then check the noise value by comparing it to our thresholds, discarding any fragments that meet the criteria. Once discared, we run the phong model shading method and assign the fragment colour.
+The main method inside the render fragment shader takes in the noise texture, and texture coordinates into a noise vector. We then check the noise vector value by comparing it to our thresholds, discarding any fragments that meet the criteria. Once discared, we run the phong model shading method.
 
-<kbd>![Noise Model Code](Screenshots/Code_planeDecayModel.png?)</kbd>
+<kbd>![Noise Decay Effect](Screenshots/decayModels.png?)</kbd>
 
-Finally, our plane model can be rendered with the noise disintegration effect. 
+Finally, our models can be rendered with the noise disintegration effect. 
 
 Lastly, we have the geometry and shadow volumes. These shadow volumes provide high quality rendered shadows for all of the models in the scene, making it visually pleasing. Shadow volumes requires boundaries, quads are formed by extending the edges of an object to produce a shadow effect, similar to real life shadows. Each triangle consist of 3 of these quads (Extending upon each edge and caps).
 
@@ -121,6 +117,22 @@ Inside the geometry shader, we are calculating the quads that have formed from t
 <kbd>![Pass 1 Code](Screenshots/Code_renderGeometry.png?)</kbd>. 
 
 For the geometry and shadows to be processed and rendered correctly, we must follow a 3 pass sytem. Pass 1 is used to render the geometry normally with phong shading, our ambient, and diffuse + specular components created earlier, are separated into individual buffers. Pass 2 generates the shadow volumes/casting objects with the help of the geometry shader. We setup the stencil test buffer so that the stencil test is always successful, front faces return an increment,, while back faces return a decrement. Pass 3 sets the stencil buffer, followed by combining the ambient, and diffuse + specular buffers, only if the stencil test succeeds. A full screen quad is then rendered onto the screen, finishing the process of shadow volumes.
+
+<kbd>![Shading Code](Screenshots/codel_shadingModels.png?)</kbd>. 
+
+The phong and toon shading is calculated in the shadowVolume-render.vert file. Phong uses ambient, diffuse and specular lighting techniques, as well as taking in a reflective model and the direction to produce realistic surface shading. Toon Shading utilizes the 3 previously listed techniques. We lock a dot product (multiplication fo 2 vectors and outputs a float) for the specular to create a fixed number of values, simulating a cell shaded appearance.
+
+Two libraries were used during development, irrKlang, and ImGUI. irrKlang is a sound library that can be used to play audio clips. To use it, we must initialise the ISoundEngine. After, we can create ISound components. ISound allows us to use commands such as .play("insert location of sound file") and .volume("insert float value to determine volume level"). 
+
+<kbd>![Sound Code 1](Screenshots/soundLibrary_part1.png?)</kbd>.
+
+<kbd>![Sound Code 2](Screenshots/soundLibrary_part2.png?)</kbd>.
+
+ImGUI provides an interface on the screen. Containing features such as buttons, sliders, checkboxes, etc. The project uses all 3 of the listed features. Sliders are used to alter adjust animation speeds, positional data, and the audio volume. ImGUI contains various .cpp files containing extensive code and calculations, we just need to call those methods into our own .cpp file and assign the correct data to them.
+
+<kbd>![GUI Code](Screenshots/imGUI_Example.png?)</kbd>.
+
+The example above shows both slider & button code. To communicate with ImGUI, we use ImGUI::"Method Name". Our method name in this case is slider float. We assign our ambience volume float, and set a min/max value for it. The button is used to turn the ambience on/off. We check the current bool, and switch it based on its current state. 
 
 #### What makes your shader program special and how does it compare to similar things?
 The Town of Wakewood has been built to simulate a small, top-down, open world setting of a small town. The visual look of the tool is used to represent games such as Cities: Skylines (Developed by Colossal Order, 2015).
