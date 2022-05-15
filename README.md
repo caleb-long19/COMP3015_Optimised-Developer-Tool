@@ -98,7 +98,6 @@ Noise disintegration can be seen on the plane model that can be seen flying abov
 
 We activate the noise shader, generate a perfect noise texture that will bind to our plane model, and set the threshold values. This uniform data will now be sent to decayNoise.frag itself.
 
-
 <kbd>![Noise Fragment Code](Screenshots/Code_noiseFrag.png?)</kbd>
 
 The main method inside the noise fragment shader retrieves the noise texture and coordinates we set. We then check the noise value by comparing it to our thresholds, discarding any fragments that meet the criteria. Once discared, we run the phong model shading method and assign the fragment colour.
@@ -107,10 +106,21 @@ The main method inside the noise fragment shader retrieves the noise texture and
 
 Finally, our plane model can be rendered with the noise disintegration effect. 
 
-Lastly, we have the geometry and shadow volumes. These shadow volumes provide high quality rendered shadows for all of the models in the scene, making it visually pleasing. Shadow volumes requires boundaries, quads are formed by extending the edges of an object to produce a shadow effect, similar to real life shadows. Each triangle consist of 3 of these quads (Extending upon each edge and caps). 
+Lastly, we have the geometry and shadow volumes. These shadow volumes provide high quality rendered shadows for all of the models in the scene, making it visually pleasing. Shadow volumes requires boundaries, quads are formed by extending the edges of an object to produce a shadow effect, similar to real life shadows. Each triangle consist of 3 of these quads (Extending upon each edge and caps).
 
+<kbd>![Shadow Setup Code](Screenshots/Code_setupShadowVolumes.png?)</kbd>
 
-The primary use of the geometry shader is to produce the shadow volumes and display textures, adjacency information of the models triangles are sent to the geometry shader. Adjacency information is used to check those triangles for a silgouette edge (triangle faces light & the triangle next to it is facing away). A polygon is then created for the shadow volume. 
+Firstly, we need to setup the framebuffer objects, a framebuffer is a combination of multiple buffers including, colour, depth, and stencil. Our framebuffer includes the depth buffer and two colour buffers (ambient, and diffuse + specular). Once the framebuffer has been created, we can return to the setup. A vao for the quads is made, we then load the texture/s our models are going to use, and activate the shadow rendering and composition shaders.
+
+The primary use of the geometry shader is to produce the shadow volumes and display textures, adjacency information of the models triangles are sent to the geometry shader. Adjacency information is used to check those triangles for a silhouette edge (triangle faces light & the triangle next to it is facing away). A polygon is then created for the shadow volume. 
+
+<kbd>![Shadow Geometry Code](Screenshots/Code_geometryShader.png?)</kbd>. 
+
+Inside the geometry shader, we are calculating the quads that have formed from the object edges. After, we need to check the triangles and its neighbours, to see which is facing towards or away from the light, a sihlouette or shadow is produced on the triangles that are facing away from the light. 
+
+<kbd>![Pass 1 Code](Screenshots/Code_renderGeometry.png?)</kbd>. 
+
+For the geometry and shadows to be processed and rendered correctly, we must follow a 3 pass sytem. Pass 1 is used to render the geometry normally with phong shading, our ambient, and diffuse + specular components created earlier, are separated into individual buffers. Pass 2 generates the shadow volumes/casting objects with the help of the geometry shader. We setup the stencil test buffer so that the stencil test is always successful, front faces return an increment,, while back faces return a decrement. Pass 3 sets the stencil buffer, followed by combining the ambient, and diffuse + specular buffers, only if the stencil test succeeds. A full screen quad is then rendered onto the screen, finishing the process of shadow volumes.
 
 #### What makes your shader program special and how does it compare to similar things?
 The Town of Wakewood has been built to simulate a small, top-down, open world setting of a small town. The visual look of the tool is used to represent games such as Cities: Skylines (Developed by Colossal Order, 2015).
@@ -217,7 +227,10 @@ A Graphical User Interface will be present on the left-hand side of the window.
 
 #### Websites
 * Plymouth University DLE Resources: Marius Varga
-  * 
+  * Lecture & Lab 6: Geometry Shaders
+  * Lecture & Lab 7: Vertex Animations
+  * Lecture & Lab 8: Shadows
+  * Lecture & Lab 9: Noise
 
 #### OpenGL Libraries
 * ImGUI: https://github.com/ocornut/imgui
