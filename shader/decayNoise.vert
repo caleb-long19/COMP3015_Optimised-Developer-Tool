@@ -1,21 +1,24 @@
 #version 460
 
-layout (location = 0 ) in vec3 VertexPosition;
-layout (location = 1) in vec3 VertexNormal;
-layout (location = 2) in vec2 VertexTexCoord;
+layout (location = 0) in vec3 VertexPosition;   // Vertex Position Coordinates
+layout (location = 1) in vec3 VertexNormal;     // Vertex Normals
+layout (location = 2) in vec2 VertexTexCoord;   // Vertex Texture Coordinates
 
-out vec4 Position;
-out vec3 Normal;
-out vec2 TexCoord;
 
-uniform mat4 ModelViewMatrix;
-uniform mat3 NormalMatrix;
-uniform mat4 MVP;
+out vec3 Position;  // Outputs Current Position
+out vec3 Normal;    // Outputs Normal
+out vec2 TexCoord;  // Outputs Texture Coordinates
+
+
+uniform mat4 ModelViewMatrix;   // Model View Matrix
+uniform mat3 NormalMatrix;      // Normal Matrix
+uniform mat4 ProjMatrix;        // Projection Matrix
+
 
 void main()
 {
-    Position = ModelViewMatrix * vec4(VertexPosition,1.0);
-    Normal = NormalMatrix * VertexNormal;
-    TexCoord = VertexTexCoord;
-    gl_Position = MVP * vec4(VertexPosition, 1.0);
+    Normal = NormalMatrix * VertexNormal;                   // Assign Normal to Normal Vertex Data
+    Position = ModelViewMatrix * vec4(VertexPosition,1.0);  // Calculate The Current Position
+    TexCoord = VertexTexCoord;                              // Set/Store The Texture Coordinates
+    gl_Position = MVP * vec4(VertexPosition, 1.0);          // Store The Current Vertex Position
 }

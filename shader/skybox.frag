@@ -21,5 +21,6 @@ void main()
     // Raises to power, used for Gamma Correction
     texColor = pow( texColor, vec3(1.0/2.2));
 
+    // Pass the result into FragColour
     FragColor = vec4(texColor,1);
 }

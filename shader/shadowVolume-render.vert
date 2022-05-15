@@ -20,13 +20,8 @@ uniform mat4 ProjMatrix;        // Projection matrix
 
 void main()
 {
-    // Set/Store The Texture Coordinates
-    TexCoord = VertexTexCoord;
-
-    // Set/Store the normalized uniform data of our Normal & Vertex Matrix
-    Normal = normalize(NormalMatrix * VertexNormal);
-
-
-    Position = vec3(ModelViewMatrix * vec4(VertexPosition,1.0));
-    gl_Position = ProjMatrix * ModelViewMatrix * vec4(VertexPosition,1.0);
+    TexCoord = VertexTexCoord;                                              // Set/Store The Texture Coordinates
+    Normal = normalize(NormalMatrix * VertexNormal);                        // Assign Normal to Normal Vertex Data
+    Position = vec3(ModelViewMatrix * vec4(VertexPosition,1.0));            // Calculate The Current Position
+    gl_Position = ProjMatrix * ModelViewMatrix * vec4(VertexPosition,1.0);  // Store The Current Vertex Position
 }

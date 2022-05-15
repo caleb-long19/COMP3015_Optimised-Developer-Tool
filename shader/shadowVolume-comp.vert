@@ -4,11 +4,12 @@ layout (location = 0) in vec3 VertexPosition;   // Vertex Position Coordinates
 layout (location = 1) in vec3 VertexNormal;     // Vertex Normals
 
 
-out vec3 Position;     // Outputs Current Position
-out vec3 Normal;       // Outputs Normal
+out vec3 Position;  // Outputs Current Position
+out vec3 Normal;    // Outputs Normal
 
 
-// Imports The Model View Matrix - Translation, Rotation, Scale Of A Model
+// Imports The Model View Matrix
+// Translation, Rotation, Scale
 uniform mat4 ModelViewMatrix;   // Model View Matrix
 uniform mat3 NormalMatrix;      // Normal Matrix
 uniform mat4 ProjMatrix;        // Projection Matrix

@@ -4,17 +4,13 @@
 layout (location = 0) in vec3 VertexPosition; // Vertex Position Coordinates
 
 
-// Output to skybox.frag
 out vec3 Vec;
 
-// Model, View, Projection
-uniform mat4 MVP;
+uniform mat4 MVP;   // Model, View, Projection
 
 
 void main() 
 {
-    // Storing/Setting the vertex postion into Vec
-    // Used in skybox.frag
-    Vec = VertexPosition;
-    gl_Position = MVP * vec4(VertexPosition,1.0);
+    Vec = VertexPosition;                           // Storing/Setting The Vertex Postion Into Vec
+    gl_Position = MVP * vec4(VertexPosition,1.0);   // Store The Current Vertex Position
 }

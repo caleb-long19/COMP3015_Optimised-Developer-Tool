@@ -28,14 +28,14 @@ uniform vec3 Accel;                      // Particle Acceleration
 uniform float ParticleLifetime;          // Particle Lifespan
 uniform float MinParticleSize = 0.1;     // Minimum Particle Size
 uniform float MaxParticleSize = 2.5;     // Maximum Particle Size
-uniform mat3 EmitterBasis;
-uniform vec3 Emitter;
+uniform mat3 EmitterBasis;               // Emitter Direction
+uniform vec3 Emitter;                    // Emitter Position
 
-// Imports The Model View Matrix - Translation, Rotation, Scale
+
 uniform mat4 MV;
 uniform mat4 Proj;
 
-// Imports the Randomly Created Texture
+
 uniform sampler1D RandomTex;
 
 

@@ -111,16 +111,6 @@ void SceneBasic_Uniform::initScene()
 
 
 
-void SceneBasic_Uniform::updateLight()
-{
-    // Change the position of the directional light continuously
-    // lightPos = vec4(150.0f * vec3(cosf(camAngle) * 0.5f, 1.5f, sinf(camAngle) * 4.5f), 1.0f);  // World coords
-    lightPos = vec4(150.0f * vec3(cosf(camAngle) * lightPosX, lightPosY, sinf(camAngle) * lightPosZ), 1.0f);  // World coords
-
-}
-
-
-
 void SceneBasic_Uniform::compile()
 {
     try {
@@ -189,6 +179,16 @@ void SceneBasic_Uniform::update(float t)
         if (camAngle > glm::two_pi<float>()) camAngle -= glm::two_pi<float>();
         updateLight();
     }
+}
+
+
+
+void SceneBasic_Uniform::updateLight()
+{
+    // Change the position of the directional light continuously
+    // lightPos = vec4(150.0f * vec3(cosf(camAngle) * 0.5f, 1.5f, sinf(camAngle) * 4.5f), 1.0f);  // World coords
+    lightPos = vec4(150.0f * vec3(cosf(camAngle) * lightPosX, lightPosY, sinf(camAngle) * lightPosZ), 1.0f);  // World coords
+
 }
 
 
@@ -666,6 +666,8 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 }
 
 
+
+
 #pragma region Buffer Setup Methods
 
 void SceneBasic_Uniform::initBuffers() 
@@ -916,21 +918,27 @@ void SceneBasic_Uniform::setupParticles()
 {
     model = mat4(1.0f);
 
+    // Initiate the particle buffers
     initBuffers();
 
+    // Load the smoke texture
     glActiveTexture(GL_TEXTURE3);
     Texture::loadTexture("media/texture/smoke.png");
 
+    // Load randomly generated particles
     glActiveTexture(GL_TEXTURE4);
     ParticleUtils::createRandomTex1D(nParticles * 3);
 
+    // Activate the particle shader and set the uniform data
     smokeShader.use();
-    smokeShader.setUniform("ParticleTex", 3);
-    smokeShader.setUniform("ParticleLifetime", particleLifetime);
-    smokeShader.setUniform("Accel", vec3(0.0f, 0.1f, 0.0f));
-    smokeShader.setUniform("MinParticleSize", float(0.05));
-    smokeShader.setUniform("MaxParticleSize", float(0.2));
-    smokeShader.setUniform("RandomTex", 4);
+    smokeShader.setUniform("ParticleTex", 3);                       // Assign Texture ID
+    smokeShader.setUniform("ParticleLifetime", particleLifetime);   // Time Particles Are Alive 
+    smokeShader.setUniform("Accel", vec3(0.0f, 0.1f, 0.0f));        // Particle Acceleration
+    smokeShader.setUniform("MinParticleSize", float(0.05));         // Minimum Particle Size
+    smokeShader.setUniform("MaxParticleSize", float(0.2));          // Maximum Particle Size
+    smokeShader.setUniform("RandomTex", 4);                         // Assign Random Texture ID
+
+    // Set Particle Emiitter Position & Direction
     smokeShader.setUniform("Emitter", emitterPos);
     smokeShader.setUniform("EmitterBasis", ParticleUtils::makeArbitraryBasis(emitterDir));
 }
@@ -984,14 +992,16 @@ void SceneBasic_Uniform::setupShadowVolumes()
     //Load texture/s
     glActiveTexture(GL_TEXTURE2);
     modelTex = Texture::loadTexture("media/nice69-32x.png");
+    glActiveTexture(GL_TEXTURE6);
+    dsModelTex = Texture::loadTexture("media/nice69-32x.png");
 
     updateLight();
 
-    renderShader.use();
-    renderShader.setUniform("Tex", 2);
+    renderShader.use();                 // Activate The Shadow Volume Render Shader
+    renderShader.setUniform("Tex", 2);  // Assign Loaded Texture ID
 
-    compShader.use();
-    compShader.setUniform("DiffSpecTex", 0);
+    compShader.use();                           // Activate The Shadow Volume Composition Shader
+    compShader.setUniform("DiffSpecTex", 6);    // Assign Loaded Texture ID
 }
 
 
@@ -1000,15 +1010,18 @@ void SceneBasic_Uniform::setupNoise()
 {
     noiseShader.use();
 
+    // Set Texture Uniorm For The Noise Shader
     noiseShader.setUniform("NoiseTex", 5);
 
+    // Bind The Generated Noise Texture
     GLuint noiseTex = NoiseTex::generate2DTex(20.0f);
     glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, noiseTex);
 
-    noiseShader.setUniform("Light.Intensity", vec3(1.0f, 1.0f, 1.0f));
-    noiseShader.setUniform("LowThreshold", 0.45f);
-    noiseShader.setUniform("HighThreshold", 0.65f);
+    // Set Uniform Data For The Noise Shaders
+    noiseShader.setUniform("Light.Intensity", vec3(0.5f, 0.5f, 0.5f));
+    noiseShader.setUniform("LowThreshold", 0.2f);
+    noiseShader.setUniform("HighThreshold", 0.8f);
 }
 
 #pragma endregion

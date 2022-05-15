@@ -1,7 +1,7 @@
 #version 460
 
 
-// Receives Triangles from the model we imported
+// Receives TrianglesF From The Imported Model/s
 layout(triangles_adjacency) in;
 layout(triangle_strip, max_vertices = 18 ) out;
 
@@ -15,6 +15,7 @@ uniform vec4 LightPosition;  // Lighting Position (Eye Coordinates)
 uniform mat4 ProjMatrix;     // Projection Matrix
 
 
+// Check if our triangle is facing towards the light
 bool facesLight( vec3 a, vec3 b, vec3 c )
 {
   vec3 n = cross( b - a, c - a );
@@ -26,6 +27,7 @@ bool facesLight( vec3 a, vec3 b, vec3 c )
 }
 
 
+// Calculates The Emitting Quads
 void emitEdgeQuad( vec3 a, vec3 b ) 
 {
   gl_Position = ProjMatrix * vec4(a, 1);
@@ -42,11 +44,11 @@ void emitEdgeQuad( vec3 a, vec3 b )
   EndPrimitive();
 }
 
+
+
 void main()
 {
-    // If the main triangle faces the light, check each adjacent triangle
-    // If an adjacent triangle does not face the light,
-    // we output a sihlouette edge quad for the corresponding edge.
+    // If the main triangle faces the light, check each adjacent triangle | If an adjacent triangle does not face the light | Output a sihlouette edge quad for the corresponding edge.
     if( facesLight(VPosition[0], VPosition[2], VPosition[4]) ) 
     {
         if(!facesLight(VPosition[0],VPosition[1],VPosition[2])) 

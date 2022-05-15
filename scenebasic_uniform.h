@@ -35,7 +35,7 @@ class SceneBasic_Uniform : public Scene
 private:
     GLSLProgram renderShader, volumeShader, compShader, skyShader, smokeShader, noiseShader;
     GLuint colorDepthFBO, fsQuad, quad;
-    GLuint modelTex;
+    GLuint modelTex, dsModelTex;
 
     // Position and direction of emitter.
     // Int Arrays for Position, Veloctiy and Age Buffers
