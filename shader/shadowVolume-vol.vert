@@ -3,7 +3,6 @@
 
 layout (location = 0) in vec3 VertexPosition;   // Vertex Position Coordinates
 layout (location = 1) in vec3 VertexNormal;     // Vertex Normals
-layout (location = 2) in vec2 VertexTexCoord;   // Vertex Texture Coordinates
 
 
 out vec3 VPosition;     // Outputs Vectors/Current Position
