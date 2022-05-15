@@ -234,7 +234,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = mat4(1.0f);
         model = glm::translate(model, vec3(0.0f, 5.0f, 1.0f));
         model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, vec3(0.4f, 0.4f, 0.4f));
         setMatrices(shader);
         townMesh->render();
@@ -243,7 +242,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = mat4(1.0f);
         model = glm::translate(model, vec3(3.0f, 5.37f, 2.35f));
         model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
         setMatrices(shader);
         whiteHouse->render();
@@ -252,7 +250,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = mat4(1.0f);
         model = glm::translate(model, vec3(-3.20f, 5.37f, 2.48f));
         model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
         setMatrices(shader);
         blueHouse->render();
@@ -261,7 +258,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = mat4(1.0f);
         model = glm::translate(model, vec3(-3.15f, 5.37f, -0.60f));
         model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
         setMatrices(shader);
         yellowHouse->render();
@@ -271,7 +267,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = mat4(1.0f);
         model = glm::translate(model, vec3(3.25f, 5.37f, -0.3f));
         model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
         setMatrices(shader);
         redHouse->render();
@@ -280,7 +275,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = mat4(1.0f);
         model = glm::translate(model, vec3(2.72f, 5.1f, 1.0f));
         model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
         setMatrices(shader);
         fenceMesh->render();
@@ -288,7 +282,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = mat4(1.0f);
         model = glm::translate(model, vec3(-2.67f, 5.1f, 1.0f));
         model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
         setMatrices(shader);
         fenceMesh->render();
@@ -303,7 +296,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = mat4(1.0f);
         model = glm::translate(model, vec3(-0.40f, 5.14f, drivingDistance * 0.25f * cos(vehicleAngle)));
         model = glm::rotate(model, glm::radians(87.0f), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
         setMatrices(shader);
         yellowCarMesh->render();
@@ -312,7 +304,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = mat4(1.0f);
         model = glm::translate(model, vec3(0.45f, 5.14f, drivingDistance * 0.35f * sin(vehicleAngle)));
         model = glm::rotate(model, glm::radians(-93.0f), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, vec3(0.15f, 0.15f, 0.15f));
         setMatrices(shader);
         redCarMesh->render();
@@ -326,7 +317,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = mat4(1.0f);
         model = glm::translate(model, vec3(-1.25f, 5.8f, 1.2f));
         model = glm::rotate(model, glm::radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
         setMatrices(shader);
         lamp_postMesh->render();
@@ -334,7 +324,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = mat4(1.0f);
         model = glm::translate(model, vec3(1.3f, 5.8f, -0.75f));
         model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
         setMatrices(shader);
         lamp_postMesh->render();
@@ -342,7 +331,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = mat4(1.0f);
         model = glm::translate(model, vec3(1.1f, 5.8f, 3.0f));
         model = glm::rotate(model, glm::radians(-90.0f), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
         setMatrices(shader);
         lamp_postMesh->render();
@@ -428,7 +416,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = mat4(1.0f);
         model = glm::translate(model, vec3(5.0f * sin(vehicleAngle), 8.0f, 2.0f * cos(vehicleAngle)));
         model = glm::rotate(model, glm::radians(87.0f * cos(vehicleAngle)), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(0.0f), vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
 
         // Set The Diffuse | Specular | Shininess Uniform Data in the Noise Shader
@@ -993,7 +980,6 @@ void SceneBasic_Uniform::setupShadowVolumes()
     //Load texture/s
     glActiveTexture(GL_TEXTURE2);
     modelTex = Texture::loadTexture("media/nice69-32x.png");
-    dsModelTex = Texture::loadTexture("media/nice69-32x.png");
 
     updateLight();
 
@@ -1003,6 +989,7 @@ void SceneBasic_Uniform::setupShadowVolumes()
     compShader.use();                           // Activate The Shadow Volume Composition Shader
     compShader.setUniform("DiffSpecTex", 0);    // Assign Loaded Texture ID
 }
+
 
 
 

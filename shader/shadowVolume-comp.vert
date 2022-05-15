@@ -8,8 +8,6 @@ out vec3 Position;  // Outputs Current Position
 out vec3 Normal;    // Outputs Normal
 
 
-// Imports The Model View Matrix
-// Translation, Rotation, Scale
 uniform mat4 ModelViewMatrix;   // Model View Matrix
 uniform mat3 NormalMatrix;      // Normal Matrix
 uniform mat4 ProjMatrix;        // Projection Matrix
