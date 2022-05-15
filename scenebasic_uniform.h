@@ -33,7 +33,7 @@ using namespace irrklang;
 class SceneBasic_Uniform : public Scene
 {
 private:
-    GLSLProgram renderShader, volumeShader, compShader, skyShader, smokeShader, noiseShader;
+    GLSLProgram renderShader, volumeShader, compShader, skyShader, smokeShader;
     GLuint colorDepthFBO, fsQuad, quad;
     GLuint modelTex, dsModelTex;
 
@@ -45,16 +45,16 @@ private:
     GLuint feedback[2];
     GLuint drawBuf;
 
-
     int nParticles;                         // Number of Particles
     int shadowMapWidth, shadowMapHeight;    // Shadow Volume Data
+    int shaderSwitch = 0;
 
 
     glm::mat4 lightPV, shadowBias;
     glm::vec4 lightPos;                                             // Position of the Light
 
 
-    float camAngle, tPrev, time, deltaT, rotSpeed;                     // Used to reclculate the camAngle of the lighting, time it takes, and how fast the animation plays
+    float camAngle, tPrev, time, deltaT, rotSpeed;                  // Used to reclculate the camAngle of the lighting, time it takes, and how fast the animation plays
     float vehicleAngle, vehicleSpeed;                               // Used for calculating the camAngle the moves & how fast the vehicle animation plays
     float particleLifetime;                                         // Length of time in which particles stay alive
     float lightPosX = 0.5f, lightPosY = 1.5f, lightPosZ = 4.5f;     // Values to alter the position of the global light (Used in the GUI)
@@ -91,7 +91,6 @@ private:
     void setMatrices(GLSLProgram &);
     void setSkyboxMatrices(GLSLProgram &);
     void setParticleMatrices(GLSLProgram &);
-    void setNoiseMatrices(GLSLProgram &);
 
 
     // Compile, setup buffer data, and draw the scene methods
@@ -109,7 +108,6 @@ private:
     void setupParticles();
     void setupSkybox();
     void setupShadowVolumes();
-    void setupNoise();
 
 #pragma endregion
 

@@ -45,10 +45,11 @@ void emitEdgeQuad( vec3 a, vec3 b )
 }
 
 
-
 void main()
 {
-    // If the main triangle faces the light, check each adjacent triangle | If an adjacent triangle does not face the light | Output a sihlouette edge quad for the corresponding edge.
+    // If the main triangle faces the light, check each adjacent triangle 
+    // If an adjacent triangle does not face the light 
+    // Output a sihlouette edge quad for the corresponding edge.
     if( facesLight(VPosition[0], VPosition[2], VPosition[4]) ) 
     {
         if(!facesLight(VPosition[0],VPosition[1],VPosition[2])) 
@@ -61,3 +62,5 @@ void main()
           emitEdgeQuad(VPosition[4],VPosition[0]);
     }
 }
+
+

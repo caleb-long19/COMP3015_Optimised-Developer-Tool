@@ -54,9 +54,6 @@
     <Filter Include="shaders\Skybox">
       <UniqueIdentifier>{41cd5fc3-5de1-4db5-8baf-db1eb8edcbae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="shaders\Noise">
-      <UniqueIdentifier>{3a6b02a7-8356-4074-bfaf-a0d6149a5631}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -183,12 +180,6 @@
     </None>
     <None Include="shader\smokeParticles.vert">
       <Filter>shaders\Particles</Filter>
-    </None>
-    <None Include="shader\decayNoise.frag">
-      <Filter>shaders\Noise</Filter>
-    </None>
-    <None Include="shader\decayNoise.vert">
-      <Filter>shaders\Noise</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

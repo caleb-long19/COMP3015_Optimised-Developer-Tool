@@ -24,7 +24,6 @@ ISound* carAmbience;
 float forestVolume = 0.05f, carVolume = 0.1f;
 bool toggleCurrentAmbience = true;
 
-
 // Model Manipulation (Turn off rendering & alter positions)
 float drivingDistance = 6.0f;
 bool disablePlane = true;
@@ -35,6 +34,12 @@ vec3 color;
 
 int main(int argc, char* argv[])
 {
+    std::cout << "Input Your Desired Winodw Resolution: " << std::endl;
+    std::cout << "Window Width: ";
+    std::cin >> windowWidth;
+    std::cout << "Window Height: ";
+    std::cin >> windowHeight;
+
     //Run entire application
     SceneRunner runner("The Town Of Wakewood");
 
@@ -97,7 +102,6 @@ void SceneBasic_Uniform::initScene()
     camAngle = 0.0f;
 
     // Setup Particles, Skybox/Cubemap & Geometry & Shadows
-    setupNoise();
     setupParticles();
     setupSkybox();
     setupShadowVolumes();
@@ -146,11 +150,6 @@ void SceneBasic_Uniform::compile()
 
         smokeShader.link();
         smokeShader.use();
-
-        // Locate & Link Noise Shader
-        noiseShader.compileShader("shader/decayNoise.vert");
-        noiseShader.compileShader("shader/decayNoise.frag");
-        noiseShader.link();
 
     }
     catch (GLSLProgramException& e) {
@@ -214,19 +213,18 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    // Bind the textures and set the geometry shader uniform data
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, modelTex);
+    color = vec3(1.0f);
+    shader.setUniform("Ka", color * 0.1f);
+    shader.setUniform("Kd", color);
+    shader.setUniform("Ks", vec3(0.9f));
+    shader.setUniform("Shininess", 150.0f);
+    shader.setUniform("shaderType", shaderSwitch);
+    
 
     #pragma region Load All Models - Assign Positions, Rotations and Scale
-
-    // Bind the textures and set the geometry shader uniform data
-    if (!onlyShadowCasters) {
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, modelTex);
-        color = vec3(1.0f);
-        shader.setUniform("Ka", color * 0.1f);
-        shader.setUniform("Kd", color);
-        shader.setUniform("Ks", vec3(0.9f));
-        shader.setUniform("Shininess", 150.0f);
-    }
 
     #pragma region House Model Rendering & Model Data
 
@@ -313,7 +311,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
     #pragma region Lamp Models Rendering & Model Data
 
-        // Alter the Poisition / Rotation / Size of the Lamp Post Meshes, set matrices/model data & render mesh
         model = mat4(1.0f);
         model = glm::translate(model, vec3(-1.25f, 5.8f, 1.2f));
         model = glm::rotate(model, glm::radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
@@ -334,6 +331,18 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         model = glm::scale(model, vec3(0.2f, 0.2f, 0.15f));
         setMatrices(shader);
         lamp_postMesh->render();
+
+        if (disablePlane)
+        {
+            model = mat4(1.0f);
+            model = glm::translate(model, vec3(5.0f * sin(vehicleAngle), 8.0f, 2.0f * cos(vehicleAngle)));
+            model = glm::rotate(model, glm::radians(87.0f * cos(vehicleAngle)), vec3(0.0f, 1.0f, 0.0f));
+            model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
+
+            // Set The Diffuse | Specular | Shininess Uniform Data in the Noise Shader
+            setMatrices(shader);
+            planeDecay->render();
+        }
 
     #pragma endregion
 
@@ -405,32 +414,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         treeMesh->render();
 
     #pragma endregion
-
-
-    #pragma region Plane Model Rendering & Model Data
-
-    if (disablePlane)
-    {
-        // Alter the Poisition / Rotation / Size of the Plane Mesh, Set Matrices/Model Data & Render Mesh
-        noiseShader.use();
-        model = mat4(1.0f);
-        model = glm::translate(model, vec3(5.0f * sin(vehicleAngle), 8.0f, 2.0f * cos(vehicleAngle)));
-        model = glm::rotate(model, glm::radians(87.0f * cos(vehicleAngle)), vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
-
-        // Set The Diffuse | Specular | Shininess Uniform Data in the Noise Shader
-        setNoiseMatrices(noiseShader);
-        noiseShader.setUniform("Material.Kd", 225.0f, 173.0f, 1.0f);
-        noiseShader.setUniform("Material.Ks", vec3(1.0f));
-        noiseShader.setUniform("Material.Shininess", 100.0f);
-        planeDecay->render();
-
-        // Return When All GL Commands are complete
-        glFinish();
-    }
-
-    #pragma endregion
-
 
     #pragma endregion
 
@@ -571,6 +554,40 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             ImGui::Dummy(ImVec2(0.0f, 10.0f));                          // Create "gap" in gui to make a cleaner appearance
 
 
+            ImGui::Text("Switch Shader Type");
+
+            if (ImGui::Button("Phong Shading"))
+            {
+                if (shaderSwitch != 0)
+                {
+                    shaderSwitch = 0;
+                }
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Toon Shading"))
+            {
+                if (shaderSwitch != 1)
+                {
+                    shaderSwitch = 1;
+                }
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Decay Shading"))
+            {
+                if (shaderSwitch != 2)
+                {
+                    shaderSwitch = 2;
+                }
+            }
+
+            ImGui::Dummy(ImVec2(0.0f, 5.0f));
+            ImGui::Dummy(ImVec2(0.0f, 5.0f));   // Creates a blank space
+            ImGui::Separator();                 // Creates a white line
+
             ImGui::Text("Model & Animation Controller");                                            // Section title
             ImGui::Checkbox("Toggle Plane", &disablePlane);                                         // Disable or Enable the animations in the scene
             ImGui::SliderFloat("Adjust All Animation Speeds", (float*)&rotSpeed, 0.1f, 1.0f);       // Slider that adjusts the speed of the animations in-game
@@ -588,14 +605,13 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             ImGui::SliderFloat("Global Light Position - Y", (float*)&lightPosY, 0.1, 25.0f);        // Slider that adjusts driving distance of the cars
             ImGui::SliderFloat("Global Light Position - Z", (float*)&lightPosZ, 0.1, 25.0f);        // Slider that adjusts driving distance of the cars
 
-
             ImGui::Dummy(ImVec2(0.0f, 5.0f));
             ImGui::Separator();
             ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
 
             ImGui::Text("House Customization");                                 // Section title
-            ImGui::Checkbox("Cream House: Chimney", &creamHouseChimney);        // Disable White House Smoke
+            ImGui::Checkbox("White House: Chimney", &creamHouseChimney);        // Disable White House Smoke
             ImGui::Checkbox("Yellow House: Chimney", &yellowHouseChimney);      // Disable Yellowe House Smoke
             ImGui::Checkbox("Red House: Chimney", &redHouseChimney);            // Disable Red House Smoke
             ImGui::Checkbox("Blue House: Chimney", &blueHouseChimney);          // Disable Blue House Smoke
@@ -772,6 +788,7 @@ void SceneBasic_Uniform::setupFBO()
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, ambBuf);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, diffSpecTex, 0);
 
+    // Set up the draw buffers so that we can write to the colour attachments
     GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glDrawBuffers(2, drawBuffers);
 
@@ -984,32 +1001,20 @@ void SceneBasic_Uniform::setupShadowVolumes()
 
     updateLight();
 
-    renderShader.use();                 // Activate The Shadow Volume Render Shader
-    renderShader.setUniform("Tex", 2);  // Assign Loaded Texture ID
-
-    compShader.use();                           // Activate The Shadow Volume Composition Shader
-    compShader.setUniform("DiffSpecTex", 0);    // Assign Loaded Texture ID
-}
-
-
-
-
-void SceneBasic_Uniform::setupNoise() 
-{
-    noiseShader.use();
-
-    // Set Texture Uniorm For The Noise Shader
-    noiseShader.setUniform("NoiseTex", 5);
-
     // Bind The Generated Noise Texture
     GLuint noiseTex = NoiseTex::generate2DTex(20.0f);
     glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, noiseTex);
 
-    // Set Uniform Data For The Noise Shaders | Noise Threshholds For Discarding
-    noiseShader.setUniform("Light.Intensity", vec3(0.5f, 0.5f, 0.5f));
-    noiseShader.setUniform("LowThreshold", 0.45f); 
-    noiseShader.setUniform("HighThreshold", 0.65f);
+    renderShader.use();                                         // Activate The Shadow Volume Render Shader
+    renderShader.setUniform("Tex", 2);                          // Set Texture Uniorm For Rendering
+    renderShader.setUniform("NoiseTex", 5);                     // Set the randomly generated noise texture
+    renderShader.setUniform("LowThreshold", 0.45f);    // Low noise threshold
+    renderShader.setUniform("HighThreshold", 0.65f);  // High noise threshold
+    renderShader.setUniform("NoiseTex", 5);                     // Set Texture Uniorm For The Noise Shader
+
+    compShader.use();                           // Activate The Shadow Volume Composition Shader
+    compShader.setUniform("DiffSpecTex", 0);    // Assign Loaded Texture ID
 }
 
 #pragma endregion
@@ -1047,16 +1052,6 @@ void SceneBasic_Uniform::setParticleMatrices(GLSLProgram& particleShader)
     particleShader.setUniform("MV", mv);
 }
 
-
-// Set Matrices for the Noise
-void SceneBasic_Uniform::setNoiseMatrices(GLSLProgram& noiseShader)
-{
-    mat4 mv = view * model;
-    noiseShader.setUniform("ModelViewMatrix", mv);
-    noiseShader.setUniform("NormalMatrix",
-        glm::mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
-    noiseShader.setUniform("MVP", projection * mv);
-}
 
 #pragma endregion
 
