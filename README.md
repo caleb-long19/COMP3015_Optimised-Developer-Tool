@@ -123,7 +123,11 @@ A Graphical User Interface will be present on the left-hand side of the window.
 ### DOCUMENTATION
 
 #### How does the user interact with your executable? How do you open and control the software you wrote (exe file)?
-The Town of Wakewood can be downloaded [here](https://github.com/caleb-long19/COMP3015_Optimised-Developer-Tool/releases/tag/v1.0). Once downloaded, extract and open the folder. Double click "Project_Wakewood.exe" to open the application. The loading time of the application will vary based on your system's hardware. Once the program has loaded, you will be presented with a low-poly town. In the top left corner you will see a graphical user interface (GUI), developed using ImGUI. Use your mouse to interact with the GUI. Left click on the buttons or tick boxes to interact with them. Hold the left mouse button on the sliders and drag left/right to alter their values. Each button/slider has a title beside them, indicating what they do. Close the application by clicking the "X", located at the top right of the window, or press the "Exit Application" button on the GUI.
+The Town of Wakewood can be downloaded [here](https://github.com/caleb-long19/COMP3015_Optimised-Developer-Tool/releases/tag/v1.0). Once downloaded, extract and open the folder. Double click "Project_Wakewood.exe" to open the application. The loading time of the application will vary based on your system's hardware. Once the program has loaded, you will need to input the window size you wish the application to be rendered in. 
+
+Afterwards, you will be presented with a low-poly town. 
+
+In the top left corner you will see a graphical user interface (GUI), developed using ImGUI. Use your mouse to interact with the GUI. Left click on the buttons or tick boxes to interact with them. Hold the left mouse button on the sliders and drag left/right to alter their values. Each button/slider has a title beside them, indicating what they do. Close the application by clicking the "X", located at the top right of the window, or press the "Exit Application" button on the GUI.
 
 #### How does the program code work? How do the classes and functions fit together and who does what?
 The Town of Wakewood utilizes four primary techniques. Geometry Shading, Shadow Volumes, Particles & Animation, and Noise (Disintegration). A total of 8 GLSL Shaders were created during development to implement these techniques, these shaders are as follows:
@@ -187,7 +191,7 @@ Lastly, we have the geometry shader and shadow volumes. These shadow volumes pro
 
 Firstly, we need to set up the framebuffer objects, a framebuffer is a combination of multiple buffers including, colour, depth, and stencil. Our framebuffer includes the depth buffer and two colour buffers (ambient, and diffuse + specular). Once the framebuffer has been created, we can return to the set up. A VAO (Vertex Array Object) for the quads is made, we then load the texture/s our models are going to use, and activate the shadow rendering and composition shaders.
 
-The primary use of the geometry shader is to produce the shadow volumes and display textures, adjacency information of the model's triangles are sent to the geometry shader. Adjacency information is used to check those triangles for a silhouette edge (check for triangle facing the light & check the adjacent triangles). A polygon is then created for the shadow volume. 
+The primary use of the geometry shader is to produce the shadow volumes/boundaries, adjacency information of the model's triangles are sent to the geometry shader. Adjacency information is used to check those triangles for a silhouette edge (check for triangle facing the light & check the adjacent triangles). A polygon is then created for the shadow volume. 
 
 <kbd>![Shadow Geometry Code](Screenshots/Code_geometryShader.png?)</kbd>. 
 
@@ -235,7 +239,10 @@ The tools visual appearance mimics that of a residential area in Cities: Skyline
 
 To begin development of the tool, my previous project [COMP3015: Coursework 1](https://github.com/caleb-long19/COMP3015-Custom-Shader-Project-OpenGL) was used as a base. All aspects of the previous project [COMP3015: Coursework 1](https://github.com/caleb-long19/COMP3015-Custom-Shader-Project-OpenGL) were removed by the end of development, besides two features, the ImGUI library, which provides an easy to use GUI which manipulates the scene, and the irrKlang library, which is used to play audio samples during runtime. Everything else in this project is completely unique in comparison. The Town of Wakewood was originally going to contain only two techniques, geometry and shadow volumes. Due to the extra time after they were implemented, a decision was made to implement particles & animation. Smoke particles were added to chimney's, making it seem that the houses were being lived in. Lastly, the noise disintegration technique was added, simply because spare time was available and to increase the quality of this portfolio piece.
 
-To make the tool unique for itself and from Cities: Skylines, two features were implemented. The first allows the user to alter the speed of the vehicles/traffic separate from the game's speed. The second feature allows the user to change the distance the vehicles travel on the road. These features combined with the four techniques, creates both a visually pleasing and dynamic tool that serves as a professional portfolio piece.
+To make the tool unique for itself and from Cities: Skylines, two features were implemented. The first allows the user to alter the speed of the vehicles/traffic separate from the game's speed. The second feature allows the user to change the distance the vehicles travel on the road. 
+
+As well as providing a GUI which allows the user to manipulate the scene in multiple ways, creating a dynamic and unique experience for each user. 
+These features combined with the four techniques, creates both a visually pleasing and dynamic tool that serves as a professional portfolio piece.
 
 The Town of Wakewood uses a GUI which manipulates the scene in real time, similar to the previously mentioned, Cities: Skylines. The user can switch shaders with the click of a button. Animations Speeds and coordinates can be altered with sliders. Checkboxes are used to trigger booleans which turn the smoke particles on or off. Sliders are used again to change the volume.
 
