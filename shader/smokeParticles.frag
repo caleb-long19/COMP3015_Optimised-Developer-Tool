@@ -2,7 +2,7 @@
 
 
 // Out To Transform Feedback Buffers (first pass)
-in vec3 Position;
+in vec3 Position;    // Retrieve vertex position from smokeParticles.vert
 
 
 in float Transp;    // Transposition

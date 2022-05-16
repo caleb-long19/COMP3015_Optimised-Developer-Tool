@@ -1,16 +1,16 @@
 #version 460
 
-in vec3 Position;
-in vec3 Normal;
-in vec2 TexCoord;
+in vec3 Position;    // Retrieve vertex position from render.vert
+in vec3 Normal;      // Retrieve normal from render.vert
+in vec2 TexCoord;    // Retrieve vertex position from render.vert
 
-uniform vec4 LightPosition;
+uniform vec4 LightPosition;     // Position of the light in the scene
 uniform vec3 LightIntensity;
 
 
-uniform sampler2D Tex;      // Active Texture
-uniform sampler2D NoiseTex;
-uniform int shaderType;
+uniform sampler2D Tex;      // Geometry Texture
+uniform sampler2D NoiseTex; // Noise Texture
+uniform int shaderType;     // Shader Type Value
 
 
 uniform vec3 Kd;            // Diffuse Reflectivity

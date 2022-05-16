@@ -49,6 +49,7 @@ const vec2 texCoords[] = vec2[](vec2(0,0), vec2(1,0), vec2(1,1), vec2(0,0), vec2
 
 vec3 randomInitialVelocity() 
 {
+    // Calculates random velocity information for the smoke particles
     float theta = mix(0.0, PI / 1.5, texelFetch(RandomTex, 3 * gl_VertexID, 0).r);
     float phi = mix(0.0, 2.0 * PI, texelFetch(RandomTex, 3 * gl_VertexID + 1, 0).r);
     float velocity = mix(0.1, 0.2, texelFetch(RandomTex, 3 * gl_VertexID + 2, 0).r);

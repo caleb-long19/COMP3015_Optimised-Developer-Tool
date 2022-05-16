@@ -19,22 +19,28 @@ ISoundEngine* backgroundSFX = createIrrKlangDevice();
 ISound* forestAmbience;
 ISound* carAmbience;
 
+
 // Store the volume level of the ambient sounds
 float forestVolume = 0.05f, carVolume = 0.1f;
+
 
 // bool to toggle audio
 bool toggleCurrentAmbience = true;
 
+
 // Model Manipulation (Turn off rendering & alter positions)
 float drivingDistance = 6.0f;
 bool disablePlane = true;
+
+
+// Bools for house particles
 bool creamHouseChimney = true, redHouseChimney = true, yellowHouseChimney = true, blueHouseChimney = true;
 vec3 color;
 
 
 int main(int argc, char* argv[])
 {
-    std::cout << "Input Your Desired Winodw Resolution: " << std::endl;
+    std::cout << "Input Your Desired Window Resolution: " << std::endl;
     std::cout << "Window Width: ";
     std::cin >> windowWidth;
     std::cout << "Window Height: ";
@@ -62,7 +68,7 @@ SceneBasic_Uniform::SceneBasic_Uniform() :
     rotSpeed(0.5f), 
     vehicleSpeed(0.5f),
 
-    // Particles
+    // Smoke Particles
     nParticles(1500), 
     particleLifetime(5.0f),
     emitterPos(0.0f), 
@@ -71,7 +77,7 @@ SceneBasic_Uniform::SceneBasic_Uniform() :
     //Skybox
     sky(100.0f)
 {
-    // Load The Town & House Meshes
+    // Load The Town & House Meshes (Loaded with adjacency due to the geometry shader required triangle information)
     townMesh = ObjMesh::loadWithAdjacency("media/models/Street_Model.obj");
     whiteHouse = ObjMesh::loadWithAdjacency("media/models/House_Model_Normal.obj");
     yellowHouse = ObjMesh::loadWithAdjacency("media/models/House_Model_Yellow.obj");
@@ -90,6 +96,8 @@ SceneBasic_Uniform::SceneBasic_Uniform() :
 }
 
 
+
+#pragma region Scene Initiation & Shader Compiling
 
 void SceneBasic_Uniform::initScene()
 {
@@ -165,6 +173,11 @@ void SceneBasic_Uniform::compile()
 }
 
 
+#pragma endregion
+
+
+
+#pragma region Update Camera, Lighting, and Vehicle Angles (Animation)
 
 void SceneBasic_Uniform::update(float t)
 {
@@ -191,15 +204,21 @@ void SceneBasic_Uniform::update(float t)
 void SceneBasic_Uniform::updateLight()
 {
     // Change the position of the directional light continuously
-    // lightPos = vec4(150.0f * vec3(cosf(camAngle) * 0.5f, 1.5f, sinf(camAngle) * 4.5f), 1.0f);  // World coords
     lightPos = vec4(150.0f * vec3(cosf(camAngle) * lightPosX, lightPosY, sinf(camAngle) * lightPosZ), 1.0f);  // World coords
+    // lightPos = vec4(150.0f * vec3(cosf(camAngle) * 0.5f, 1.5f, sinf(camAngle) * 4.5f), 1.0f);  // World coords
 
 }
 
+#pragma endregion
 
+
+
+#pragma region Rendering and Drawing Methods
 
 void SceneBasic_Uniform::render()
 {
+
+    // Run Pass Methods for Geometry Shading & Shadow Volumes
     pass1();
     glFlush();
     pass2();
@@ -317,6 +336,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
     #pragma region Lamp Models Rendering & Model Data
 
+        // Alter the Poisition / Rotation / Size of the Lamp Post Meshes, set matrices/model data & render mesh
         model = mat4(1.0f);
         model = glm::translate(model, vec3(-1.25f, 5.8f, 1.2f));
         model = glm::rotate(model, glm::radians(90.0f), vec3(0.0f, 1.0f, 0.0f));
@@ -338,14 +358,16 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         setMatrices(shader);
         lamp_postMesh->render();
 
+        // Don't render is bool is true
         if (disablePlane)
         {
+            // Alter the Poisition / Rotation / Size of the Plane Mesh, set matrices/model data & render mesh
             model = mat4(1.0f);
             model = glm::translate(model, vec3(5.0f * sin(vehicleAngle), 8.0f, 2.0f * cos(vehicleAngle)));
             model = glm::rotate(model, glm::radians(87.0f * cos(vehicleAngle)), vec3(0.0f, 1.0f, 0.0f));
             model = glm::scale(model, vec3(0.35f, 0.35f, 0.35f));
 
-            // Set The Diffuse | Specular | Shininess Uniform Data in the Noise Shader
+            // Set The Diffuse | Specular | Shininess Uniform Data in the Render Shader
             setMatrices(shader);
             planeDecay->render();
         }
@@ -439,14 +461,16 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
         if (!onlyShadowCasters)
         {
-            // Update pass
+            // Animate smoke particles if true
             if (animating())
             {
+                // Activate smoke shader and begin first pass | Set particle timer
                 smokeShader.use();
                 smokeShader.setUniform("Pass", 1);
                 smokeShader.setUniform("Time", time);
                 smokeShader.setUniform("DeltaT", deltaT);
 
+                // Bind particle feedback buffers & VAO
                 glEnable(GL_RASTERIZER_DISCARD);
                 glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, feedback[drawBuf]);
                 glBeginTransformFeedback(GL_POINTS);
@@ -462,13 +486,15 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
                 smokeShader.setUniform("Pass", 2);
             }
 
-            // Smoke Particles for the white house chimney
+            // Smoke Particles for the white house chimney | Alter the Poisition, set matrices/model data & render particles
             if (creamHouseChimney)
             {
                 model = mat4(1.0f);
                 model = glm::translate(model, vec3(3.5f, 5.9f, 2.35f));
                 smokeShader.use();
                 setParticleMatrices(smokeShader);
+
+                // Disable depth mask to draw particles, then activate depth mask
                 glDepthMask(GL_FALSE);
                 glBindVertexArray(particleArray[drawBuf]);
                 glVertexAttribDivisor(0, 1);
@@ -488,6 +514,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
                 model = glm::translate(model, vec3(3.7f, 5.9f, -0.3f));
                 smokeShader.use();
                 setParticleMatrices(smokeShader);
+
                 glDepthMask(GL_FALSE);
                 glBindVertexArray(particleArray[drawBuf]);
                 glVertexAttribDivisor(0, 1);
@@ -507,6 +534,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
                 model = glm::translate(model, vec3(-3.53f, 5.9f, -0.60f));
                 smokeShader.use();
                 setParticleMatrices(smokeShader);
+
                 glDepthMask(GL_FALSE);
                 glBindVertexArray(particleArray[drawBuf]);
                 glVertexAttribDivisor(0, 1);
@@ -526,6 +554,8 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
                 model = glm::translate(model, vec3(-3.53f, 5.9f, 2.48f));
                 smokeShader.use();
                 setParticleMatrices(smokeShader);
+
+
                 glDepthMask(GL_FALSE);
                 glBindVertexArray(particleArray[drawBuf]);
                 glVertexAttribDivisor(0, 1);
@@ -674,6 +704,7 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
         #pragma endregion
 }
 
+#pragma endregion
 
 
 
@@ -681,6 +712,8 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
 
 void SceneBasic_Uniform::initBuffers() 
 {
+    // Create multiple buffers for the position, velocity, and age of the particles
+
     // Generate the buffers
     glGenBuffers(2, posBuf);    // position buffers
     glGenBuffers(2, velBuf);    // velocity buffers
@@ -688,17 +721,20 @@ void SceneBasic_Uniform::initBuffers()
 
     // Allocate space for all buffers
     int size = nParticles * 3 * sizeof(GLfloat);
-    glBindBuffer(GL_ARRAY_BUFFER, posBuf[0]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, posBuf[0]); // Buffer A
     glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
-    glBindBuffer(GL_ARRAY_BUFFER, posBuf[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, posBuf[1]); // Buffer B
     glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
-    glBindBuffer(GL_ARRAY_BUFFER, velBuf[0]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, velBuf[0]); // Buffer A
     glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
-    glBindBuffer(GL_ARRAY_BUFFER, velBuf[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, velBuf[1]); // Buffer B
     glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_COPY);
-    glBindBuffer(GL_ARRAY_BUFFER, age[0]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, age[0]);    // Buffer A
     glBufferData(GL_ARRAY_BUFFER, nParticles * sizeof(GLfloat), 0, GL_DYNAMIC_COPY);
-    glBindBuffer(GL_ARRAY_BUFFER, age[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, age[1]);    // Buffer B
     glBufferData(GL_ARRAY_BUFFER, nParticles * sizeof(GLfloat), 0, GL_DYNAMIC_COPY);
 
     // Fill the first age buffer
@@ -713,6 +749,8 @@ void SceneBasic_Uniform::initBuffers()
     // Create vertex arrays for each set of buffers
     glGenVertexArrays(2, particleArray);
 
+
+    // Buffers "A" will be assigned to the corresponding vertex attributes
     // Set up particle array 0
     glBindVertexArray(particleArray[0]);
     glBindBuffer(GL_ARRAY_BUFFER, posBuf[0]);
@@ -727,6 +765,8 @@ void SceneBasic_Uniform::initBuffers()
     glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(2);
 
+    // Buffers "B" will be assigned to the corresponding vertex attributes
+    // the handles will be accessed by the array called particleArray
     // Set up particle array 1
     glBindVertexArray(particleArray[1]);
     glBindBuffer(GL_ARRAY_BUFFER, posBuf[1]);
@@ -742,6 +782,8 @@ void SceneBasic_Uniform::initBuffers()
     glEnableVertexAttribArray(2);
 
     glBindVertexArray(0);
+
+    // Define the buffers to receive output data from the vertex shader by binding the buffers to the indexed binding points
 
     // Setup the feedback objects
     glGenTransformFeedbacks(2, feedback);
@@ -762,9 +804,10 @@ void SceneBasic_Uniform::initBuffers()
 }
 
 
-
 void SceneBasic_Uniform::setupFBO()
 {
+    // Set up the depth and colour attachments buffers for the geometry shading and shadow volumes
+
     // The depth buffer
     GLuint depthBuf;
     glGenRenderbuffers(1, &depthBuf);
@@ -777,7 +820,7 @@ void SceneBasic_Uniform::setupFBO()
     glBindRenderbuffer(GL_RENDERBUFFER, ambBuf);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, width, height);
 
-    // The diffuse + specular component
+    // The diffuse + specular component (used for texturing)
     glActiveTexture(GL_TEXTURE0);
     GLuint diffSpecTex;
     glGenTextures(1, &diffSpecTex);
@@ -913,7 +956,7 @@ void SceneBasic_Uniform::pass3() {
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     glBindVertexArray(0);
 
-    // Restore some state
+    // Restore a state
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
 }
@@ -974,6 +1017,7 @@ void SceneBasic_Uniform::setupShadowVolumes()
 {
     setupFBO();
 
+    // Activate the render shader and set the light intensity values for the lighting model (shadowVolume-render.frag)
     renderShader.use();
     renderShader.setUniform("LightIntensity", vec3(1.0f));
 
@@ -985,12 +1029,13 @@ void SceneBasic_Uniform::setupShadowVolumes()
        0.0f, -1.0f, 1.0f, 0.0f 
     };
 
+    // create buffer handle and bind to vertices
     GLuint bufHandle;
     glGenBuffers(1, &bufHandle);
     glBindBuffer(GL_ARRAY_BUFFER, bufHandle);
     glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(GLfloat), verts, GL_STATIC_DRAW);
 
-    // Set up the vertex array object
+    // Set up the vertex array object to store quad data
     glGenVertexArrays(1, &fsQuad);
     glBindVertexArray(fsQuad);
 
@@ -1004,6 +1049,7 @@ void SceneBasic_Uniform::setupShadowVolumes()
     glActiveTexture(GL_TEXTURE2);
     modelTex = Texture::loadTexture("media/nice69-32x.png");
 
+    // Update the position of the lighting
     updateLight();
 
     // Bind The Generated Noise Texture
@@ -1028,7 +1074,7 @@ void SceneBasic_Uniform::setupShadowVolumes()
 
 #pragma region Set Matrices Methods
 
-// Set Matrices for the geometry/shadow shaders
+// Set Matrices for the geometry/shadow shaders (Contains noise values!)
 void SceneBasic_Uniform::setMatrices(GLSLProgram &shader)
 {
     mat4 mv = view * model;
@@ -1077,6 +1123,7 @@ void SceneBasic_Uniform::resize(int w, int h)
 
 void SceneBasic_Uniform::toggleAmbience()
 {
+    // Play audio if true, stop if false
     if (toggleCurrentAmbience == true) 
     {
         // Loop background Ambience

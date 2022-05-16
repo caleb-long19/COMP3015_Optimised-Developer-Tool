@@ -4,13 +4,10 @@
 layout(binding=1) uniform samplerCube SkyBoxTex;
 
 
-// Retrieve vertex position from skybox.vert
-in vec3 Vec;
-
+in vec3 Vec;    // Retrieve vertex position from skybox.vert
 
 
 layout( location = 0 ) out vec4 FragColor;
-
 
 
 void main() 
