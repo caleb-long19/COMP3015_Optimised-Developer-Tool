@@ -4,18 +4,22 @@
 The Town Of Wakewood
 
 ## PROJECT BRIEF
-This Optimised Developer Tool will be used to present varying OpenGL Techniques. These include, a Geometry Shader, Shadows, Noise, and Particles and Animation. This application will be used to showcase these elements in real time and allow you to understand the different concepts within OpenGL. 
+This Optimised Developer Tool will be used to present varying OpenGL Techniques. These include a Geometry Shader, Shadows, Noise, and Particles and Animation. This application will be used to showcase these elements in real time and allow you to understand the different concepts within OpenGL. 
 
 ### FEATURES
   * Dynamic Small Town Scene
   * Geometry Shading
   * Shadow Mapping/Volumes
   * Particle Effects & Animations
-  * Noise Decay
+  * Noise (Disintegration)
   * Custom HDR Skybox
   * Background SFX
   * Animated Models, Camera, and Lighting
 * ImGUI
+  * Switch Shader Type
+    * Toon Shading
+    * Phong Shading
+    * Phong Shading (Noise Disintegration)  
   * Model & Animation Controller
     * Toggle Plane Model On/Off 
     * Adjust Game/Animation Speed
@@ -41,13 +45,88 @@ This Optimised Developer Tool will be used to present varying OpenGL Techniques.
 --------------
 
 
+### INSTALLATION INSTRUCTIONS & USER MANUAL
+
+
+#### TUTORIAL & WALKTHROUGH VIDEO - CLICK ME!
+[![Tutorial Thumnbail](https://img.youtube.com/vi/sglTpRQdkmU/0.jpg)](https://www.youtube.com/watch?v=sglTpRQdkmU)
+
+
+#### How To Install & Use The Tool
+
+<kbd>![Release Location](Screenshots/Release_Location.png?)</kbd>
+Go to the Releases Page. This is located on the right-hand side of the GitHub Repository
+
+<kbd>![Release Download](Screenshots/Release_Download.png?)</kbd>
+Download the The Town Of Wakewood: Developer Tool - Verison "N"
+
+<kbd>![Extract .zip Folder](Screenshots/Extract_To_Folder.png?)</kbd>
+After Downloading the .zip file. Extract to any location you want. 
+
+<kbd>![Open Application](Screenshots/Exe_Location.png?)</kbd>
+Enter the folder and double-click the "Project_Wakewood.exe"
+
+<kbd>![Application Demo](Screenshots/Wakewood_Demo.png?)</kbd>
+The Window will load and you will be presented with a scene displaying a small town surrounded by a forest.
+
+A Graphical User Interface will be present on the left-hand side of the window.
+
+<kbd>![GUI](Screenshots/GUI_Example.png?)</kbd>
+
+* ImGUI
+  * Switch Shader Type
+    * Toon Shading
+    * Phong Shading
+    * Phong Shading (Noise Disintegration)  
+  * Model & Animation Controller
+    * Toggle Plane Model On/Off 
+    * Adjust Game/Animation Speed
+    * Adjust Distance Vehicles Travel
+    * Adjust Vehicle Moving Speed
+  * Lighting Controller
+    * Adjust Global Lighting on the X, Y, and Z Axis
+  * House Customization
+    * Toggle White House Model On/Off
+    * Toggle Yellow House Model On/Off
+    * Toggle Red House Model On/Off
+    * Toggle Blue House Model On/Off
+  * Volume Settings
+    * Adjust Forest Ambience SFX
+    * Adjust Car Ambience SFX
+    * Toggle Ambience On/Off
+  * Tool Customization
+    * Toggle Animation On/Off
+    * Exit Application
+    * View Performance
+
+
+--------------
+
+### SCREENSHOTS
+
+#### Morning In Wakewood
+<kbd>![Town of Wakewood - Morning](Screenshots/Town_of_Wakewood-Morning.png?)</kbd>
+
+#### Afternoon In The Town of Wakewood
+<kbd>![Town of Wakewood - Afternoon](Screenshots/Town_of_Wakewood-Afternoon.png?)</kbd>
+
+#### Getting Dark In Wakewood
+<kbd>![Town of Wakewood - Evening](Screenshots/Town_of_Wakewood-Evening.png?)</kbd>
+
+#### Flying Around Wakewood
+<kbd>![Town of Wakewood - Flying](Screenshots/Town_of_Wakewood-Plane.png?)</kbd>
+
+
+--------------
+
+
 ### DOCUMENTATION
 
 #### How does the user interact with your executable? How do you open and control the software you wrote (exe file)?
-The Town of Wakewood can be download [here](https://github.com/caleb-long19/COMP3015_Optimised-Developer-Tool/releases/tag/v1.0). Once downloaded, extract and open the folder. Double click "Project_Wakewood.exe" to open the application. The loading time of the application will vary based on your systems hardware. Once the program has loaded, you will be presented with a low-poly town. In the top left corner you will see a graphical user interface (GUI), developed using ImGUI. Use your mouse to interact with the GUI. Left click on the buttons or tick boxes to interact with them. Hold the left mouse button on the sliders and drag left/right to alter their values. Each button/slider has a title above them, indicating what they do. Close the application by clicking the "x", located at the top right of the window, or press the "Exit Application" button on the GUI.
+The Town of Wakewood can be downloaded [here](https://github.com/caleb-long19/COMP3015_Optimised-Developer-Tool/releases/tag/v1.0). Once downloaded, extract and open the folder. Double click "Project_Wakewood.exe" to open the application. The loading time of the application will vary based on your system's hardware. Once the program has loaded, you will be presented with a low-poly town. In the top left corner you will see a graphical user interface (GUI), developed using ImGUI. Use your mouse to interact with the GUI. Left click on the buttons or tick boxes to interact with them. Hold the left mouse button on the sliders and drag left/right to alter their values. Each button/slider has a title beside them, indicating what they do. Close the application by clicking the "X", located at the top right of the window, or press the "Exit Application" button on the GUI.
 
 #### How does the program code work? How do the classes and functions fit together and who does what?
-The Town of Wakewood utilizes four primary techniques. Geometry Shading, Shadow Volumes, Particles & Animation, and Noise. A total of 8 GLSL Shaders were created during development, these shaders are as follows:
+The Town of Wakewood utilizes four primary techniques. Geometry Shading, Shadow Volumes, Particles & Animation, and Noise (Disintegration). A total of 8 GLSL Shaders were created during development to implement these techniques, these shaders are as follows:
 
 * Geometry & Shadow Volume Shader
   * shadowVolume-comp.frag
@@ -68,7 +147,7 @@ Before discussing the shaders in further detail, context is required on where th
 
 The code sample above displays the previously discussed shaders being compiled and linked, by using the function of .use(). We can activate the shader. Once activated, we can send our data to our shaders, allowing them to use it for various calculations.
 
-After the compiler has linked all the shaders. We can begin to setup all the data that needs to be sent to the shaders. This information is sent via using the function of .setUniform("Name_In_Shader", value).
+After the compiler has linked all the shaders. We can begin to set up all the data that needs to be sent to the shaders. This information is set via using the function of .setUniform("Name_In_Shader", value).
 
 <kbd>![Uniform Code](Screenshots/Code_setupParticles.png?)</kbd>
 
@@ -82,13 +161,13 @@ The smokeParticle.vert is the most unique vertex shader used in the project. Con
 
 <kbd>![vertex Shader Code](Screenshots/Code_vertShaders.png?)</kbd>
 
-The screenshot above displays what all the other vertex shader code looks like. Uniforms from the scenebasic_uniform.cpp are calculated here, once all calculations are done in the main method, they sent to its fragment counterpart. Vertex commonly contains coordinate data for both positon and textures, and the Model View Projection Matrix. Model is used for an objects local position into world space, view for the world space to camera, and projection from the camera to the screen.
+The screenshot above displays what all the other vertex shader code looks like. Uniforms from the scenebasic_uniform.cpp are calculated here, once all calculations are done in the main method, they are sent to its fragment counterpart. Vertex commonly contains coordinate data for both position and textures, and the Model View Projection Matrix. Model is used for an object's local position into world space, view for the world space to camera, and projection from the camera to the screen.
 
 <kbd>![Model Code](Screenshots/Code_models.png?)</kbd>
 
 An example of manipulating the matrix data can be seen above. We reset our model data, and use the functions of translate, rotate, and scale for our model. Translate means the position of the object e.g. X, Y, Z Coordinates. Rotate is self explanitory, and scale means to increase or decrease the object size.
 
-Setting up the noise requires multiple steps, first we must set the noise texture and bind it. For an object to appear disintegrated, the discard keyword is used and combined with the noise effect, simulating the look of decay on the chosen model. Fragments of the noise are discared if the noise value is above or below a set threshhold. 
+Setting up the noise requires multiple steps, first we must set the noise texture and bind it. For an object to appear disintegrated, the discard keyword is used and combined with the noise effect, simulating the look of decay on the chosen model. Fragments of the noise are discarded if the noise value is above or below a set threshold. 
 
 <kbd>![Noise Setup Code](Screenshots/Code_setupNoise.png?)</kbd>
 
@@ -96,50 +175,53 @@ We generate a perfect noise texture that will bind to our models, and set the th
 
 <kbd>![Noise Fragment Code](Screenshots/Code_noiseFrag.png?)</kbd>
 
-The main method inside the render fragment shader takes in the noise texture, and texture coordinates into a noise vector. We then check the noise vector value by comparing it to our thresholds, discarding any fragments that meet the criteria. Once discared, we run the phong model shading method.
+The main method inside the render fragment shader takes in the noise texture, and texture coordinates into a noise vector. We then check the noise vector value by comparing it to our thresholds, discarding any fragments that meet the criteria. Once discarded, we run the phong model shading method.
 
 <kbd>![Noise Decay Effect](Screenshots/decayModels.png?)</kbd>
 
 Finally, our models can be rendered with the noise disintegration effect. 
 
-Lastly, we have the geometry and shadow volumes. These shadow volumes provide high quality rendered shadows for all of the models in the scene, making it visually pleasing. Shadow volumes requires boundaries, quads are formed by extending the edges of an object to produce a shadow effect, similar to real life shadows. Each triangle consist of 3 of these quads (Extending upon each edge and caps).
+Lastly, we have the geometry shader and shadow volumes. These shadow volumes provide high quality rendered shadows for all of the models in the scene, making it visually pleasing. Shadow volumes require boundaries, quads are formed by extending the edges of an object to produce a shadow effect, similar to real life shadows. Each triangle consists of 3 of these quads (Extending upon each edge and caps).
 
 <kbd>![Shadow Setup Code](Screenshots/Code_setupShadowVolumes.png?)</kbd>
 
-Firstly, we need to setup the framebuffer objects, a framebuffer is a combination of multiple buffers including, colour, depth, and stencil. Our framebuffer includes the depth buffer and two colour buffers (ambient, and diffuse + specular). Once the framebuffer has been created, we can return to the setup. A vao for the quads is made, we then load the texture/s our models are going to use, and activate the shadow rendering and composition shaders.
+Firstly, we need to set up the framebuffer objects, a framebuffer is a combination of multiple buffers including, colour, depth, and stencil. Our framebuffer includes the depth buffer and two colour buffers (ambient, and diffuse + specular). Once the framebuffer has been created, we can return to the set up. A VAO (Vertex Array Object) for the quads is made, we then load the texture/s our models are going to use, and activate the shadow rendering and composition shaders.
 
-The primary use of the geometry shader is to produce the shadow volumes and display textures, adjacency information of the models triangles are sent to the geometry shader. Adjacency information is used to check those triangles for a silhouette edge (triangle faces light & the triangle next to it is facing away). A polygon is then created for the shadow volume. 
+The primary use of the geometry shader is to produce the shadow volumes and display textures, adjacency information of the model's triangles are sent to the geometry shader. Adjacency information is used to check those triangles for a silhouette edge (check for triangle facing the light & check the adjacent triangles). A polygon is then created for the shadow volume. 
 
 <kbd>![Shadow Geometry Code](Screenshots/Code_geometryShader.png?)</kbd>. 
 
-Inside the geometry shader, we are calculating the quads that have formed from the object edges. After, we need to check the triangles and its neighbours, to see which is facing towards or away from the light, a sihlouette or shadow is produced on the triangles that are facing away from the light. 
+Inside the geometry shader, we are calculating the quads that have formed from the object edges. After, we need to check the triangles and its neighbours, to see which is facing towards or away from the light, a silhouette/shadow is produced on the triangles that are facing away from the light. 
 
 <kbd>![Pass 1 Code](Screenshots/Code_renderGeometry.png?)</kbd>. 
 
-For the geometry and shadows to be processed and rendered correctly, we must follow a 3 pass sytem. Pass 1 is used to render the geometry normally with phong shading, our ambient, and diffuse + specular components created earlier, are separated into individual buffers. Pass 2 generates the shadow volumes/casting objects with the help of the geometry shader. We setup the stencil test buffer so that the stencil test is always successful, front faces return an increment,, while back faces return a decrement. Pass 3 sets the stencil buffer, followed by combining the ambient, and diffuse + specular buffers, only if the stencil test succeeds. A full screen quad is then rendered onto the screen, finishing the process of shadow volumes.
+For the geometry and shadows to be processed and rendered correctly, we must follow a triple pass system. Pass 1 is used to render the geometry normally with phong shading; our ambient, and diffuse + specular components created earlier, are separated into individual buffers. Pass 2 generates the shadow volumes/casting objects with the help of the geometry shader. We set up the stencil test buffer so that the stencil test is always successful, front faces return an increment, while back faces return a decrement. Pass 3 sets the stencil buffer, followed by combining the ambient, and diffuse + specular buffers, only if the stencil test succeeds. A full screen quad is then rendered onto the screen, finishing the process of shadow volumes.
 
 <kbd>![Shading Code](Screenshots/codel_shadingModels.png?)</kbd>. 
 
-The phong and toon shading is calculated in the shadowVolume-render.vert file. Phong uses ambient, diffuse and specular lighting techniques, as well as taking in a reflective model and the direction to produce realistic surface shading. Toon Shading utilizes the 3 previously listed techniques. We lock a dot product (multiplication fo 2 vectors and outputs a float) for the specular to create a fixed number of values, simulating a cell shaded appearance.
+The phong and toon shading is calculated in the shadowVolume-render.vert file. Phong uses ambient, diffuse and specular lighting techniques, as well as taking in a reflective model and the direction, the phong model calculation is the clamped dot product of the light reflection and direction, to produce semi-realistic surface shading. Toon Shading utilizes the 3 previously listed techniques. We lock a dot product (multiplication of 2 vectors and output a float) for the specular to create a fixed number of values, simulating a cell shaded appearance.
 
-Two libraries were used during development, irrKlang, and ImGUI. irrKlang is a sound library that can be used to play audio clips. To use it, we must initialise the ISoundEngine. After, we can create ISound components. ISound allows us to use commands such as .play("insert location of sound file") and .volume("insert float value to determine volume level"). 
+Two libraries were used during development, irrKlang, and ImGUI. irrKlang is a sound library that can be used to play audio clips. To use it, we must initialise the ISoundEngine. Afterwards, we can create ISound components. ISound allows us to use commands such as .play("insert location of sound file") and .volume("insert float value to determine volume level"). 
 
 <kbd>![Sound Code 1](Screenshots/soundLibrary_part1.png?)</kbd>.
 
 <kbd>![Sound Code 2](Screenshots/soundLibrary_part2.png?)</kbd>.
 
-ImGUI provides an interface on the screen. Containing features such as buttons, sliders, checkboxes, etc. The project uses all 3 of the listed features. Sliders are used to alter adjust animation speeds, positional data, and the audio volume. ImGUI contains various .cpp files containing extensive code and calculations, we just need to call those methods into our own .cpp file and assign the correct data to them.
+ImGUI provides an interface on the screen. Containing features such as buttons, sliders, checkboxes, etc. The project uses all 3 of the listed features. Sliders are used to adjust animation speeds, positional data, and the audio volume. ImGUI contains various .cpp files containing extensive code and calculations, we just need to call those methods into our own .cpp file and assign the correct data to them.
 
 <kbd>![GUI Code](Screenshots/imGUI_Example.png?)</kbd>.
 
 The example above shows both slider & button code. To communicate with ImGUI, we use ImGUI::"Method Name". Our method name in this case is slider float. We assign our ambience volume float, and set a min/max value for it. The button is used to turn the ambience on/off. We check the current bool, and switch it based on its current state. 
 
+#### Software Engineering Issues
+During development, I was careful about my coding practices. The project contains many instances of good coding practices, commenting and encapsulation is plentiful. The code was proofread to remove duplicate code, some could possibly remain. To my knowledge, the code present in the project is efficient and the program performs perfectly well. Various issues occurred during development. A common issue that was repeated, was sending incorrect data through the uniforms, causing the program to fail compiling, render a black screen, or glitch out entirely. GLSL code was very difficult to handle at times, having no particular way of debugging the code, solving errors could range from minutes to hours. 9 times out of 10, the error was caused by an incorrect value being used in a calculation, the rest being syntax errors. Reading the lab sheets and searching google provided most solutions to my problems.
+
 #### What makes your shader program special and how does it compare to similar things?
 The Town of Wakewood has been built to simulate a small, top-down, open world setting of a small town. The visual look of the tool is used to represent games such as Cities: Skylines (Developed by Colossal Order, 2015).
 
-In Cities: Skylines, you design large cities, containing residential, industrial, and business districts. AI is present in the game and move around the city without the input of the player. The car models present in The Town of Wakewood are animated, going back and forth on the road, simulating AI. 
+In Cities: Skylines, you design large cities, containing residential, industrial, and business districts. AI is present in the game and moves around the city without the input of the player. The car models present in The Town of Wakewood are animated, going back and forth on the road, simulating AI. 
 
-The tools visual apperance mimics that of a residential area in Cities: Skylines.
+The tools visual appearance mimics that of a residential area in Cities: Skylines.
 
 | Features             | Cities: Skylines    | Wakewood            |
 | -------------        | -------------       | -------------       |
@@ -149,78 +231,14 @@ The tools visual apperance mimics that of a residential area in Cities: Skylines
 | Vehicle AI           | :heavy_check_mark:  | :x:                 |
 | Music/SFX            | :heavy_check_mark:  | :heavy_check_mark:  |
 
-To begin development of the tool, my previous project [COMP3015: Coursework 1](https://github.com/caleb-long19/COMP3015-Custom-Shader-Project-OpenGL) was used as a base. All aspects of the previous project [COMP3015: Coursework 1](https://github.com/caleb-long19/COMP3015-Custom-Shader-Project-OpenGL) were removed by the end of development, besides two features, the ImGUI library, which provides an easy to use GUI which manipulates the scene, and the irrKlang library, which is used to play audio samples during runtime. Everything else in this project is completely unique in comparison. The Town of Wakewood was originally going to contain only two techinques, geometry and shadow volumes. Due to the extra time after they were implemented, a decision was made to implement particles & animation. Smoke particles were added to chimney's, making it seem that the houses were being lived in. Lastly, the noise decay technique was added, simply because spare time was available and to increase the quality of this portfolio piece.
+To begin development of the tool, my previous project [COMP3015: Coursework 1](https://github.com/caleb-long19/COMP3015-Custom-Shader-Project-OpenGL) was used as a base. All aspects of the previous project [COMP3015: Coursework 1](https://github.com/caleb-long19/COMP3015-Custom-Shader-Project-OpenGL) were removed by the end of development, besides two features, the ImGUI library, which provides an easy to use GUI which manipulates the scene, and the irrKlang library, which is used to play audio samples during runtime. Everything else in this project is completely unique in comparison. The Town of Wakewood was originally going to contain only two techniques, geometry and shadow volumes. Due to the extra time after they were implemented, a decision was made to implement particles & animation. Smoke particles were added to chimney's, making it seem that the houses were being lived in. Lastly, the noise disintegration technique was added, simply because spare time was available and to increase the quality of this portfolio piece.
 
-To make the tool unique from Cities: Skylines, two features were implemented. The first allows the user to alter the speed of the vehicles/traffic separate from the games speed. The second feature allows the user to change the distance the vehicles travel on the road. These features combined with the four techniques, creates both a visually pleasing and dynamic tool that serves as a professional portfolio piece.
+To make the tool unique for itself and from Cities: Skylines, two features were implemented. The first allows the user to alter the speed of the vehicles/traffic separate from the game's speed. The second feature allows the user to change the distance the vehicles travel on the road. These features combined with the four techniques, creates both a visually pleasing and dynamic tool that serves as a professional portfolio piece.
+
+The Town of Wakewood uses a GUI which manipulates the scene in real time, similar to the previously mentioned, Cities: Skylines. The user can switch shaders with the click of a button. Animations Speeds and coordinates can be altered with sliders. Checkboxes are used to trigger booleans which turn the smoke particles on or off. Sliders are used again to change the volume.
 
 #### THE TOWN OF WAKEWOOD: PRESENTATION - CLICK ME!
-[![Presentation Thumnbail](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=VIDEO_ID)
-
-
---------------
-
-
-### INSTALLATION INSTRUCTIONS & USER MANUAL
-
-#### How To Install & Use The Tool
-
-<kbd>![Release Location](Screenshots/Release_Location.png?)</kbd>
-Go to the Releases Page. This is located on the right-hand side of the GitHub Repository
-
-<kbd>![Release Download](Screenshots/Release_Download.png?)</kbd>
-Download the The Town Of Wakewood: Developer Tool - Verison "N"
-
-<kbd>![Extract .zip Folder](Screenshots/Extract_To_Folder.png?)</kbd>
-After Downloading the .zip file. Extract to any location you want. 
-
-<kbd>![Open Application](Screenshots/Exe_Location.png?)</kbd>
-Enter the folder and double-click the "Project_Wakewood.exe"
-
-<kbd>![Application Demo](Screenshots/Wakewood_Demo.png?)</kbd>
-The Window will load and you will be presented with a scene displaying a small town surrounded by a forest.
-
-A Graphical User Interface will be present on the left-hand side of the window.
-* Model & Animation Controller
-  * Toggle Plane Model On/Off 
-  * Adjust Game/Animation Speed
-  * Adjust Distance Vehicles Travel
-  * Adjust Vehicle Moving Speed
-* Lighting Controller
-  * Adjust Global Lighting on the X, Y, and Z Axis
-* House Customization
-  * Toggle White House Model On/Off
-  * Toggle Yellow House Model On/Off
-  * Toggle Red House Model On/Off
-  * Toggle Blue House Model On/Off
-* Volume Settings
-  * Adjust Forest Ambience SFX
-  * Adjust Car Ambience SFX
-  * Turn Music On/Off
-* Tool Customization
-  * Turn Animation On/Off
-  * Exit Application
-  * View Performance
-
-#### TUTORIAL & WALKTHROUGH VIDEO - CLICK ME!
-[![Tutorial Thumnbail](https://img.youtube.com/vi/sglTpRQdkmU/0.jpg)](https://www.youtube.com/watch?v=sglTpRQdkmU)
-
-
---------------
-
-
-### SCREENSHOTS
-
-#### Morning In Wakewood
-<kbd>![Town of Wakewood - Morning](Screenshots/Town_of_Wakewood-Morning.png?)</kbd>
-
-#### Afternoon In The Town of Wakewood
-<kbd>![Town of Wakewood - Afternoon](Screenshots/Town_of_Wakewood-Afternoon.png?)</kbd>
-
-#### Getting Dark In Wakewood
-<kbd>![Town of Wakewood - Evening](Screenshots/Town_of_Wakewood-Evening.png?)</kbd>
-
-#### Flying Around Wakewood
-<kbd>![Town of Wakewood - Flying](Screenshots/Town_of_Wakewood-Plane.png?)</kbd>
+[![Presentation Thumnbail](https://img.youtube.com/vi/H4-ZPZqtje0/0.jpg)](https://www.youtube.com/watch?v=H4-ZPZqtje0)
 
 
 --------------
