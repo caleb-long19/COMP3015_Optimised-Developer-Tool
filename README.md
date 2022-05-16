@@ -219,6 +219,8 @@ During development, I was careful about my coding practices. The project contain
 #### What makes your shader program special and how does it compare to similar things?
 The Town of Wakewood has been built to simulate a small, top-down, open world setting of a small town. The visual look of the tool is used to represent games such as Cities: Skylines (Developed by Colossal Order, 2015).
 
+<kbd>![Cities: Example](Screenshots/Cities_Reference.png?)</kbd>.
+
 In Cities: Skylines, you design large cities, containing residential, industrial, and business districts. AI is present in the game and moves around the city without the input of the player. The car models present in The Town of Wakewood are animated, going back and forth on the road, simulating AI. 
 
 The tools visual appearance mimics that of a residential area in Cities: Skylines.
