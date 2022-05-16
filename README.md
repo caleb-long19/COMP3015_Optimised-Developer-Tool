@@ -128,7 +128,7 @@ A Graphical User Interface will be present on the left-hand side of the window.
 ### DOCUMENTATION
 
 #### How does the user interact with your executable? How do you open and control the software you wrote (exe file)?
-The Town of Wakewood can be downloaded [here](https://github.com/caleb-long19/COMP3015_Optimised-Developer-Tool/releases/tag/v1.0). Once downloaded, extract and open the folder. Double click "Project_Wakewood.exe" to open the application. The loading time of the application will vary based on your system's hardware. Once the program has loaded, you will need to input the window size you wish the application to be rendered in. 
+The Town of Wakewood can be downloaded [here](https://github.com/caleb-long19/COMP3015_Optimised-Developer-Tool/releases). Once downloaded, extract and open the folder. Double click "Project_Wakewood.exe" to open the application. The loading time of the application will vary based on your system's hardware. Once the program has loaded, you will need to input the window size you wish the application to be rendered in. 
 
 Afterwards, you will be presented with a low-poly town. 
 
