@@ -45,13 +45,14 @@ private:
     GLuint feedback[2];
     GLuint drawBuf;
 
+
     int nParticles;                         // Number of Particles
     int shadowMapWidth, shadowMapHeight;    // Shadow Volume Data
     int shaderSwitch = 0;
 
 
-    glm::mat4 lightPV, shadowBias;
-    glm::vec4 lightPos;                                             // Position of the Light
+    glm::mat4 lightPV, shadowBias;  
+    glm::vec4 lightPos;             // Position of the Light
 
 
     float camAngle, tPrev, time, deltaT, rotSpeed;                  // Used to reclculate the camAngle of the lighting, time it takes, and how fast the animation plays
@@ -82,7 +83,6 @@ private:
 
 
     SkyBox sky;
-    Frustum lightFrustum;
 
 
 #pragma region Methods For SceneBasic_Uniform.cpp

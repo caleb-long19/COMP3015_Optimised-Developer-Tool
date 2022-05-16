@@ -1,7 +1,7 @@
 #version 460
 
 
-// Receives TrianglesF From The Imported Model/s
+// Receives Triangles From The Imported Model/s
 layout(triangles_adjacency) in;
 layout(triangle_strip, max_vertices = 18 ) out;
 
@@ -16,14 +16,14 @@ uniform mat4 ProjMatrix;     // Projection Matrix
 
 
 // Check if our triangle is facing towards the light
-bool facesLight( vec3 a, vec3 b, vec3 c )
+bool facesLight(vec3 a, vec3 b, vec3 c)
 {
-  vec3 n = cross( b - a, c - a );
+  vec3 normal = cross( b - a, c - a );
   vec3 da = LightPosition.xyz - a;
   vec3 db = LightPosition.xyz - b;
   vec3 dc = LightPosition.xyz - c;
 
-  return dot(n, da) > 0 || dot(n, db) > 0 || dot(n, dc) > 0; 
+  return dot(normal, da) > 0 || dot(normal, db) > 0 || dot(normal, dc) > 0; 
 }
 
 

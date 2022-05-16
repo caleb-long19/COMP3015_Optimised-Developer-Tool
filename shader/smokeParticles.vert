@@ -21,7 +21,8 @@ out float Transp;
 out vec2 TexCoord;
 
 
-// Imports The Values Of The Particle System
+// Imports The Values Of 
+// The Particle System
 uniform float Time;                      // Particle Simulation Time
 uniform float DeltaT;                    // Elapsed Time Between Frames
 uniform vec3 Accel;                      // Particle Acceleration
@@ -48,9 +49,9 @@ const vec2 texCoords[] = vec2[](vec2(0,0), vec2(1,0), vec2(1,1), vec2(0,0), vec2
 
 vec3 randomInitialVelocity() 
 {
-    float theta = mix(0.0, PI / 1.5, texelFetch(RandomTex, 3 * gl_VertexID, 0).r );
+    float theta = mix(0.0, PI / 1.5, texelFetch(RandomTex, 3 * gl_VertexID, 0).r);
     float phi = mix(0.0, 2.0 * PI, texelFetch(RandomTex, 3 * gl_VertexID + 1, 0).r);
-    float velocity = mix(0.1, 0.2, texelFetch(RandomTex, 3 * gl_VertexID + 2, 0).r );
+    float velocity = mix(0.1, 0.2, texelFetch(RandomTex, 3 * gl_VertexID + 2, 0).r);
 
     vec3 v = vec3(sin(theta) * cos(phi), cos(theta), sin(theta) * sin(phi));
     return normalize(EmitterBasis * v) * velocity;
@@ -89,6 +90,7 @@ void render()
         Transp = clamp(1.0 - agePct, 0, 1);
         posCam = (MV * vec4(VertexPosition,1)).xyz + offsets[gl_VertexID] * mix(MinParticleSize, MaxParticleSize, agePct);
     }
+
     TexCoord = texCoords[gl_VertexID];
 
     gl_Position = Proj * vec4(posCam,1);

@@ -29,6 +29,7 @@ uniform float HighThreshold;    // Store High Value For Discarding
 const int levels = 4;
 const float scaleFactor = 1.0 / levels;
 
+
 // Phong Shading Model
 void phongShade()
 {
@@ -45,16 +46,18 @@ void phongShade()
     DiffSpec = vec4(texColor.rgb * LightIntensity * (Kd * max( dot(specular, Normal), 0.0) + Ks * pow(max(dot(r,v), 0.0), Shininess)) ,1.0 );
 }
 
+
 void toonShade()
 {
     vec3 texColor = texture(Tex, TexCoord).rgb;
-    
 	vec3 specular = normalize(LightPosition.xyz - Position.xyz);
 
+    // Calculate The Ambient Lighting
 	Ambient = vec4(texColor.rgb * LightIntensity * Ka, 1.0);
 
 	float cosine = dot(specular, Normal);
 
+    // Calculate The Diffuse/Specular Lighting
 	DiffSpec = vec4(texColor * Kd * ceil(cosine * levels) * scaleFactor, 1);
 }
 

@@ -32,7 +32,6 @@ bool creamHouseChimney = true, redHouseChimney = true, yellowHouseChimney = true
 vec3 color;
 
 
-
 int main(int argc, char* argv[])
 {
     std::cout << "Input Your Desired Winodw Resolution: " << std::endl;
@@ -58,12 +57,18 @@ SceneBasic_Uniform::SceneBasic_Uniform() :
     drawBuf(1), 
     time(0), 
     deltaT(0),
+
+    // Speed of camera, lighting, and vehicle animations
     rotSpeed(0.5f), 
     vehicleSpeed(0.5f),
+
+    // Particles
     nParticles(1500), 
     particleLifetime(5.0f),
     emitterPos(0.0f), 
     emitterDir(0, 1, 0),
+
+    //Skybox
     sky(100.0f)
 {
     // Load The Town & House Meshes
@@ -171,10 +176,10 @@ void SceneBasic_Uniform::update(float t)
 
     if (animating()) 
     { 
-        // Adjust camera angles based on delta time and speed
+        // Animate/Adjust camera angles based on delta time and speed
         camAngle += deltaT * rotSpeed;
 
-        // Adjust car angles based on delta time and speed
+        // Animate/Adjust vehicle angles based on delta time and speed
         vehicleAngle += deltaT * vehicleSpeed;
         if (camAngle > glm::two_pi<float>()) camAngle -= glm::two_pi<float>();
         updateLight();
@@ -437,7 +442,6 @@ void SceneBasic_Uniform::drawScene(GLSLProgram& shader, bool onlyShadowCasters)
             // Update pass
             if (animating())
             {
-
                 smokeShader.use();
                 smokeShader.setUniform("Pass", 1);
                 smokeShader.setUniform("Time", time);
@@ -789,7 +793,7 @@ void SceneBasic_Uniform::setupFBO()
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, ambBuf);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, diffSpecTex, 0);
 
-    // Set up the draw buffers so that we can write to the colour attachments
+    // draw buffers so we can write to the colour attachments
     GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glDrawBuffers(2, drawBuffers);
 
@@ -973,7 +977,7 @@ void SceneBasic_Uniform::setupShadowVolumes()
     renderShader.use();
     renderShader.setUniform("LightIntensity", vec3(1.0f));
 
-    // Set up a  VAO for the full-screen quad
+    // Create a VAO for the full-screen quad
     GLfloat verts[] = 
     {
       -1.0f, -1.0f, 0.0f, 1.0f, 
@@ -1034,6 +1038,7 @@ void SceneBasic_Uniform::setMatrices(GLSLProgram &shader)
     shader.setUniform("NormalMatrix", glm::mat3(vec3(mv[0]), vec3(mv[1]), vec3(mv[2])));
 
 }
+
 
 
 // Set Matrices for the skybox
@@ -1099,7 +1104,6 @@ void SceneBasic_Uniform::ImGuiSetup()
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
-
 }
 
 
