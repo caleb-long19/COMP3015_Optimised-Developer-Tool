@@ -44,6 +44,11 @@ This Optimised Developer Tool will be used to present varying OpenGL Techniques.
 
 --------------
 
+### IMPORTANT
+When you download the source code you may be greeted with an error about Frustrum. Remove it from the helper file and re-add it to the helper filer. It should fix the issue!
+
+--------------
+
 
 ### INSTALLATION INSTRUCTIONS & USER MANUAL
 
